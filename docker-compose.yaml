@@ -2,10 +2,10 @@ version: '3'
 services:
   db:
     container_name: db
-    image: postgres:alpine
+    image: postgres:latest
     restart: always
     volumes:
-      - /srv/DownloadsAndSoftware/EIP/db-data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
