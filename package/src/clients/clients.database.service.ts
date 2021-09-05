@@ -4,7 +4,7 @@ import Client from '../commons/services/orm/models/clients.database.model'
 import ClientModel from './models/client.model'
 
 export default class ClientsService {
-  static async getClientFromIdAndSecret(
+  async getClientFromIdAndSecret(
     client_id: string,
     client_secret: string
   ): Promise<DatabaseServiceResult<ClientModel>> {

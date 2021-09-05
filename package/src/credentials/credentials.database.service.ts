@@ -5,7 +5,7 @@ import Token from '../commons/services/orm/models/tokens.database.model'
 import CredentialModel from './models/credential.model'
 
 export default class CredentialsService {
-  static async deleteCredentialFromId(credential_id: number): Promise<DatabaseServiceResult<null>> {
+  async deleteCredentialFromId(credential_id: number): Promise<DatabaseServiceResult<null>> {
     try {
       const credential = await Credential.findOne({ where: { id: credential_id } })
 
@@ -24,7 +24,7 @@ export default class CredentialsService {
     }
   }
 
-  static async getCredentialFromId(credential_id: number): Promise<DatabaseServiceResult<CredentialModel>> {
+  async getCredentialFromId(credential_id: number): Promise<DatabaseServiceResult<CredentialModel>> {
     try {
       const credential = await Credential.findOne({ where: { id: credential_id } })
 
@@ -38,7 +38,7 @@ export default class CredentialsService {
     }
   }
 
-  static async createCredentialWithId(
+  async createCredentialWithId(
     id_type: 'user' | 'shop' | 'admin',
     id: number,
     email: string,
@@ -59,7 +59,7 @@ export default class CredentialsService {
     }
   }
 
-  static async isEmailUnique(email: string): Promise<DatabaseServiceResult<null>> {
+  async isEmailUnique(email: string): Promise<DatabaseServiceResult<null>> {
     try {
       const owner = await Credential.findOne({ where: { email: email } })
 
