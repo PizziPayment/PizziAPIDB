@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "neverthrow": "^4.2.2",
+    "prettier": "^2.3.2",
     "reflect-metadata": "^0.1.13",
     "sequelize": "=6.6.2",
     "sequelize-typescript": "^2.1.0"

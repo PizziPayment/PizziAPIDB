@@ -1,5 +1,5 @@
-import { AutoIncrement, Column, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript"
-import Receipt from "./receipts.database.model"
+import { AutoIncrement, Column, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import Receipt from './receipts.database.model'
 
 interface ItemAttributes {
   id: number

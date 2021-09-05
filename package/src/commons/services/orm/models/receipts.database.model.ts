@@ -1,12 +1,12 @@
-import { AutoIncrement, Column, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript"
-import Shop from "./shop.database.model"
-import User from "./user.database.model"
+import { AutoIncrement, Column, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import Shop from './shop.database.model'
+import User from './user.database.model'
 
 interface ReceiptAttributes {
-    id: number
-    price_total: number
-    shop_id: number
-    user_id: number
+  id: number
+  price_total: number
+  shop_id: number
+  user_id: number
 }
 
 export type ReceiptCreation = Omit<ReceiptAttributes, 'id'>
