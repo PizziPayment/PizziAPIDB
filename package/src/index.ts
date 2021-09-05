@@ -13,7 +13,7 @@ export default class PizziDatabaseService {
   // This method has to be called before accessing other members
   // if not, it will probably throw an error when using sequelize's
   // models.
-  static initOrm(config: OrmConfig): Sequelize {
+  static initOrm(config: OrmConfig): Promise<void> {
     return new Sequelize({
         dialect: 'postgres',
         host: config.host,
@@ -23,7 +23,7 @@ export default class PizziDatabaseService {
         password: config.password,
         models: [`${__dirname}/commons/services/orm/models/`],
         logging: config.logging,
-    })
+    }).authenticate()
   }
 
   static encrypt(source: string): string {
