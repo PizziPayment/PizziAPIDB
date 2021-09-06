@@ -5,14 +5,14 @@ interface ShopAttributes {
   id: number
   name: string
   phone: string
-  description: string
+  description?: string
   address: string
   zipcode: number
-  logo: number
-  website: string
-  instagram: string
-  twitter: string
-  facebook: string
+  logo?: number
+  website?: string
+  instagram?: string
+  twitter?: string
+  facebook?: string
 }
 
 export type ShopCreation = Omit<ShopAttributes, 'id'>
