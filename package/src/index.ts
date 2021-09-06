@@ -1,11 +1,11 @@
 import { createHash } from 'crypto'
 import { Sequelize } from 'sequelize-typescript'
-import ClientsService from './clients/clients.database.service'
 import OrmConfig from './commons/models/orm.config.model'
-import CredentialsService from './credentials/credentials.database.service'
-import TokensService from './tokens/tokens.database.service'
 
-export * from './commons/models/response.model'
+export * from './credentials/credentials.database.service'
+export * from './tokens/tokens.database.service'
+export * from './clients/clients.database.service'
+export * from './users/users.database.service'
 
 export default class PizziDatabaseService {
   // This method has to be called before accessing other members
@@ -27,8 +27,4 @@ export default class PizziDatabaseService {
   static encrypt(source: string): string {
     return createHash('sha256').update(source).digest('hex')
   }
-
-  static credentials: CredentialsService
-  static tokens: TokensService
-  static clients: ClientsService
 }

@@ -1,16 +1,23 @@
-import { err, ok } from 'neverthrow'
-import { DatabaseServiceError, DatabaseServiceResult } from '../commons/models/response.model'
+import { err, ok, Result } from 'neverthrow'
 import Credential, { CredentialCreation } from '../commons/services/orm/models/credentials.database.model'
 import Token from '../commons/services/orm/models/tokens.database.model'
 import CredentialModel from './models/credential.model'
 
+export type CredentialsServiceResult<T> = Result<T, CredentialsServiceError>
+
+export enum CredentialsServiceError {
+  DuplicatedEmail,
+  OwnerNotFound,
+  DatabaseError,
+}
+
 export default class CredentialsService {
-  async deleteCredentialFromId(credential_id: number): Promise<DatabaseServiceResult<null>> {
+  async deleteCredentialFromId(credential_id: number): Promise<CredentialsServiceResult<null>> {
     try {
       const credential = await Credential.findOne({ where: { id: credential_id } })
 
       if (!credential) {
-        return err(DatabaseServiceError.OwnerNotFound)
+        return err(CredentialsServiceError.OwnerNotFound)
       } else {
         const tokens = await Token.findAll({ where: { credential_id: credential_id } })
 
@@ -20,21 +27,21 @@ export default class CredentialsService {
       }
     } catch (e) {
       console.log(e)
-      return err(DatabaseServiceError.DatabaseError)
+      return err(CredentialsServiceError.DatabaseError)
     }
   }
 
-  async getCredentialFromId(credential_id: number): Promise<DatabaseServiceResult<CredentialModel>> {
+  async getCredentialFromId(credential_id: number): Promise<CredentialsServiceResult<CredentialModel>> {
     try {
       const credential = await Credential.findOne({ where: { id: credential_id } })
 
       if (!credential) {
-        return err(DatabaseServiceError.OwnerNotFound)
+        return err(CredentialsServiceError.OwnerNotFound)
       } else {
         return ok(credential)
       }
     } catch {
-      return err(DatabaseServiceError.DatabaseError)
+      return err(CredentialsServiceError.DatabaseError)
     }
   }
 
@@ -43,7 +50,7 @@ export default class CredentialsService {
     id: number,
     email: string,
     password: string
-  ): Promise<DatabaseServiceResult<CredentialModel>> {
+  ): Promise<CredentialsServiceResult<CredentialModel>> {
     try {
       const id_key: 'user_id' | 'shop_id' | 'admin_id' = `${id_type}_id`
       const credential_attr: CredentialCreation = {
@@ -55,21 +62,21 @@ export default class CredentialsService {
 
       return ok(credential)
     } catch {
-      return err(DatabaseServiceError.DatabaseError)
+      return err(CredentialsServiceError.DatabaseError)
     }
   }
 
-  async isEmailUnique(email: string): Promise<DatabaseServiceResult<null>> {
+  async isEmailUnique(email: string): Promise<CredentialsServiceResult<null>> {
     try {
       const owner = await Credential.findOne({ where: { email: email } })
 
       if (!owner) {
         return ok(null)
       } else {
-        return err(DatabaseServiceError.DuplicatedEmail)
+        return err(CredentialsServiceError.DuplicatedEmail)
       }
     } catch {
-      return err(DatabaseServiceError.DatabaseError)
+      return err(CredentialsServiceError.DatabaseError)
     }
   }
 }
