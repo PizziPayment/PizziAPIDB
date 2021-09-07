@@ -19,7 +19,7 @@ You have to init the whole ORM before using any of the methods.
 Here's the configuration class:
 
 ```ts
-export default interface OrmConfig {
+export interface OrmConfig {
     // user's password
     password: string;
 
@@ -41,9 +41,9 @@ export default interface OrmConfig {
 ```
 
 ```ts
-import PizziDB from 'pizzi-db'
+import { initOrm } from 'pizzi-db'
 
-PizziDB.initOrm(
+initOrm(
   {
     user: 'dbuser', 
     name: 'dbname', 
@@ -58,13 +58,13 @@ PizziDB.initOrm(
 // The rest of your code
 ```
 
-# Using Exemple
+# Using Example
 
 ```ts
-import PizziDB from 'pizzi-db'
+import { TokensService } from 'pizzi-db'
 
 async function toto(): void {
-    const token = await PizziDB.tokens.getTokenFromValue("tokenstring")
+    const token = await TokensService.getTokenFromValue("tokenstring")
 
     if (token.isOk()) {
         console.log(token.value) // it will log the whole token object
