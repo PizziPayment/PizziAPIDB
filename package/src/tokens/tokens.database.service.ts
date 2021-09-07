@@ -9,7 +9,7 @@ export enum TokensServiceError {
   DatabaseError,
 }
 
-export default class TokensService {
+export class TokensService {
   async getTokenFromValue(token: string): Promise<TokensServiceResult<TokenModel>> {
     try {
       const maybe_token = await Token.findOne({ where: { access_token: token } })

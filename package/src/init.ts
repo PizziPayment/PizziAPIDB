@@ -1,4 +1,4 @@
-import OrmConfig from './commons/models/orm.config.model'
+import { OrmConfig } from './commons/models/orm.config.model'
 import { Sequelize } from 'sequelize-typescript'
 
 // This function must be called before accessing other members

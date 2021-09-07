@@ -1,4 +1,4 @@
-export default interface OrmConfig {
+export interface OrmConfig {
   password: string
   user: string
   name: string

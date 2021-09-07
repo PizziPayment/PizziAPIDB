@@ -11,7 +11,7 @@ export enum CredentialsServiceError {
   DatabaseError,
 }
 
-export default class CredentialsService {
+export class CredentialsService {
   async deleteCredentialFromId(credential_id: number): Promise<CredentialsServiceResult<null>> {
     try {
       const credential = await Credential.findOne({ where: { id: credential_id } })

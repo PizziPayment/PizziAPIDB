@@ -9,7 +9,7 @@ export enum ShopServiceError {
   ShopNotFound,
 }
 
-export default class ShopServices {
+export class ShopServices {
   static async deleteShopById(shop_id: number): Promise<ShopServiceResult<null>> {
     try {
       const shop = await Shop.findOne({ where: { id: shop_id } })

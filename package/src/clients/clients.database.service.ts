@@ -9,7 +9,7 @@ export enum ClientsServiceError {
   DatabaseError,
 }
 
-export default class ClientsService {
+export class ClientsService {
   async getClientFromIdAndSecret(client_id: string, client_secret: string): Promise<ClientsServiceResult<ClientModel>> {
     try {
       const client = await Client.findOne({ where: { client_id: client_id, client_secret: client_secret } })

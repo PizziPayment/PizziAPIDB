@@ -9,7 +9,7 @@ export enum UsersServiceError {
   UserNotFound,
 }
 
-export default class UsersServices {
+export class UsersServices {
   static async deleteUserById(user_id: number): Promise<UsersServiceResult<null>> {
     try {
       const user = await User.findOne({ where: { id: user_id } })
