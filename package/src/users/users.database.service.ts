@@ -1,5 +1,5 @@
 import { err, ok, Result } from 'neverthrow'
-import UserModel from './models/user.model'
+import { UserModel } from './models/user.model'
 import User from '../commons/services/orm/models/user.database.model'
 
 export type UsersServiceResult<T> = Result<T, UsersServiceError>

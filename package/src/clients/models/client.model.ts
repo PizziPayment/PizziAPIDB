@@ -1,4 +1,4 @@
-export default interface ClientModel {
+export interface ClientModel {
   id: number
   client_id: string
   client_secret: string

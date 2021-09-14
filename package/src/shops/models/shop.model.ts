@@ -1,4 +1,4 @@
-export default interface ShopModel {
+export interface ShopModel {
   id: number
   name: string
   phone: string

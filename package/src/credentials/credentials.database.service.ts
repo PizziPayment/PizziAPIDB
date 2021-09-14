@@ -1,7 +1,7 @@
 import { err, ok, Result } from 'neverthrow'
 import Credential, { CredentialCreation } from '../commons/services/orm/models/credentials.database.model'
 import Token from '../commons/services/orm/models/tokens.database.model'
-import CredentialModel from './models/credential.model'
+import { CredentialModel } from './models/credential.model'
 
 export type CredentialsServiceResult<T> = Result<T, CredentialsServiceError>
 

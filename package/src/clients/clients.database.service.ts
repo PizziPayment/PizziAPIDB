@@ -1,6 +1,6 @@
 import { err, ok, Result } from 'neverthrow'
 import Client from '../commons/services/orm/models/clients.database.model'
-import ClientModel from './models/client.model'
+import { ClientModel } from './models/client.model'
 
 export type ClientsServiceResult<T> = Result<T, ClientsServiceError>
 

@@ -1,4 +1,4 @@
-export default interface CredentialModel {
+export interface CredentialModel {
   email: string
   password: string
   user_id?: number

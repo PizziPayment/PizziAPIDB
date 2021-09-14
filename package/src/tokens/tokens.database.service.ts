@@ -1,6 +1,6 @@
 import { err, ok, Result } from 'neverthrow'
 import Token from '../commons/services/orm/models/tokens.database.model'
-import TokenModel from './models/token.model'
+import { TokenModel } from './models/token.model'
 
 export type TokensServiceResult<T> = Result<T, TokensServiceError>
 
