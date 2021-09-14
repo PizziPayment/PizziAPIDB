@@ -12,7 +12,7 @@ export enum CredentialsServiceError {
 }
 
 export class CredentialsService {
-  async deleteCredentialFromId(credential_id: number): Promise<CredentialsServiceResult<null>> {
+  static async deleteCredentialFromId(credential_id: number): Promise<CredentialsServiceResult<null>> {
     try {
       const credential = await Credential.findOne({ where: { id: credential_id } })
 
@@ -31,7 +31,7 @@ export class CredentialsService {
     }
   }
 
-  async getCredentialFromId(credential_id: number): Promise<CredentialsServiceResult<CredentialModel>> {
+  static async getCredentialFromId(credential_id: number): Promise<CredentialsServiceResult<CredentialModel>> {
     try {
       const credential = await Credential.findOne({ where: { id: credential_id } })
 
@@ -45,7 +45,7 @@ export class CredentialsService {
     }
   }
 
-  async createCredentialWithId(
+  static async createCredentialWithId(
     id_type: 'user' | 'shop' | 'admin',
     id: number,
     email: string,
@@ -66,7 +66,7 @@ export class CredentialsService {
     }
   }
 
-  async isEmailUnique(email: string): Promise<CredentialsServiceResult<null>> {
+  static async isEmailUnique(email: string): Promise<CredentialsServiceResult<null>> {
     try {
       const owner = await Credential.findOne({ where: { email: email } })
 

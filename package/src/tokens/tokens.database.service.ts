@@ -10,7 +10,7 @@ export enum TokensServiceError {
 }
 
 export class TokensService {
-  async getTokenFromValue(token: string): Promise<TokensServiceResult<TokenModel>> {
+  static async getTokenFromValue(token: string): Promise<TokensServiceResult<TokenModel>> {
     try {
       const maybe_token = await Token.findOne({ where: { access_token: token } })
 
