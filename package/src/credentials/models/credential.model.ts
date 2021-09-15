@@ -1,4 +1,5 @@
 export interface CredentialModel {
+  id: number
   email: string
   password: string
   user_id?: number

@@ -1,8 +1,8 @@
-import { err, ok, Result } from 'neverthrow'
+import { errAsync, okAsync, ResultAsync } from 'neverthrow'
 import { UserModel } from './models/user.model'
 import User from '../commons/services/orm/models/user.database.model'
 
-export type UsersServiceResult<T> = Result<T, UsersServiceError>
+export type UsersServiceResult<T> = ResultAsync<T, UsersServiceError>
 
 export enum UsersServiceError {
   DatabaseError,
@@ -10,39 +10,37 @@ export enum UsersServiceError {
 }
 
 export class UsersServices {
-  static async deleteUserById(user_id: number): Promise<UsersServiceResult<null>> {
-    try {
-      const user = await User.findOne({ where: { id: user_id } })
-
-      if (!user) {
-        return err(UsersServiceError.UserNotFound)
-      } else {
-        await user.destroy()
-        return ok(null)
-      }
-    } catch {
-      return err(UsersServiceError.DatabaseError)
-    }
+  static deleteUserById(user_id: number): UsersServiceResult<null> {
+    return this.getUserFromId(user_id)
+      .andThen(destroyUser)
+      .map(() => null)
   }
 
-  static async createUser(
-    name: string,
-    surname: string,
-    address: string,
-    zipcode: number
-  ): Promise<UsersServiceResult<UserModel>> {
-    try {
-      const user = await User.create({
+  static getUserFromId(user_id: number): UsersServiceResult<UserModel> {
+    return ResultAsync.fromPromise(
+      User.findOne({ where: { id: user_id } }),
+      () => UsersServiceError.DatabaseError
+    ).andThen((maybe_user) => (maybe_user ? okAsync(maybe_user) : errAsync(UsersServiceError.UserNotFound)))
+  }
+
+  static createUser(name: string, surname: string, address: string, zipcode: number): UsersServiceResult<UserModel> {
+    return ResultAsync.fromPromise(
+      User.create({
         address: address,
         firstname: name,
         surname: surname,
         zipcode: zipcode,
         picture_id: undefined,
-      })
-
-      return ok(user)
-    } catch {
-      return err(UsersServiceError.DatabaseError)
-    }
+      }),
+      () => UsersServiceError.DatabaseError
+    )
   }
+}
+
+// Pipeline
+
+function destroyUser(user: UserModel): UsersServiceResult<UserModel> {
+  return ResultAsync.fromPromise(User.destroy({ where: { id: user.id } }), () => UsersServiceError.DatabaseError).map(
+    () => user
+  )
 }

@@ -1,8 +1,8 @@
-import { err, ok, Result } from 'neverthrow'
+import { errAsync, okAsync, ResultAsync } from 'neverthrow'
 import { ShopModel } from './models/shop.model'
 import Shop from '../commons/services/orm/models/shop.database.model'
 
-export type ShopsServiceResult<T> = Result<T, ShopsServiceError>
+export type ShopsServiceResult<T> = ResultAsync<T, ShopsServiceError>
 
 export enum ShopsServiceError {
   DatabaseError,
@@ -10,28 +10,22 @@ export enum ShopsServiceError {
 }
 
 export class ShopsServices {
-  static async deleteShopById(shop_id: number): Promise<ShopsServiceResult<null>> {
-    try {
-      const shop = await Shop.findOne({ where: { id: shop_id } })
-
-      if (!shop) {
-        return err(ShopsServiceError.ShopNotFound)
-      } else {
-        await shop.destroy()
-        return ok(null)
-      }
-    } catch {
-      return err(ShopsServiceError.DatabaseError)
-    }
+  static deleteShopById(shop_id: number): ShopsServiceResult<null> {
+    return this.getShopFromId(shop_id)
+      .andThen(destroyShop)
+      .map(() => null)
   }
-  static async createShop(
-    name: string,
-    phone: string,
-    address: string,
-    zipcode: number
-  ): Promise<ShopsServiceResult<ShopModel>> {
-    try {
-      const shop = await Shop.create({
+
+  static getShopFromId(shop_id: number): ShopsServiceResult<ShopModel> {
+    return ResultAsync.fromPromise(
+      Shop.findOne({ where: { id: shop_id } }),
+      () => ShopsServiceError.DatabaseError
+    ).andThen((maybe_shop) => (maybe_shop ? okAsync(maybe_shop) : errAsync(ShopsServiceError.ShopNotFound)))
+  }
+
+  static createShop(name: string, phone: string, address: string, zipcode: number): ShopsServiceResult<ShopModel> {
+    return ResultAsync.fromPromise(
+      Shop.create({
         address: address,
         name: name,
         phone: phone,
@@ -42,11 +36,16 @@ export class ShopsServices {
         instagram: undefined,
         twitter: undefined,
         website: undefined,
-      })
-
-      return ok(shop)
-    } catch {
-      return err(ShopsServiceError.DatabaseError)
-    }
+      }),
+      () => ShopsServiceError.DatabaseError
+    )
   }
+}
+
+// Pipeline
+
+function destroyShop(shop: ShopModel): ShopsServiceResult<ShopModel> {
+  return ResultAsync.fromPromise(Shop.destroy({ where: { id: shop.id } }), () => ShopsServiceError.DatabaseError).map(
+    () => shop
+  )
 }
