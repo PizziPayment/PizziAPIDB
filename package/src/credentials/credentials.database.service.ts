@@ -1,4 +1,4 @@
-import { okAsync, ResultAsync } from 'neverthrow'
+import { ResultAsync } from 'neverthrow'
 import Credential from '../commons/services/orm/models/credentials.database.model'
 import Token from '../commons/services/orm/models/tokens.database.model'
 import { CredentialModel } from './models/credential.model'
