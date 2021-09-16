@@ -1,4 +1,4 @@
-import { ResultAsync } from 'neverthrow'
+import { okAsync, ResultAsync } from 'neverthrow'
 import Credential from '../commons/services/orm/models/credentials.database.model'
 import Token from '../commons/services/orm/models/tokens.database.model'
 import { CredentialModel } from './models/credential.model'
@@ -48,6 +48,7 @@ export class CredentialsService {
       Credential.findOne({ where: { email: email } }),
       () => CredentialsServiceError.DatabaseError
     )
+      .map((t) => !t) // Reverse null and not null to match `okIfNotNullElse` function.
       .andThen(okIfNotNullElse(CredentialsServiceError.DuplicatedEmail))
       .map(() => null)
   }
