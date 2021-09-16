@@ -1,4 +1,4 @@
-import { errAsync, okAsync, ResultAsync } from 'neverthrow'
+import { ResultAsync } from 'neverthrow'
 import { ShopModel } from './models/shop.model'
 import Shop from '../commons/services/orm/models/shop.database.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
