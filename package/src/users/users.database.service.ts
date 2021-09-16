@@ -1,6 +1,7 @@
 import { errAsync, okAsync, ResultAsync } from 'neverthrow'
 import { UserModel } from './models/user.model'
 import User from '../commons/services/orm/models/user.database.model'
+import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 
 export type UsersServiceResult<T> = ResultAsync<T, UsersServiceError>
 
@@ -20,7 +21,7 @@ export class UsersServices {
     return ResultAsync.fromPromise(
       User.findOne({ where: { id: user_id } }),
       () => UsersServiceError.DatabaseError
-    ).andThen((maybe_user) => (maybe_user ? okAsync(maybe_user) : errAsync(UsersServiceError.UserNotFound)))
+    ).andThen(okIfNotNullElse(UsersServiceError.UserNotFound))
   }
 
   static createUser(name: string, surname: string, address: string, zipcode: number): UsersServiceResult<UserModel> {

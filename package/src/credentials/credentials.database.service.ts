@@ -2,6 +2,7 @@ import { errAsync, okAsync, ResultAsync } from 'neverthrow'
 import Credential from '../commons/services/orm/models/credentials.database.model'
 import Token from '../commons/services/orm/models/tokens.database.model'
 import { CredentialModel } from './models/credential.model'
+import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 
 export type CredentialsServiceResult<T> = ResultAsync<T, CredentialsServiceError>
 
@@ -23,9 +24,7 @@ export class CredentialsService {
     return ResultAsync.fromPromise(
       Credential.findOne({ where: { id: credential_id } }),
       () => CredentialsServiceError.DatabaseError
-    ).andThen((maybe_credential) =>
-      maybe_credential ? okAsync(maybe_credential) : errAsync(CredentialsServiceError.OwnerNotFound)
-    )
+    ).andThen(okIfNotNullElse(CredentialsServiceError.OwnerNotFound))
   }
 
   static createCredentialWithId(
@@ -48,7 +47,9 @@ export class CredentialsService {
     return ResultAsync.fromPromise(
       Credential.findOne({ where: { email: email } }),
       () => CredentialsServiceError.DatabaseError
-    ).andThen((maybe_owner) => (maybe_owner ? okAsync(null) : errAsync(CredentialsServiceError.DuplicatedEmail)))
+    )
+      .andThen(okIfNotNullElse(CredentialsServiceError.DuplicatedEmail))
+      .map(() => null)
   }
 }
 

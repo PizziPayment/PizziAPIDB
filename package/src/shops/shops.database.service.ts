@@ -1,6 +1,7 @@
 import { errAsync, okAsync, ResultAsync } from 'neverthrow'
 import { ShopModel } from './models/shop.model'
 import Shop from '../commons/services/orm/models/shop.database.model'
+import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 
 export type ShopsServiceResult<T> = ResultAsync<T, ShopsServiceError>
 
@@ -20,7 +21,7 @@ export class ShopsServices {
     return ResultAsync.fromPromise(
       Shop.findOne({ where: { id: shop_id } }),
       () => ShopsServiceError.DatabaseError
-    ).andThen((maybe_shop) => (maybe_shop ? okAsync(maybe_shop) : errAsync(ShopsServiceError.ShopNotFound)))
+    ).andThen(okIfNotNullElse(ShopsServiceError.ShopNotFound))
   }
 
   static createShop(name: string, phone: string, address: string, zipcode: number): ShopsServiceResult<ShopModel> {
