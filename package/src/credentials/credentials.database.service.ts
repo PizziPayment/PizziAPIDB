@@ -35,6 +35,20 @@ export class CredentialsService {
     ).andThen(okIfNotNullElse(CredentialsServiceError.OwnerNotFound))
   }
 
+  static getCredentialFromMailAndPassword(
+    email: string,
+    hashed_password: string,
+    transaction: Transaction | null = null
+  ): CredentialsServiceResult<CredentialModel> {
+    return ResultAsync.fromPromise(
+      Credential.findOne({
+        where: { email: email, password: hashed_password },
+        transaction,
+      }),
+      () => CredentialsServiceError.DatabaseError
+    ).andThen(okIfNotNullElse(CredentialsServiceError.OwnerNotFound))
+  }
+
   static createCredentialWithId(
     id_type: 'user' | 'shop' | 'admin',
     id: number,
