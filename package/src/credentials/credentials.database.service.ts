@@ -3,6 +3,8 @@ import Credential from '../commons/services/orm/models/credentials.database.mode
 import Token from '../commons/services/orm/models/tokens.database.model'
 import { CredentialModel } from './models/credential.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
+import { Transaction } from 'sequelize'
+import { onTransaction } from '../commons/extensions/generators.extension'
 
 export type CredentialsServiceResult<T> = ResultAsync<T, CredentialsServiceError>
 
@@ -13,16 +15,22 @@ export enum CredentialsServiceError {
 }
 
 export class CredentialsService {
-  static deleteCredentialFromId(credential_id: number): CredentialsServiceResult<null> {
-    return this.getCredentialFromId(credential_id)
-      .andThen(destroyOwnersTokens)
-      .andThen(destroyCredential)
+  static deleteCredentialFromId(
+    credential_id: number,
+    transaction: Transaction | null = null
+  ): CredentialsServiceResult<null> {
+    return this.getCredentialFromId(credential_id, transaction)
+      .andThen(onTransaction(transaction, destroyOwnersTokens))
+      .andThen(onTransaction(transaction, destroyCredential))
       .map(() => null)
   }
 
-  static getCredentialFromId(credential_id: number): CredentialsServiceResult<CredentialModel> {
+  static getCredentialFromId(
+    credential_id: number,
+    transaction: Transaction | null = null
+  ): CredentialsServiceResult<CredentialModel> {
     return ResultAsync.fromPromise(
-      Credential.findOne({ where: { id: credential_id } }),
+      Credential.findOne({ where: { id: credential_id }, transaction }),
       () => CredentialsServiceError.DatabaseError
     ).andThen(okIfNotNullElse(CredentialsServiceError.OwnerNotFound))
   }
@@ -31,21 +39,25 @@ export class CredentialsService {
     id_type: 'user' | 'shop' | 'admin',
     id: number,
     email: string,
-    password: string
+    password: string,
+    transaction: Transaction | null = null
   ): CredentialsServiceResult<CredentialModel> {
     return ResultAsync.fromPromise(
-      Credential.create({
-        email: email,
-        password: password,
-        [`${id_type}_id`]: id,
-      }),
+      Credential.create(
+        {
+          email: email,
+          password: password,
+          [`${id_type}_id`]: id,
+        },
+        { transaction }
+      ),
       () => CredentialsServiceError.DatabaseError
     )
   }
 
-  static isEmailUnique(email: string): CredentialsServiceResult<null> {
+  static isEmailUnique(email: string, transaction: Transaction | null = null): CredentialsServiceResult<null> {
     return ResultAsync.fromPromise(
-      Credential.findOne({ where: { email: email } }),
+      Credential.findOne({ where: { email: email }, transaction }),
       () => CredentialsServiceError.DatabaseError
     )
       .map((t) => !t) // Reverse null and not null to match `okIfNotNullElse` function.
@@ -56,21 +68,27 @@ export class CredentialsService {
 
 // Pipeline
 
-function destroyOwnersTokens(credential: CredentialModel): CredentialsServiceResult<CredentialModel> {
+function destroyOwnersTokens(
+  credential: CredentialModel,
+  transaction: Transaction | null
+): CredentialsServiceResult<CredentialModel> {
   return ResultAsync.fromPromise(
-    Token.findAll({ where: { credential_id: credential.id } }),
+    Token.findAll({ where: { credential_id: credential.id }, transaction }),
     () => CredentialsServiceError.DatabaseError
   ).andThen((tokens) =>
     ResultAsync.fromPromise(
-      Promise.all(tokens.map((tok) => tok.destroy())),
+      Promise.all(tokens.map((tok) => tok.destroy({ transaction }))),
       () => CredentialsServiceError.DatabaseError
     ).map(() => credential)
   )
 }
 
-function destroyCredential(credential: CredentialModel): CredentialsServiceResult<CredentialModel> {
+function destroyCredential(
+  credential: CredentialModel,
+  transaction: Transaction | null
+): CredentialsServiceResult<CredentialModel> {
   return ResultAsync.fromPromise(
-    Credential.destroy({ where: { id: credential.id } }),
+    Credential.destroy({ where: { id: credential.id }, transaction }),
     () => CredentialsServiceError.DatabaseError
   ).map(() => credential)
 }

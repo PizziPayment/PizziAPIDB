@@ -2,6 +2,7 @@ import { ResultAsync } from 'neverthrow'
 import Token from '../commons/services/orm/models/tokens.database.model'
 import { TokenModel } from './models/token.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
+import { Transaction } from 'sequelize'
 
 export type TokensServiceResult<T> = ResultAsync<T, TokensServiceError>
 
@@ -11,9 +12,9 @@ export enum TokensServiceError {
 }
 
 export class TokensService {
-  static getTokenFromValue(token: string): TokensServiceResult<TokenModel> {
+  static getTokenFromValue(token: string, transaction: Transaction | null): TokensServiceResult<TokenModel> {
     return ResultAsync.fromPromise(
-      Token.findOne({ where: { access_token: token } }),
+      Token.findOne({ where: { access_token: token }, transaction }),
       () => TokensServiceError.DatabaseError
     ).andThen(okIfNotNullElse(TokensServiceError.TokenNotFound))
   }
