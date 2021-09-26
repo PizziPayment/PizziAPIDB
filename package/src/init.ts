@@ -21,6 +21,9 @@ export async function initOrm(config: OrmConfig): Promise<Sequelize> {
   return sequelize
 }
 
+// This function alter all the database's tables using the database
+// models.
+// Alteration of existing tables can cause data losses.
 export async function alterTables(config: OrmConfig): Promise<Sequelize> {
   return new Sequelize({
     dialect: 'postgres',
@@ -34,6 +37,9 @@ export async function alterTables(config: OrmConfig): Promise<Sequelize> {
   }).sync({ alter: true })
 }
 
+// This function delete and re create all the database's tables using
+// the database models.
+// The data stored in the database will be lost.
 export async function rewriteTables(config: OrmConfig): Promise<Sequelize> {
   return new Sequelize({
     dialect: 'postgres',
