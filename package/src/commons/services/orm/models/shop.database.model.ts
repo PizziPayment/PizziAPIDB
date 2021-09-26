@@ -22,7 +22,7 @@ export default class Shop extends Model<ShopAttributes, ShopCreation> {
   @PrimaryKey
   @AutoIncrement
   @Column
-  override id!: number
+  declare id: number
 
   @Column
   name!: string

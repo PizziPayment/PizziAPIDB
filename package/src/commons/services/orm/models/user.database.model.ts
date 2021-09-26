@@ -18,7 +18,7 @@ export default class User extends Model<UserAttributes, UserCreation> {
   @PrimaryKey
   @AutoIncrement
   @Column
-  override id!: number
+  declare id: number
 
   @Column
   firstname!: string

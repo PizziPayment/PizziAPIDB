@@ -18,7 +18,7 @@ export default class Token extends Model<TokenAttributes, TokenCreation> {
   @PrimaryKey
   @AutoIncrement
   @Column
-  override id!: number
+  declare id: number
 
   @Column
   access_token!: string
