@@ -6,7 +6,7 @@ interface ClientAttributes {
   client_secret: string
 }
 
-type ClientCreation = Omit<ClientAttributes, 'id'>
+export type ClientCreation = Omit<ClientAttributes, 'id'>
 
 @Table({ tableName: 'clients', timestamps: false })
 export default class Client extends Model<ClientAttributes, ClientCreation> {
