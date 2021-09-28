@@ -1,6 +1,6 @@
 # Pizzi Database Service
 
-This package isolates the abstraction around Pizzi's BDD, it uses Sequelize to
+This package isolates the abstraction around Pizzi's DB, it uses Sequelize to
 generate the tables and their relations.
 
 # How to add Pizzi-DB as a dependency to your project ? 
