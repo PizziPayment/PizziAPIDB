@@ -4,7 +4,7 @@ This is a utility CLI to correctly init the db.
 
 ## Example
 
-Recreate the tables from scratch, loosing all the data.
+Recreate the tables from scratch, losing all the data.
 ```
 $> yarn start table recreate
 Table created.
