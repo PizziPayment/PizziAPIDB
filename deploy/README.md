@@ -4,7 +4,7 @@ This is a utility CLI to correctly init the db.
 
 ## Example
 
-Recreate the tables from 0, loosing all the data.
+Recreate the tables from scratch, loosing all the data.
 ```
 $> yarn start table recreate
 Table created.
@@ -22,6 +22,6 @@ To prevent the seeding of the table you can use the flag `--noseed` or `-n`.
 
 ## Config
 
-All the information for db connection are located in `config.json`. If you want
+All the information for db connection is located in `config.json`. If you want to
 use your own configuration use the flag `--config <path>` or `-c <path>`. You can
 dump the config file with `--verbose` or `-v`.
