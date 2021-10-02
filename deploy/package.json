@@ -1,0 +1,19 @@
+{
+  "name": "deploy-db",
+  "version": "1.0.0",
+  "description": "Deploy Pizzi creating all the tables",
+  "main": "src/main.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node ./src/main.js"
+  },
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "pg": "^8.7.1",
+    "pizzi-db": "^0.1.5",
+    "yargs": "^17.2.1"
+  },
+  "devDependencies": {
+    "@types/yargs": "^17.0.3"
+  }
+}
