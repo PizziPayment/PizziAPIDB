@@ -18,4 +18,10 @@ Table synchronized.
 Table seeded.
 ```
 
-To prevent the seeding of the table you can use the flag `--noseed` or `--ns`.
+To prevent the seeding of the table you can use the flag `--noseed` or `-n`.
+
+## Config
+
+All the information for db connection are located in `config.json`. If you want
+use your own configuration use the flag `--config <path>` or `-c <path>`. You can
+dump the config file with `--verbose` or `-v`.
