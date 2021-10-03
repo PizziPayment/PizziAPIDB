@@ -263,8 +263,8 @@ pgpass@1.x:
 
 pizzi-db@^0.1.5:
   version "0.1.5"
-  resolved "https://pointecouteau.fr:40403/pizzi-db/-/pizzi-db-0.1.5.tgz#37a31b65dcc0f7ca5fdfdf3a94291a64e7a078f0"
-  integrity sha512-uI6P7Kbu7CvDRnc9AcHXZT4si8bSfY1bNnFDfcWjMOG78Kxk24IQ9+FLwMh/rrEkjLUKt5GVElk6TJyzLvHHHw==
+  resolved "https://pointecouteau.fr:40403/pizzi-db/-/pizzi-db-0.1.5.tgz#c112aa0b1388ed84790e4ebbcec1756e04e882d4"
+  integrity sha512-9PNAJiKndS1bS4u1c2icPG/NgtyikRM00LUi5BQ2WYQHBRluKL0y+6Zy4JJzINXEF7yJKS7ZWdgek7Ejr8fsdw==
   dependencies:
     neverthrow "^4.2.2"
     prettier "^2.3.2"
