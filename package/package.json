@@ -1,6 +1,6 @@
 {
   "name": "pizzi-db",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Database abstraction and ORM for Pizzi",
   "repository": "git@github.com:PizziPayment/PizziAPIBdd.git",
   "author": "Lilian VERLHAC",
