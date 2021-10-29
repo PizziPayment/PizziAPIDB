@@ -56,7 +56,7 @@ export class TokensService {
     })
   }
 
-  static getTokenFromValue(token: string, transaction: Transaction | null): TokensServiceResult<TokenModel> {
+  static getTokenFromValue(token: string, transaction: Transaction | null = null): TokensServiceResult<TokenModel> {
     return ResultAsync.fromPromise(
       Token.findOne({ where: { access_token: token }, transaction }),
       () => TokensServiceError.DatabaseError
