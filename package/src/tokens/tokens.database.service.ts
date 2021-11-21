@@ -3,7 +3,6 @@ import Token, { TokenCreation } from '../commons/services/orm/models/tokens.data
 import { TokenModel } from './models/token.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
-import Credential from '../commons/services/orm/models/credentials.database.model'
 import { onTransaction } from '../commons/extensions/generators.extension'
 import { randomBytes } from 'crypto'
 import { ClientModel } from '../clients/models/client.model'
@@ -81,7 +80,7 @@ export class TokensService {
 
 function destroyToken(token: TokenModel, transaction: Transaction | null): TokensServiceResult<TokenModel> {
   return ResultAsync.fromPromise(
-    Credential.destroy({ where: { id: token.id }, transaction }),
+    Token.destroy({ where: { id: token.id }, transaction }),
     () => TokensServiceError.DatabaseError
   ).map(() => token)
 }
