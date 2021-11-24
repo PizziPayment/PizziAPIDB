@@ -12,6 +12,13 @@ export enum ClientsServiceError {
 }
 
 export class ClientsService {
+  static createClientFromIdAndSecret(client_id: string, client_secret: string, transaction: Transaction | null = null) {
+    return ResultAsync.fromPromise(
+      Client.create({ client_id, client_secret }, { transaction }),
+      () => ClientsServiceError.DatabaseError
+    )
+  }
+
   static getClientFromIdAndSecret(
     client_id: string,
     client_secret: string,

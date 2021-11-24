@@ -4,6 +4,7 @@ import User from '../commons/services/orm/models/user.database.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
 import { onTransaction } from '../commons/extensions/generators.extension'
+import { TokensServiceError } from '../tokens/tokens.database.service'
 
 export type UsersServiceResult<T> = ResultAsync<T, UsersServiceError>
 
@@ -47,6 +48,55 @@ export class UsersServices {
       () => UsersServiceError.DatabaseError
     )
   }
+
+  static updateUserFromId(
+    user_id: number,
+    name: string | null,
+    surname: string | null,
+    address: string | null,
+    zipcode: number | null,
+    transaction: Transaction | null = null
+  ): UsersServiceResult<UserModel> {
+    return ResultAsync.fromPromise(
+      User.findOne({
+        where: {
+          id: user_id,
+        },
+        transaction,
+      }),
+      () => UsersServiceError.DatabaseError
+    )
+      .andThen(okIfNotNullElse(UsersServiceError.UserNotFound))
+      .andThen((user) =>
+        ResultAsync.fromPromise(
+          Object.assign(user, nonNullUserValues(name, surname, address, zipcode)).save({ transaction }),
+          () => UsersServiceError.DatabaseError
+        )
+      )
+  }
+}
+
+function nonNullUserValues(
+  name: string | null,
+  surname: string | null,
+  address: string | null,
+  zipcode: number | null
+): Record<string, string | number> {
+  const record: Record<string, string | number> = {}
+
+  if (name) {
+    record['name'] = name
+  }
+  if (surname) {
+    record['surname'] = surname
+  }
+  if (address) {
+    record['address'] = address
+  }
+  if (zipcode) {
+    record['zipcode'] = zipcode
+  }
+  return record
 }
 
 // Pipeline
