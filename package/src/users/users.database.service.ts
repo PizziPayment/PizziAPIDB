@@ -4,7 +4,6 @@ import User from '../commons/services/orm/models/user.database.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
 import { onTransaction } from '../commons/extensions/generators.extension'
-import { TokensServiceError } from '../tokens/tokens.database.service'
 
 export type UsersServiceResult<T> = ResultAsync<T, UsersServiceError>
 
@@ -85,7 +84,7 @@ function nonNullUserValues(
   const record: Record<string, string | number> = {}
 
   if (name) {
-    record['name'] = name
+    record['firstname'] = name
   }
   if (surname) {
     record['surname'] = surname
