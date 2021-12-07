@@ -1,10 +1,13 @@
 import { AutoIncrement, Column, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import Shop from './shop.database.model'
 import User from './user.database.model'
+import PaymentMethod from './receipts.database.model'
 
 interface ReceiptAttributes {
   id: number
   price_total: number
+  tva: number
+  payment_method: number
   shop_id: number
   user_id: number
 }
@@ -20,6 +23,10 @@ export default class Receipt extends Model<ReceiptAttributes, ReceiptCreation> {
 
   @Column
   price_total!: number
+
+  @ForeignKey(() => PaymentMethod)
+  @Column
+  payment_method!: number
 
   @ForeignKey(() => Shop)
   @Column

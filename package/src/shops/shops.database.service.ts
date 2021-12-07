@@ -46,6 +46,7 @@ export class ShopsServices {
           instagram: undefined,
           twitter: undefined,
           website: undefined,
+          receipt_footer: undefined,
         },
         { transaction }
       ),

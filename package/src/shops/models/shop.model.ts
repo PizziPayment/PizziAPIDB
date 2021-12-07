@@ -10,4 +10,5 @@ export interface ShopModel {
   instagram?: string
   twitter?: string
   facebook?: string
+  receipt_footer?: string
 }

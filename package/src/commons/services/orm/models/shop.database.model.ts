@@ -13,6 +13,7 @@ interface ShopAttributes {
   instagram?: string
   twitter?: string
   facebook?: string
+  receipt_footer?: string
 }
 
 export type ShopCreation = Omit<ShopAttributes, 'id'>
@@ -54,4 +55,7 @@ export default class Shop extends Model<ShopAttributes, ShopCreation> {
 
   @Column
   facebook?: string
+
+  @Column
+  receipt_footer?: string
 }
