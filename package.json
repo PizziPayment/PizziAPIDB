@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "workspaces": [
+    "deploy-db",
+    "pizzi-db"
+  ]
+}
