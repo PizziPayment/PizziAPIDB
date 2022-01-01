@@ -3,5 +3,6 @@
   "workspaces": [
     "deploy-db",
     "pizzi-db"
-  ]
+  ],
+  "packageManager": "yarn@3.1.1"
 }
