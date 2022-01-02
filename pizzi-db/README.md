@@ -5,11 +5,10 @@ generate the tables and their relations.
 
 # How to add Pizzi-DB as a dependency to your project ? 
 
-ATM the package is hosted on a private registry, you should specify it when
-adding the package to your dependency tree.
+You need to add this repository as a dependency. This is only tested on the berry (>= 2) version of yarn.
 
 ```sh
-> yarn add pizzi-db --registry <url to pizzi registry>
+> yarn add 'git@github.com:PizziPayment/PizziAPIDB.git#workspace=pizzi-db&commit=<commit>'
 ```
 
 # How it works ?
