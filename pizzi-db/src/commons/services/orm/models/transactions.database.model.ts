@@ -1,5 +1,5 @@
 import { AutoIncrement, Column, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
-import User from './user.database.model'
+import User from './users.database.model'
 import Receipt from './receipts.database.model'
 
 interface TransactionAttributes {

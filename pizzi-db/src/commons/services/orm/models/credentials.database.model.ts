@@ -1,7 +1,7 @@
 import { AutoIncrement, Column, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import Admin from './admins.database.model'
 import Shop from './shop.database.model'
-import User from './user.database.model'
+import User from './users.database.model'
 
 interface CredentialAttributes {
   id: number
