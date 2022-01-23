@@ -21,17 +21,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*":
-  version: 16.7.9
-  resolution: "@types/node@npm:16.7.9"
-  checksum: dd8970adbb82a188c4b253df8303b9e4e5e3423ff8c35243b240bb448b056a2723f58fe17228e4bcb1b1f98b3f37108c0bdfda7efd88ed839e098502cf73992f
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^17.0.6":
-  version: 17.0.6
-  resolution: "@types/node@npm:17.0.6"
-  checksum: 36fda5555ec759132886721f59fa74333947f7148b7dcce3de0a78c36f37f57ec86a3d09fd38c835ba65c8de77905de6c01523ec99864d8cead83f404118a44a
+"@types/node@npm:*, @types/node@npm:^17.0.6":
+  version: 17.0.10
+  resolution: "@types/node@npm:17.0.10"
+  checksum: 979e83d642a2b4f18fa1a4233f884822c05abc7acd0836024aa964187f8446432b21f7913e72fe2b3927c4a811c27a0b6cd60ac7c4ac6a6762cfbab70782aa6a
   languageName: node
   linkType: hard
 
@@ -376,22 +369,22 @@ __metadata:
   linkType: hard
 
 "sequelize-typescript@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "sequelize-typescript@npm:2.1.1"
+  version: 2.1.2
+  resolution: "sequelize-typescript@npm:2.1.2"
   dependencies:
     glob: 7.2.0
   peerDependencies:
     "@types/node": "*"
     "@types/validator": "*"
     reflect-metadata: "*"
-    sequelize: ">=6.6.5"
-  checksum: 4e03985632beef135df8a849a6f623672f4c321c2a7e20463af54969989bd01ab9f99d1f5895dbcaf1cb29ccc7bf3f1c1af5f3b9b66bf98f0c7a9e8e8dff6fb8
+    sequelize: ">=6.8.0"
+  checksum: 2809fd643578a4331a7092b7fdb839b55821e2583f38ba5b77fdf3f800b8bac0967c5f75241165afc9718046b737187d8bfb06e220f030392784994935c83039
   languageName: node
   linkType: hard
 
 "sequelize@npm:^6.12.4":
-  version: 6.12.4
-  resolution: "sequelize@npm:6.12.4"
+  version: 6.13.0
+  resolution: "sequelize@npm:6.13.0"
   dependencies:
     "@types/debug": ^4.1.7
     debug: ^4.3.3
@@ -425,7 +418,7 @@ __metadata:
       optional: true
     tedious:
       optional: true
-  checksum: bf781ea640627cb8f32bcc3521ad100c98cca0f77ac1f0bffeaaa1bb5f15dff200c5e225d752f9c7fc8824f3f1885d3d4944f5a31b990008684eedc19e805059
+  checksum: e9b5e5793a14f39a302f485435d33e59239aa837594f71d9a7e4ef02f1da4bcd1af168f21ae680df6ba04bc88f72d6e7b990072b3426d778bf25890495231193
   languageName: node
   linkType: hard
 
@@ -444,11 +437,11 @@ __metadata:
   linkType: hard
 
 "tsc@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "tsc@npm:2.0.3"
+  version: 2.0.4
+  resolution: "tsc@npm:2.0.4"
   bin:
     tsc: bin/tsc
-  checksum: 959c0227323a35982d7180a49f67902bbce9a243c160ece1bd5002c9d67efe22037ca9808cf41f360a5db6e9699f947ba980b367ddbb6ee69e4988dc878d60b2
+  checksum: 50b10240887424c66454687f0fca4e319713b35cb44f0dab228719eb4dd757251f83c3d79e60d29dfbe90c2d6f1272f793b83e75a9fca2c622b4213ad3eb8cb1
   languageName: node
   linkType: hard
 

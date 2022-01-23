@@ -19,7 +19,10 @@ export default class Transaction extends Model<TransactionAttributes, Transactio
   declare id: number
 
   @Column
-  state!: number
+  state!: 'failed' | 'pending' | 'validated'
+
+  @Column
+  payment_method!: 'card' | 'cash'
 
   @Column
   @ForeignKey(() => User)

@@ -1,6 +1,6 @@
 import { ResultAsync } from 'neverthrow'
 import { ShopModel } from './models/shop.model'
-import Shop from '../commons/services/orm/models/shop.database.model'
+import Shop from '../commons/services/orm/models/shops.database.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
 import { onTransaction } from '../commons/extensions/generators.extension'
