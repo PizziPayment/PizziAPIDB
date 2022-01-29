@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, Column, DataType, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import User from './users.database.model'
 import Receipt from './receipts.database.model'
 
@@ -18,10 +18,10 @@ export default class Transaction extends Model<TransactionAttributes, Transactio
   @Column
   declare id: number
 
-  @Column
+  @Column(DataType.ENUM('failed', 'pending', 'validated'))
   state!: 'failed' | 'pending' | 'validated'
 
-  @Column
+  @Column(DataType.ENUM('card', 'cash'))
   payment_method!: 'card' | 'cash'
 
   @Column
