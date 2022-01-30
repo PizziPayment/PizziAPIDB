@@ -5,11 +5,15 @@ import Receipt from './receipts.database.model'
 interface TransactionAttributes {
   id: number
   state: number
+  payment_method: number
   user_id: number
   receipt_id: number
 }
 
 export type TransactionCreation = Omit<TransactionAttributes, 'id'>
+
+export type PaymentMethod = 'card' | 'cash'
+export type TransactionState = 'failed' | 'pending' | 'validated'
 
 @Table({ tableName: 'transactions', timestamps: false })
 export default class Transaction extends Model<TransactionAttributes, TransactionCreation> {
@@ -19,10 +23,10 @@ export default class Transaction extends Model<TransactionAttributes, Transactio
   declare id: number
 
   @Column(DataType.ENUM('failed', 'pending', 'validated'))
-  state!: 'failed' | 'pending' | 'validated'
+  state!: TransactionState
 
   @Column(DataType.ENUM('card', 'cash'))
-  payment_method!: 'card' | 'cash'
+  payment_method!: PaymentMethod
 
   @Column
   @ForeignKey(() => User)
