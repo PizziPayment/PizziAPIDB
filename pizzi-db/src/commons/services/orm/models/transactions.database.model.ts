@@ -4,9 +4,9 @@ import Receipt from './receipts.database.model'
 
 interface TransactionAttributes {
   id: number
-  state: number
-  payment_method: number
-  user_id: number
+  state: TransactionState
+  payment_method: PaymentMethod
+  user_id?: number
   receipt_id: number
 }
 
