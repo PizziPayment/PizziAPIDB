@@ -7,7 +7,6 @@ import { onTransaction } from '../commons/extensions/generators.extension'
 import { randomBytes } from 'crypto'
 import { ClientModel } from '../clients/models/client.model'
 import { CredentialModel } from '../credentials/models/credential.model'
-import { transcode } from 'buffer'
 
 export type TokensServiceResult<T> = ResultAsync<T, TokensServiceError>
 
