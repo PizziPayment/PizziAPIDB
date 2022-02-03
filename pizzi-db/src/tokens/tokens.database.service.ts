@@ -74,6 +74,16 @@ export class TokensService {
       .andThen(onTransaction(transaction, destroyToken))
       .map(() => null)
   }
+
+  static deleteTokensFromCredentialId(
+    credential_id: number,
+    transaction: Transaction | null = null
+  ): TokensServiceResult<null> {
+    return ResultAsync.fromPromise(
+      Token.destroy({ where: { credential_id: credential_id }, transaction }),
+      () => TokensServiceError.DatabaseError
+    ).map(() => null)
+  }
 }
 
 // Pipeline

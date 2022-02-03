@@ -49,6 +49,28 @@ export class CredentialsService {
     ).andThen(okIfNotNullElse(CredentialsServiceError.OwnerNotFound))
   }
 
+  static changePassword(
+    credential_id: number,
+    hashed_password: string,
+    transaction: Transaction | null = null
+  ): CredentialsServiceResult<null> {
+    return ResultAsync.fromPromise(
+      Credential.findOne({ where: { id: credential_id }, transaction }),
+      () => CredentialsServiceError.DatabaseError
+    )
+      .andThen(okIfNotNullElse(CredentialsServiceError.OwnerNotFound))
+      .andThen((credential) =>
+        ResultAsync.fromPromise(
+          Object.assign(credential, nonNullCredentialValues(null, hashed_password, null, null, null)).save({
+            transaction,
+          }),
+          () => CredentialsServiceError.DatabaseError
+        )
+      )
+      .andThen(onTransaction(transaction, destroyOwnersTokens))
+      .map(() => null)
+  }
+
   static createCredentialWithId(
     id_type: 'user' | 'shop' | 'admin',
     id: number,
@@ -80,6 +102,25 @@ export class CredentialsService {
   }
 }
 
+function nonNullCredentialValues(
+  email: string | null,
+  password: string | null,
+  user_id: number | null,
+  shop_id: number | null,
+  admin_id: number | null
+): Record<string, string | number> {
+  const record: Record<string, string | number> = {}
+  const values = { email: email, password: password, user_id: user_id, shop_id: shop_id, admin_id: admin_id }
+
+  for (const [key, value] of Object.entries(values)) {
+    if (value !== undefined && value !== null) {
+      record[key] = value
+    }
+  }
+
+  return record
+}
+
 // Pipeline
 
 function destroyOwnersTokens(
@@ -87,14 +128,9 @@ function destroyOwnersTokens(
   transaction: Transaction | null
 ): CredentialsServiceResult<CredentialModel> {
   return ResultAsync.fromPromise(
-    Token.findAll({ where: { credential_id: credential.id }, transaction }),
+    Token.destroy({ where: { credential_id: credential.id }, transaction }),
     () => CredentialsServiceError.DatabaseError
-  ).andThen((tokens) =>
-    ResultAsync.fromPromise(
-      Promise.all(tokens.map((tok) => tok.destroy({ transaction }))),
-      () => CredentialsServiceError.DatabaseError
-    ).map(() => credential)
-  )
+  ).map(() => credential)
 }
 
 function destroyCredential(
