@@ -5,6 +5,7 @@ interface ShopItemsAttributes {
   id: number
   name: string
   price: string
+  shop_id: number
 }
 
 export type ShopItemsCreation = Omit<ShopItemsAttributes, 'id'>

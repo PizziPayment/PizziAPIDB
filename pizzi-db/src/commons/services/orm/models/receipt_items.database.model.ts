@@ -1,16 +1,20 @@
 import { AutoIncrement, Column, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
-import Shop from './shops.database.model'
 import Receipt from './receipts.database.model'
+import ShopItem from './shop_items.database.model'
 
 interface ReceiptItemsAttributes {
   id: number
-  name: string
-  price: string
+  receipt_id: number
+  shop_item_id: number
+  quantity: number
+  warranty: string
+  eco_tax: number
+  discount: number
 }
 
 export type ReceiptItemsCreation = Omit<ReceiptItemsAttributes, 'id'>
 
-@Table({ tableName: 'shop_items', timestamps: false })
+@Table({ tableName: 'receipt_items', timestamps: false })
 export default class ReceiptItems extends Model<ReceiptItemsAttributes, ReceiptItemsCreation> {
   @PrimaryKey
   @AutoIncrement
@@ -20,11 +24,14 @@ export default class ReceiptItems extends Model<ReceiptItemsAttributes, ReceiptI
   @ForeignKey(() => Receipt)
   receipt_id!: string
 
-  @Column
-  quantity!: string
+  @ForeignKey(() => ShopItem)
+  shop_item_id!: number
 
   @Column
-  warranty!: boolean
+  quantity!: number
+
+  @Column
+  warranty!: string
 
   @Column
   eco_tax!: number

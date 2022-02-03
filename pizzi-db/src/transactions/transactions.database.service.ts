@@ -38,6 +38,7 @@ export class TransactionsService {
   static createPendingTransaction(
     receipt_id: number,
     user_id: number | null,
+    shop_id: number,
     payment_method: PaymentMethod,
     transaction: SequelizeTransaction | null = null
   ): TransactionServiceResult<TransactionModel> {
@@ -46,6 +47,7 @@ export class TransactionsService {
         {
           state: 'pending',
           user_id: user_id || undefined,
+          shop_id: shop_id,
           payment_method: payment_method,
           receipt_id: receipt_id,
         },

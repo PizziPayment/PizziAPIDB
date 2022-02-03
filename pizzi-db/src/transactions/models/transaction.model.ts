@@ -5,5 +5,6 @@ export interface TransactionModel {
   state: TransactionState
   payment_method: PaymentMethod
   user_id?: number
+  shop_id: number
   receipt_id: number
 }

@@ -1,12 +1,14 @@
 import { AutoIncrement, Column, DataType, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import User from './users.database.model'
 import Receipt from './receipts.database.model'
+import Shop from './shops.database.model'
 
 interface TransactionAttributes {
   id: number
   state: TransactionState
   payment_method: PaymentMethod
   user_id?: number
+  shop_id: number
   receipt_id: number
 }
 
@@ -31,6 +33,10 @@ export default class Transaction extends Model<TransactionAttributes, Transactio
   @Column
   @ForeignKey(() => User)
   user_id?: number
+
+  @Column
+  @ForeignKey(() => Shop)
+  shop_id!: number
 
   @Column
   @ForeignKey(() => Receipt)

@@ -1,12 +1,8 @@
-import { AutoIncrement, Column, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
-import Shop from './shops.database.model'
-import User from './users.database.model'
+import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript'
 
 interface ReceiptAttributes {
   id: number
-  price_total: number
-  shop_id: number
-  user_id: number
+  tva_percentage: number
 }
 
 export type ReceiptCreation = Omit<ReceiptAttributes, 'id'>
@@ -18,14 +14,6 @@ export default class Receipt extends Model<ReceiptAttributes, ReceiptCreation> {
   @Column
   declare id: number
 
-  @Column
-  price_total!: number
-
-  @ForeignKey(() => Shop)
-  @Column
-  shop_id!: number
-
-  @ForeignKey(() => User)
-  @Column
-  user_id!: number
+  @Column(DataType.FLOAT)
+  tva_percentage!: number
 }
