@@ -61,9 +61,7 @@ export class CredentialsService {
       .andThen(okIfNotNullElse(CredentialsServiceError.OwnerNotFound))
       .andThen((credential) =>
         ResultAsync.fromPromise(
-          Object.assign(credential, nonNullCredentialValues(null, hashed_password, null, null, null)).save({
-            transaction,
-          }),
+          credential.set('password', hashed_password).save({ transaction }),
           () => CredentialsServiceError.DatabaseError
         )
       )
