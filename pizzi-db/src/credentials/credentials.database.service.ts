@@ -71,6 +71,25 @@ export class CredentialsService {
       .map(() => null)
   }
 
+  static changeEmail(
+    credential_id: number,
+    email: string,
+    transaction: Transaction | null = null
+  ): CredentialsServiceResult<null> {
+    return ResultAsync.fromPromise(
+      Credential.findOne({ where: { id: credential_id }, transaction }),
+      () => CredentialsServiceError.DatabaseError
+    )
+      .andThen(okIfNotNullElse(CredentialsServiceError.OwnerNotFound))
+      .andThen((credential) =>
+        ResultAsync.fromPromise(
+          credential.set('email', email).save({ transaction }),
+          () => CredentialsServiceError.DatabaseError
+        )
+      )
+      .map(() => null)
+  }
+
   static createCredentialWithId(
     id_type: 'user' | 'shop' | 'admin',
     id: number,
