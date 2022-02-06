@@ -7,7 +7,7 @@ import { Transaction as SequelizeTransaction } from 'sequelize'
 import { TransactionModel } from './models/transaction.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 
-export type TransactionServiceResult<T> = ResultAsync<T, TransactionsServiceError>
+export type TransactionsServiceResult<T> = ResultAsync<T, TransactionsServiceError>
 
 export enum TransactionsServiceError {
   TransactionNotFound,
@@ -18,7 +18,7 @@ export class TransactionsService {
   static getTransactionsByState(
     state: TransactionState,
     transaction: SequelizeTransaction | null = null
-  ): TransactionServiceResult<Array<TransactionModel>> {
+  ): TransactionsServiceResult<Array<TransactionModel>> {
     return ResultAsync.fromPromise(
       Transaction.findAll({ where: { state: state }, transaction }),
       () => TransactionsServiceError.DatabaseError
@@ -28,7 +28,7 @@ export class TransactionsService {
   static getTransactionById(
     id: number,
     transaction: SequelizeTransaction | null = null
-  ): TransactionServiceResult<TransactionModel> {
+  ): TransactionsServiceResult<TransactionModel> {
     return ResultAsync.fromPromise(
       Transaction.findOne({ where: { id: id }, transaction }),
       () => TransactionsServiceError.DatabaseError
@@ -41,7 +41,7 @@ export class TransactionsService {
     shop_id: number,
     payment_method: PaymentMethod,
     transaction: SequelizeTransaction | null = null
-  ): TransactionServiceResult<TransactionModel> {
+  ): TransactionsServiceResult<TransactionModel> {
     return ResultAsync.fromPromise(
       Transaction.create(
         {
@@ -61,7 +61,7 @@ export class TransactionsService {
     transaction_id: number,
     state: TransactionState,
     transaction: SequelizeTransaction | null = null
-  ): TransactionServiceResult<null> {
+  ): TransactionsServiceResult<null> {
     return ResultAsync.fromPromise(
       Transaction.findOne({ where: { id: transaction_id }, transaction }),
       () => TransactionsServiceError.DatabaseError

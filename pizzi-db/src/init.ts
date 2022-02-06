@@ -6,7 +6,7 @@ import { Sequelize } from 'sequelize-typescript'
 // models.
 // The initialised Sequelize object is returned.
 export async function initOrm(config: OrmConfig): Promise<Sequelize> {
-   const sequelize = new Sequelize({
+  const sequelize = new Sequelize({
     dialect: 'postgres',
     host: config.host,
     port: config.port,

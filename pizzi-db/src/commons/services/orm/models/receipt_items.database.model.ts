@@ -14,15 +14,15 @@ interface ReceiptItemsAttributes {
 
 export type ReceiptItemsCreation = Omit<ReceiptItemsAttributes, 'id'>
 
-@Table({ tableName: 'receipt_items', timestamps: false })
-export default class ReceiptItems extends Model<ReceiptItemsAttributes, ReceiptItemsCreation> {
+@Table({ tableName: 'shop_items', timestamps: false })
+export default class ReceiptItem extends Model<ReceiptItemsAttributes, ReceiptItemsCreation> {
   @PrimaryKey
   @AutoIncrement
   @Column
   declare id: number
 
   @ForeignKey(() => Receipt)
-  receipt_id!: string
+  receipt_id!: number
 
   @ForeignKey(() => ShopItem)
   shop_item_id!: number

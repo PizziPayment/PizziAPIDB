@@ -4,13 +4,13 @@ import Shop from './shops.database.model'
 interface ShopItemsAttributes {
   id: number
   name: string
-  price: string
+  price: number
   shop_id: number
 }
 
 export type ShopItemsCreation = Omit<ShopItemsAttributes, 'id'>
 
-@Table({ tableName: 'shop_items', timestamps: false })
+@Table({ tableName: 'receipt_items', timestamps: false })
 export default class ShopItem extends Model<ShopItemsAttributes, ShopItemsCreation> {
   @PrimaryKey
   @AutoIncrement
@@ -21,7 +21,7 @@ export default class ShopItem extends Model<ShopItemsAttributes, ShopItemsCreati
   name!: string
 
   @Column
-  price!: string
+  price!: number
 
   @ForeignKey(() => Shop)
   shop_id!: number
