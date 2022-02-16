@@ -25,6 +25,28 @@ export class TransactionsService {
     )
   }
 
+  static getUsersTransactionsByState(
+    user_id: number,
+    state: TransactionState,
+    transaction: SequelizeTransaction | null = null
+  ): TransactionsServiceResult<Array<TransactionModel>> {
+    return ResultAsync.fromPromise(
+      Transaction.findAll({ where: { state: state, user_id: user_id }, transaction }),
+      () => TransactionsServiceError.DatabaseError
+    )
+  }
+
+  static getShopsTransactionsByState(
+    shop_id: number,
+    state: TransactionState,
+    transaction: SequelizeTransaction | null = null
+  ): TransactionsServiceResult<Array<TransactionModel>> {
+    return ResultAsync.fromPromise(
+      Transaction.findAll({ where: { state: state, shop_id: shop_id }, transaction }),
+      () => TransactionsServiceError.DatabaseError
+    )
+  }
+
   static getTransactionById(
     id: number,
     transaction: SequelizeTransaction | null = null

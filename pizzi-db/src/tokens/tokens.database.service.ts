@@ -16,16 +16,6 @@ export enum TokensServiceError {
 }
 
 export class TokensService {
-  private static generateToken(client: ClientModel, credential: CredentialModel): TokenCreation {
-    return {
-      access_token: randomBytes(20).toString('hex'),
-      refresh_token: randomBytes(20).toString('hex'),
-      expires_at: new Date(new Date().setDate(new Date().getDate() + 1)), // Tomorrow
-      client_id: client.id,
-      credential_id: credential.id,
-    }
-  }
-
   static generateTokenBetweenClientAndCredential(
     client: ClientModel,
     credential: CredentialModel,
@@ -73,6 +63,16 @@ export class TokensService {
     return this.getTokenFromId(token.id, transaction)
       .andThen(onTransaction(transaction, destroyToken))
       .map(() => null)
+  }
+
+  private static generateToken(client: ClientModel, credential: CredentialModel): TokenCreation {
+    return {
+      access_token: randomBytes(20).toString('hex'),
+      refresh_token: randomBytes(20).toString('hex'),
+      expires_at: new Date(new Date().setDate(new Date().getDate() + 1)), // Tomorrow
+      client_id: client.id,
+      credential_id: credential.id,
+    }
   }
 }
 
