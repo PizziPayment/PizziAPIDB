@@ -3,7 +3,7 @@ import User from './users.database.model'
 import Receipt from './receipts.database.model'
 import Shop from './shops.database.model'
 
-interface TransactionAttributes {
+export interface TransactionAttributes {
   id: number
   state: string
   payment_method: string
@@ -11,6 +11,9 @@ interface TransactionAttributes {
   shop_id: number
   receipt_id: number
 }
+
+export type PaymentMethod = 'card' | 'cash'
+export type TransactionState = 'failed' | 'pending' | 'validated'
 
 export type TransactionCreation = Omit<TransactionAttributes, 'id'>
 
@@ -22,9 +25,11 @@ export default class Transaction extends Model<TransactionAttributes, Transactio
   declare id: number
 
   @IsIn([['failed', 'pending', 'validated']])
+  @Column
   state!: string
 
   @IsIn([['card', 'cash']])
+  @Column
   payment_method!: string
 
   @Column

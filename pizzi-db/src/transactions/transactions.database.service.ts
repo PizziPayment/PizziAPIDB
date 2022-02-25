@@ -4,7 +4,7 @@ import Transaction, {
   TransactionState,
 } from '../commons/services/orm/models/transactions.database.model'
 import { Transaction as SequelizeTransaction } from 'sequelize'
-import { TransactionModel } from './models/transaction.model'
+import { TransactionModel, intoTransactionModel } from './models/transaction.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 
 export type TransactionsServiceResult<T> = ResultAsync<T, TransactionsServiceError>
@@ -20,7 +20,9 @@ export class TransactionsService {
     transaction: SequelizeTransaction | null = null
   ): TransactionsServiceResult<Array<TransactionModel>> {
     return ResultAsync.fromPromise(
-      Transaction.findAll({ where: { state: state }, transaction }),
+      Transaction.findAll({ where: { state: state }, transaction }).then((transactions) =>
+        transactions.map((transaction) => intoTransactionModel(transaction))
+      ),
       () => TransactionsServiceError.DatabaseError
     )
   }
@@ -31,7 +33,9 @@ export class TransactionsService {
     transaction: SequelizeTransaction | null = null
   ): TransactionsServiceResult<Array<TransactionModel>> {
     return ResultAsync.fromPromise(
-      Transaction.findAll({ where: { state: state, user_id: user_id }, transaction }),
+      Transaction.findAll({ where: { state: state, user_id: user_id }, transaction }).then((transactions) =>
+        transactions.map((transaction) => intoTransactionModel(transaction))
+      ),
       () => TransactionsServiceError.DatabaseError
     )
   }
@@ -42,7 +46,9 @@ export class TransactionsService {
     transaction: SequelizeTransaction | null = null
   ): TransactionsServiceResult<Array<TransactionModel>> {
     return ResultAsync.fromPromise(
-      Transaction.findAll({ where: { state: state, shop_id: shop_id }, transaction }),
+      Transaction.findAll({ where: { state: state, shop_id: shop_id }, transaction }).then((transactions) =>
+        transactions.map((transaction) => intoTransactionModel(transaction))
+      ),
       () => TransactionsServiceError.DatabaseError
     )
   }
@@ -54,7 +60,9 @@ export class TransactionsService {
     return ResultAsync.fromPromise(
       Transaction.findOne({ where: { id: id }, transaction }),
       () => TransactionsServiceError.DatabaseError
-    ).andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
+    )
+      .andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
+      .map((x) => intoTransactionModel(x))
   }
 
   static createPendingTransaction(
@@ -74,7 +82,7 @@ export class TransactionsService {
           receipt_id: receipt_id,
         },
         { transaction }
-      ),
+      ).then((x) => intoTransactionModel(x)),
       () => TransactionsServiceError.DatabaseError
     )
   }
