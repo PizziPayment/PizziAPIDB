@@ -4,7 +4,7 @@ import Transaction, {
   TransactionState,
 } from '../commons/services/orm/models/transactions.database.model'
 import { Transaction as SequelizeTransaction } from 'sequelize'
-import { TransactionModel } from './models/transaction.model'
+import { TransactionModel, intoTransactionModel } from './models/transaction.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 
 export type TransactionsServiceResult<T> = ResultAsync<T, TransactionsServiceError>
@@ -22,7 +22,7 @@ export class TransactionsService {
     return ResultAsync.fromPromise(
       Transaction.findAll({ where: { state: state }, transaction }),
       () => TransactionsServiceError.DatabaseError
-    )
+    ).map((transactionns) => transactionns.map(intoTransactionModel))
   }
 
   static getUsersTransactionsByState(
@@ -33,7 +33,7 @@ export class TransactionsService {
     return ResultAsync.fromPromise(
       Transaction.findAll({ where: { state: state, user_id: user_id }, transaction }),
       () => TransactionsServiceError.DatabaseError
-    )
+    ).map((transactions) => transactions.map(intoTransactionModel))
   }
 
   static getShopsTransactionsByState(
@@ -44,7 +44,7 @@ export class TransactionsService {
     return ResultAsync.fromPromise(
       Transaction.findAll({ where: { state: state, shop_id: shop_id }, transaction }),
       () => TransactionsServiceError.DatabaseError
-    )
+    ).map((transactions) => transactions.map(intoTransactionModel))
   }
 
   static getTransactionById(
@@ -54,7 +54,9 @@ export class TransactionsService {
     return ResultAsync.fromPromise(
       Transaction.findOne({ where: { id: id }, transaction }),
       () => TransactionsServiceError.DatabaseError
-    ).andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
+    )
+      .andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
+      .map(intoTransactionModel)
   }
 
   static createPendingTransaction(
@@ -76,7 +78,7 @@ export class TransactionsService {
         { transaction }
       ),
       () => TransactionsServiceError.DatabaseError
-    )
+    ).map(intoTransactionModel)
   }
 
   static updateTransactionStateFromId(
