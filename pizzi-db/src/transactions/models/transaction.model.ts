@@ -14,7 +14,7 @@ export interface TransactionModel {
 }
 
 export function intoTransactionModel(model: TransactionAttributes): TransactionModel {
-  const ret: TransactionModel = {
+  return {
     id: model.id,
     state: model.state as TransactionState,
     payment_method: model.payment_method as PaymentMethod,
@@ -22,6 +22,4 @@ export function intoTransactionModel(model: TransactionAttributes): TransactionM
     shop_id: model.shop_id,
     receipt_id: model.receipt_id,
   }
-
-  return ret
 }

@@ -20,11 +20,9 @@ export class TransactionsService {
     transaction: SequelizeTransaction | null = null
   ): TransactionsServiceResult<Array<TransactionModel>> {
     return ResultAsync.fromPromise(
-      Transaction.findAll({ where: { state: state }, transaction }).then((transactions) =>
-        transactions.map((transaction) => intoTransactionModel(transaction))
-      ),
+      Transaction.findAll({ where: { state: state }, transaction }),
       () => TransactionsServiceError.DatabaseError
-    )
+    ).map((transactionns) => transactionns.map(intoTransactionModel))
   }
 
   static getUsersTransactionsByState(
@@ -33,11 +31,9 @@ export class TransactionsService {
     transaction: SequelizeTransaction | null = null
   ): TransactionsServiceResult<Array<TransactionModel>> {
     return ResultAsync.fromPromise(
-      Transaction.findAll({ where: { state: state, user_id: user_id }, transaction }).then((transactions) =>
-        transactions.map((transaction) => intoTransactionModel(transaction))
-      ),
+      Transaction.findAll({ where: { state: state, user_id: user_id }, transaction }),
       () => TransactionsServiceError.DatabaseError
-    )
+    ).map((transactions) => transactions.map(intoTransactionModel))
   }
 
   static getShopsTransactionsByState(
@@ -46,11 +42,9 @@ export class TransactionsService {
     transaction: SequelizeTransaction | null = null
   ): TransactionsServiceResult<Array<TransactionModel>> {
     return ResultAsync.fromPromise(
-      Transaction.findAll({ where: { state: state, shop_id: shop_id }, transaction }).then((transactions) =>
-        transactions.map((transaction) => intoTransactionModel(transaction))
-      ),
+      Transaction.findAll({ where: { state: state, shop_id: shop_id }, transaction }),
       () => TransactionsServiceError.DatabaseError
-    )
+    ).map((transactions) => transactions.map(intoTransactionModel))
   }
 
   static getTransactionById(
@@ -62,7 +56,7 @@ export class TransactionsService {
       () => TransactionsServiceError.DatabaseError
     )
       .andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
-      .map((x) => intoTransactionModel(x))
+      .map(intoTransactionModel)
   }
 
   static createPendingTransaction(
@@ -82,9 +76,9 @@ export class TransactionsService {
           receipt_id: receipt_id,
         },
         { transaction }
-      ).then((x) => intoTransactionModel(x)),
+      ),
       () => TransactionsServiceError.DatabaseError
-    )
+    ).map(intoTransactionModel)
   }
 
   static updateTransactionStateFromId(
