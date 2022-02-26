@@ -4,7 +4,7 @@ import Transaction, {
   TransactionState,
 } from '../commons/services/orm/models/transactions.database.model'
 import { Transaction as SequelizeTransaction } from 'sequelize'
-import { TransactionModel, intoTransactionModel } from './models/transaction.model'
+import { intoTransactionModel, TransactionModel } from './models/transaction.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 
 export type TransactionsServiceResult<T> = ResultAsync<T, TransactionsServiceError>
@@ -22,29 +22,19 @@ export class TransactionsService {
     return ResultAsync.fromPromise(
       Transaction.findAll({ where: { state: state }, transaction }),
       () => TransactionsServiceError.DatabaseError
-    ).map((transactionns) => transactionns.map(intoTransactionModel))
+    ).map((pizzi_transactions) => pizzi_transactions.map(intoTransactionModel))
   }
 
-  static getUsersTransactionsByState(
-    user_id: number,
+  static getOwnersTransactionsByState(
+    owner_type: 'user' | 'shop',
+    owner_id: number,
     state: TransactionState,
     transaction: SequelizeTransaction | null = null
   ): TransactionsServiceResult<Array<TransactionModel>> {
     return ResultAsync.fromPromise(
-      Transaction.findAll({ where: { state: state, user_id: user_id }, transaction }),
+      Transaction.findAll({ where: { state: state, [`${owner_type}_id`]: owner_id }, transaction }),
       () => TransactionsServiceError.DatabaseError
-    ).map((transactions) => transactions.map(intoTransactionModel))
-  }
-
-  static getShopsTransactionsByState(
-    shop_id: number,
-    state: TransactionState,
-    transaction: SequelizeTransaction | null = null
-  ): TransactionsServiceResult<Array<TransactionModel>> {
-    return ResultAsync.fromPromise(
-      Transaction.findAll({ where: { state: state, shop_id: shop_id }, transaction }),
-      () => TransactionsServiceError.DatabaseError
-    ).map((transactions) => transactions.map(intoTransactionModel))
+    ).map((pizzi_transactions) => pizzi_transactions.map(intoTransactionModel))
   }
 
   static getTransactionById(

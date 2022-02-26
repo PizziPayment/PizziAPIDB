@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, BelongsTo, Column, ForeignKey, HasOne, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import Receipt from './receipts.database.model'
 import ShopItem from './shop_items.database.model'
 
@@ -38,4 +38,10 @@ export default class ReceiptItem extends Model<ReceiptItemsAttributes, ReceiptIt
 
   @Column
   discount!: number
+
+  @BelongsTo(() => Receipt)
+  receipt!: Receipt
+
+  @HasOne(() => ShopItem)
+  shop_item!: ShopItem
 }

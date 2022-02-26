@@ -1,8 +1,10 @@
-import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, Column, DataType, HasMany, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import ReceiptItem from './receipt_items.database.model'
 
-interface ReceiptAttributes {
+export interface ReceiptAttributes {
   id: number
   tva_percentage: number
+  total_price: string
 }
 
 export type ReceiptCreation = Omit<ReceiptAttributes, 'id'>
@@ -16,4 +18,10 @@ export default class Receipt extends Model<ReceiptAttributes, ReceiptCreation> {
 
   @Column(DataType.FLOAT)
   tva_percentage!: number
+
+  @Column
+  total_price!: string
+
+  @HasMany(() => ReceiptItem)
+  items!: Array<ReceiptItem>
 }
