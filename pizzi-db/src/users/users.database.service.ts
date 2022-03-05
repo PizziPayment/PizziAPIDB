@@ -82,18 +82,12 @@ function nonNullUserValues(
   zipcode: number | null
 ): Record<string, string | number> {
   const record: Record<string, string | number> = {}
+  const values = { firstname: name, surname: surname, address: address, zipcode: zipcode }
 
-  if (name) {
-    record['firstname'] = name
-  }
-  if (surname) {
-    record['surname'] = surname
-  }
-  if (address) {
-    record['address'] = address
-  }
-  if (zipcode) {
-    record['zipcode'] = zipcode
+  for (const [key, value] of Object.entries(values)) {
+    if (value !== undefined && value !== null) {
+      record[key] = value
+    }
   }
   return record
 }

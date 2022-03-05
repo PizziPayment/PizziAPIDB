@@ -65,6 +65,16 @@ export class TokensService {
       .map(() => null)
   }
 
+  static deleteTokensFromCredentialId(
+    credential_id: number,
+    transaction: Transaction | null = null
+  ): TokensServiceResult<null> {
+    return ResultAsync.fromPromise(
+      Token.destroy({ where: { credential_id: credential_id }, transaction }),
+      () => TokensServiceError.DatabaseError
+    ).map(() => null)
+  }
+
   private static generateToken(client: ClientModel, credential: CredentialModel): TokenCreation {
     return {
       access_token: randomBytes(20).toString('hex'),
