@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, ForeignKey, IsIn, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, Column, ForeignKey, HasOne, IsIn, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import User from './users.database.model'
 import Receipt from './receipts.database.model'
 import Shop from './shops.database.model'
@@ -17,7 +17,7 @@ export type TransactionState = 'failed' | 'pending' | 'validated'
 
 export type TransactionCreation = Omit<TransactionAttributes, 'id'>
 
-@Table({ tableName: 'transactions', timestamps: false })
+@Table({ tableName: 'transactions', timestamps: true })
 export default class Transaction extends Model<TransactionAttributes, TransactionCreation> {
   @PrimaryKey
   @AutoIncrement
@@ -43,4 +43,7 @@ export default class Transaction extends Model<TransactionAttributes, Transactio
   @Column
   @ForeignKey(() => Receipt)
   receipt_id!: number
+
+  @HasOne(() => Receipt)
+  receipt!: Receipt
 }

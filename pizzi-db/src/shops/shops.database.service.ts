@@ -55,6 +55,7 @@ export class ShopsServices {
 }
 
 // Pipeline
+
 function destroyShop(shop: ShopModel, transaction: Transaction | null): ShopsServiceResult<ShopModel> {
   return ResultAsync.fromPromise(
     Shop.destroy({ where: { id: shop.id }, transaction }),
