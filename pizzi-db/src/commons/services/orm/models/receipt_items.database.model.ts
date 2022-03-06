@@ -14,7 +14,7 @@ interface ReceiptItemsAttributes {
 
 export type ReceiptItemsCreation = Omit<ReceiptItemsAttributes, 'id'>
 
-@Table({ tableName: 'shop_items', timestamps: false })
+@Table({ tableName: 'receipt_items', timestamps: false })
 export default class ReceiptItem extends Model<ReceiptItemsAttributes, ReceiptItemsCreation> {
   @PrimaryKey
   @AutoIncrement
@@ -39,7 +39,7 @@ export default class ReceiptItem extends Model<ReceiptItemsAttributes, ReceiptIt
   @Column
   discount!: number
 
-  @BelongsTo(() => Receipt)
+  @BelongsTo(() => Receipt, { foreignKey: 'receipt_id' })
   receipt!: Receipt
 
   @HasOne(() => ShopItem)
