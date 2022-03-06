@@ -42,6 +42,6 @@ export default class ReceiptItem extends Model<ReceiptItemsAttributes, ReceiptIt
   @BelongsTo(() => Receipt, { foreignKey: 'receipt_id' })
   receipt!: Receipt
 
-  @HasOne(() => ShopItem)
+  @HasOne(() => ShopItem, { foreignKey: 'shop_item_id' })
   shop_item!: ShopItem
 }
