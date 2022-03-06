@@ -10,7 +10,7 @@ interface ShopItemsAttributes {
 
 export type ShopItemsCreation = Omit<ShopItemsAttributes, 'id'>
 
-@Table({ tableName: 'receipt_items', timestamps: false })
+@Table({ tableName: 'shop_items', timestamps: false })
 export default class ShopItem extends Model<ShopItemsAttributes, ShopItemsCreation> {
   @PrimaryKey
   @AutoIncrement

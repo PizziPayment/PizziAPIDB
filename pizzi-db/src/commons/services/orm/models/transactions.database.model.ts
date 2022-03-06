@@ -44,6 +44,6 @@ export default class Transaction extends Model<TransactionAttributes, Transactio
   @ForeignKey(() => Receipt)
   receipt_id!: number
 
-  @HasOne(() => Receipt)
+  @HasOne(() => Receipt, { foreignKey: 'receipt_id' })
   receipt!: Receipt
 }
