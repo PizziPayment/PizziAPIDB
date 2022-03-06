@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, Column, DataType, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import Shop from './shops.database.model'
 
 interface ShopItemsAttributes {
@@ -6,6 +6,7 @@ interface ShopItemsAttributes {
   name: string
   price: number
   shop_id: number
+  created_at: Date
 }
 
 export type ShopItemsCreation = Omit<ShopItemsAttributes, 'id'>
@@ -23,6 +24,10 @@ export default class ShopItem extends Model<ShopItemsAttributes, ShopItemsCreati
   @Column
   price!: number
 
+  @Column(DataType.DATE)
+  created_at!: Date
+
   @ForeignKey(() => Shop)
+  @Column
   shop_id!: number
 }
