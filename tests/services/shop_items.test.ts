@@ -17,6 +17,10 @@ const shop_items: Array<ShopItemCreationModel> = [
     name: 'lung',
     price: 40,
   },
+  {
+    name: 'leg',
+    price: 450,
+  },
 ]
 
 describe('Shop item domain', () => {
@@ -65,10 +69,38 @@ describe('Shop item domain', () => {
     await t.rollback()
   })
 
-  describe('should be able to retrieve shop items with', () => {
+  it('should be able to retrieve a shop item from and id', async () => {
+    const sequelize = new Sequelize(intoSequelizeOption(config))
+    const t = await sequelize.transaction()
+
+    const shop_id = (
+      await ShopsServices.createShop(shop.name, shop.phone, shop.address, shop.zipcode, t)
+    )._unsafeUnwrap().id
+
+    let res = await ShopItemsService.createShopItem(shop_id, shop_items[0].name, shop_items[0].price, t)
+    expect(res.isOk()).toBeTruthy()
+    const created_item = res._unsafeUnwrap()
+    res = await ShopItemsService.retrieveShopItemFromId(created_item.id, t)
+    expect(res.isOk()).toBeTruthy()
+    const retrieved_item = res._unsafeUnwrap()
+
+    expect(retrieved_item.id).toBe(created_item.id)
+    await t.rollback()
+  })
+
+  describe('should be able to retrieve shop items with a given filter', () => {
     const params = [
-      [{ page: 1, nb_items: 3, sort_by: SortBy.NAME, order: Order.ASC, query: '', expected_si: shop_items }],
-      [{ page: 2, nb_items: 1, sort_by: SortBy.NAME, order: Order.DESC, query: '', expected_si: [shop_items[0]] }],
+      [
+        {
+          page: 1,
+          nb_items: 3,
+          sort_by: SortBy.NAME,
+          order: Order.ASC,
+          query: '',
+          expected_si: [shop_items[0], shop_items[2], shop_items[1]],
+        },
+      ],
+      [{ page: 2, nb_items: 1, sort_by: SortBy.NAME, order: Order.DESC, query: '', expected_si: [shop_items[2]] }],
       [{ page: 1, nb_items: 1, sort_by: SortBy.NAME, order: Order.ASC, query: '', expected_si: [shop_items[0]] }],
       [
         {
@@ -77,7 +109,17 @@ describe('Shop item domain', () => {
           sort_by: SortBy.PRICE,
           order: Order.DESC,
           query: '',
-          expected_si: [shop_items[1], shop_items[0]],
+          expected_si: [shop_items[2], shop_items[1]],
+        },
+      ],
+      [
+        {
+          page: 1,
+          nb_items: 2,
+          sort_by: SortBy.NAME,
+          order: Order.ASC,
+          query: 'l',
+          expected_si: [shop_items[2], shop_items[1]],
         },
       ],
     ]
