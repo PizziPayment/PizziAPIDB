@@ -67,24 +67,22 @@ export class ShopItemsService {
     shop_id: number,
     page: number,
     nb_items: number,
-    filter: string,
     sort_by: SortBy,
     order: Order,
+    query: string = '',
     transaction: Transaction | null = null
   ): ShopItemsServiceResult<Array<ShopItemModel>> {
     return ResultAsync.fromPromise(
       ShopItem.findAndCountAll({
-        where: { name: { [Op.like]: `%${filter}%` }, shop_id: shop_id },
+        where: { name: { [Op.like]: `%${query}%` }, shop_id: shop_id },
         order: [[sort_by, order]],
         limit: nb_items,
-        offset: page,
+        offset: page - 1,
+        raw: true,
         transaction,
       }),
       () => ShopItemsServiceError.DatabaseError
-    ).map((result) => {
-      console.log(result.rows)
-      return result.rows
-    })
+    ).map((result) => result.rows)
   }
 
   static updateShopItemFromId(
