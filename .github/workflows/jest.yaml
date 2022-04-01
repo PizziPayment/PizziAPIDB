@@ -8,9 +8,6 @@ on:
 jobs:
   jest:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./pizzi-db
     steps:
       - uses: actions/checkout@v2
       - uses: webfactory/ssh-agent@v0.5.4
