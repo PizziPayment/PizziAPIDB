@@ -1,5 +1,17 @@
-import { AutoIncrement, Column, DataType, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import {
+  AutoIncrement,
+  BelongsTo,
+  BelongsToMany,
+  Column,
+  DataType,
+  ForeignKey,
+  HasMany,
+  Model,
+  PrimaryKey,
+  Table,
+} from 'sequelize-typescript'
 import Shop from './shops.database.model'
+import ReceiptItem from './receipt_items.database.model'
 
 interface ShopItemsAttributes {
   id: number
@@ -30,4 +42,7 @@ export default class ShopItem extends Model<ShopItemsAttributes, ShopItemsCreati
   @ForeignKey(() => Shop)
   @Column
   shop_id!: number
+
+  @HasMany(() => ReceiptItem, 'shop_item_id')
+  receipt_items!: Array<ReceiptItem>
 }

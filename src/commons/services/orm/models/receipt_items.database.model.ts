@@ -22,9 +22,11 @@ export default class ReceiptItem extends Model<ReceiptItemsAttributes, ReceiptIt
   declare id: number
 
   @ForeignKey(() => Receipt)
+  @Column
   receipt_id!: number
 
   @ForeignKey(() => ShopItem)
+  @Column
   shop_item_id!: number
 
   @Column
@@ -39,9 +41,9 @@ export default class ReceiptItem extends Model<ReceiptItemsAttributes, ReceiptIt
   @Column
   discount!: number
 
-  @BelongsTo(() => Receipt, { foreignKey: 'receipt_id' })
+  @BelongsTo(() => Receipt, { constraints: false })
   receipt!: Receipt
 
-  @HasOne(() => ShopItem, { foreignKey: 'shop_item_id' })
+  @BelongsTo(() => ShopItem)
   shop_item!: ShopItem
 }

@@ -1,5 +1,4 @@
 import { AutoIncrement, Column, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
-import { Omit } from 'sequelize-typescript/dist/shared/types'
 import Picture from './pictures.database.model'
 
 interface UserAttributes {

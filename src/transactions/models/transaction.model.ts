@@ -4,6 +4,8 @@ import {
   TransactionAttributes,
 } from '../../commons/services/orm/models/transactions.database.model'
 
+export { PaymentMethod }
+
 export interface TransactionModel {
   id: number
   state: TransactionState

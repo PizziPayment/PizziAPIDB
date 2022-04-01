@@ -1,3 +1,4 @@
+// @ts-ignore
 import ConfigProvider from 'config'
 import { OrmConfig } from '../../src/commons/models/orm.config.model'
 
