@@ -1,7 +1,6 @@
 import {
   AutoIncrement,
   BelongsTo,
-  BelongsToMany,
   Column,
   DataType,
   ForeignKey,
@@ -42,6 +41,9 @@ export default class ShopItem extends Model<ShopItemsAttributes, ShopItemsCreati
   @ForeignKey(() => Shop)
   @Column
   shop_id!: number
+
+  @BelongsTo(() => Shop)
+  shop!: Shop
 
   @HasMany(() => ReceiptItem, 'shop_item_id')
   receipt_items!: Array<ReceiptItem>

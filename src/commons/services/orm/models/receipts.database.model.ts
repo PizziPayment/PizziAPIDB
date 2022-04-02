@@ -1,5 +1,6 @@
-import { AutoIncrement, Column, DataType, HasMany, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, Column, DataType, HasMany, HasOne, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import ReceiptItem from './receipt_items.database.model'
+import Transaction from './transactions.database.model'
 
 export interface ReceiptAttributes {
   id: number
@@ -24,4 +25,7 @@ export default class Receipt extends Model<ReceiptAttributes, ReceiptCreation> {
 
   @HasMany(() => ReceiptItem)
   items!: Array<ReceiptItem>
+
+  @HasOne(() => Transaction)
+  transaction!: Transaction
 }

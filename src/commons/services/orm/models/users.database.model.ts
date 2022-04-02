@@ -1,5 +1,6 @@
-import { AutoIncrement, Column, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, Column, ForeignKey, HasMany, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import Picture from './pictures.database.model'
+import Transaction from './transactions.database.model'
 
 interface UserAttributes {
   id: number
@@ -34,4 +35,7 @@ export default class User extends Model<UserAttributes, UserCreation> {
 
   @Column
   zipcode!: number
+
+  @HasMany(() => Transaction)
+  transactions!: Array<Transaction>
 }

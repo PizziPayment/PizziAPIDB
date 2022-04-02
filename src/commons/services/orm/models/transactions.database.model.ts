@@ -1,4 +1,14 @@
-import { AutoIncrement, Column, ForeignKey, HasOne, IsIn, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import {
+  AutoIncrement,
+  BelongsTo,
+  Column,
+  ForeignKey,
+  HasOne,
+  IsIn,
+  Model,
+  PrimaryKey,
+  Table,
+} from 'sequelize-typescript'
 import User from './users.database.model'
 import Receipt from './receipts.database.model'
 import Shop from './shops.database.model'
@@ -32,18 +42,24 @@ export default class Transaction extends Model<TransactionAttributes, Transactio
   @Column
   payment_method!: string
 
-  @Column
   @ForeignKey(() => User)
+  @Column
   user_id?: number
 
-  @Column
   @ForeignKey(() => Shop)
+  @Column
   shop_id!: number
 
-  @Column
   @ForeignKey(() => Receipt)
+  @Column
   receipt_id!: number
 
-  @HasOne(() => Receipt, { foreignKey: 'receipt_id' })
+  @BelongsTo(() => User)
+  user!: User
+
+  @BelongsTo(() => Shop)
+  shop!: Shop
+
+  @BelongsTo(() => Receipt)
   receipt!: Receipt
 }
