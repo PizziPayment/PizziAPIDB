@@ -4,7 +4,6 @@ import Shop from '../commons/services/orm/models/shops.database.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
 import { onTransaction } from '../commons/extensions/generators.extension'
-import * as console from 'console'
 
 export type ShopsServiceResult<T> = ResultAsync<T, ShopsServiceError>
 
@@ -50,10 +49,7 @@ export class ShopsServices {
         },
         { transaction }
       ),
-      (e) => {
-        console.log(e)
-        return ShopsServiceError.DatabaseError
-      }
+      () => ShopsServiceError.DatabaseError
     )
   }
 }
