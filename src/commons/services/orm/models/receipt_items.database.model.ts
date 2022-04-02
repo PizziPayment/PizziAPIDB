@@ -1,4 +1,4 @@
-import { AutoIncrement, BelongsTo, Column, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, BelongsTo, Column, ForeignKey, Model, NotNull, PrimaryKey, Table } from 'sequelize-typescript'
 import Receipt from './receipts.database.model'
 import ShopItem from './shop_items.database.model'
 
@@ -22,23 +22,29 @@ export default class ReceiptItem extends Model<ReceiptItemsAttributes, ReceiptIt
   declare id: number
 
   @ForeignKey(() => Receipt)
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   receipt_id!: number
 
   @ForeignKey(() => ShopItem)
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   shop_item_id!: number
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   quantity!: number
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   warranty!: string
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   eco_tax!: number
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   discount!: number
 
   @BelongsTo(() => Receipt)

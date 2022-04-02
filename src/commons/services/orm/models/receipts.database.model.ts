@@ -1,4 +1,14 @@
-import { AutoIncrement, Column, DataType, HasMany, HasOne, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import {
+  AutoIncrement,
+  Column,
+  DataType,
+  HasMany,
+  HasOne,
+  Model,
+  NotNull,
+  PrimaryKey,
+  Table,
+} from 'sequelize-typescript'
 import ReceiptItem from './receipt_items.database.model'
 import Transaction from './transactions.database.model'
 
@@ -17,10 +27,12 @@ export default class Receipt extends Model<ReceiptAttributes, ReceiptCreation> {
   @Column
   declare id: number
 
-  @Column(DataType.FLOAT)
+  @NotNull
+  @Column({ allowNull: false, type: DataType.FLOAT })
   tva_percentage!: number
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   total_price!: string
 
   @HasMany(() => ReceiptItem)

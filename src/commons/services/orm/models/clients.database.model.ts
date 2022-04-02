@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, Column, Model, NotNull, PrimaryKey, Table } from 'sequelize-typescript'
 
 interface ClientAttributes {
   id: number
@@ -15,9 +15,11 @@ export default class Client extends Model<ClientAttributes, ClientCreation> {
   @Column
   declare id: number
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   client_id!: string
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   client_secret!: string
 }

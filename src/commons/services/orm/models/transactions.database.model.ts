@@ -3,9 +3,9 @@ import {
   BelongsTo,
   Column,
   ForeignKey,
-  HasOne,
   IsIn,
   Model,
+  NotNull,
   PrimaryKey,
   Table,
 } from 'sequelize-typescript'
@@ -35,11 +35,13 @@ export default class Transaction extends Model<TransactionAttributes, Transactio
   declare id: number
 
   @IsIn([['failed', 'pending', 'validated']])
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   state!: string
 
   @IsIn([['card', 'cash']])
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   payment_method!: string
 
   @ForeignKey(() => User)
@@ -47,11 +49,13 @@ export default class Transaction extends Model<TransactionAttributes, Transactio
   user_id?: number
 
   @ForeignKey(() => Shop)
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   shop_id!: number
 
   @ForeignKey(() => Receipt)
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   receipt_id!: number
 
   @BelongsTo(() => User)

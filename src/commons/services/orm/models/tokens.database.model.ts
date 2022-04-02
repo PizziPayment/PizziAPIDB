@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, DataType, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, Column, DataType, ForeignKey, Model, NotNull, PrimaryKey, Table } from 'sequelize-typescript'
 import Client from './clients.database.model'
 import Credential from './credentials.database.model'
 
@@ -20,20 +20,25 @@ export default class Token extends Model<TokenAttributes, TokenCreation> {
   @Column
   declare id: number
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   access_token!: string
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   refresh_token!: string
 
-  @Column(DataType.DATE)
+  @NotNull
+  @Column({ allowNull: false, type: DataType.DATE })
   expires_at!: Date
 
   @ForeignKey(() => Client)
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   client_id!: number
 
   @ForeignKey(() => Credential)
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   credential_id!: number
 }

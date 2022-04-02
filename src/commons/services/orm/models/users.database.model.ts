@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, ForeignKey, HasMany, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, Column, ForeignKey, HasMany, Model, NotNull, PrimaryKey, Table } from 'sequelize-typescript'
 import Picture from './pictures.database.model'
 import Transaction from './transactions.database.model'
 
@@ -20,20 +20,24 @@ export default class User extends Model<UserAttributes, UserCreation> {
   @Column
   declare id: number
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   firstname!: string
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   surname!: string
 
   @ForeignKey(() => Picture)
   @Column
   picture_id?: number
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   address!: string
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   zipcode!: number
 
   @HasMany(() => Transaction)

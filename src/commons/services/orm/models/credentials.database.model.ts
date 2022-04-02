@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, Column, ForeignKey, Model, NotNull, PrimaryKey, Table } from 'sequelize-typescript'
 import Admin from './admins.database.model'
 import Shop from './shops.database.model'
 import User from './users.database.model'
@@ -21,10 +21,12 @@ export default class Credential extends Model<CredentialAttributes, CredentialCr
   @Column
   declare id: number
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   email!: string
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   password!: string
 
   @ForeignKey(() => User)

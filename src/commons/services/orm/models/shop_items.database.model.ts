@@ -6,6 +6,7 @@ import {
   ForeignKey,
   HasMany,
   Model,
+  NotNull,
   PrimaryKey,
   Table,
 } from 'sequelize-typescript'
@@ -29,17 +30,21 @@ export default class ShopItem extends Model<ShopItemsAttributes, ShopItemsCreati
   @Column
   declare id: number
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   name!: string
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   price!: number
 
-  @Column(DataType.DATE)
+  @NotNull
+  @Column({ allowNull: false, type: DataType.DATE })
   created_at!: Date
 
   @ForeignKey(() => Shop)
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   shop_id!: number
 
   @BelongsTo(() => Shop)

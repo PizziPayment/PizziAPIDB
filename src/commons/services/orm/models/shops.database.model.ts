@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, ForeignKey, HasMany, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, Column, ForeignKey, HasMany, Model, NotNull, PrimaryKey, Table } from 'sequelize-typescript'
 import Picture from './pictures.database.model'
 import Transaction from './transactions.database.model'
 
@@ -25,19 +25,23 @@ export default class Shop extends Model<ShopAttributes, ShopCreation> {
   @Column
   declare id: number
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   name!: string
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   phone!: string
 
   @Column
-  description!: string
+  description?: string
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   address!: string
 
-  @Column
+  @NotNull
+  @Column({ allowNull: false })
   zipcode!: number
 
   @Column
