@@ -1,6 +1,7 @@
 export interface ReceiptModel {
   id: number
   tva_percentage: number
+  total_price: string
 }
 
 export interface DetailedReceiptModel extends ReceiptModel {

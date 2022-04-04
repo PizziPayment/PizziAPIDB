@@ -50,6 +50,6 @@ export default class ShopItem extends Model<ShopItemsAttributes, ShopItemsCreati
   @BelongsTo(() => Shop)
   shop!: Shop
 
-  @HasMany(() => ReceiptItem, 'shop_item_id')
+  @HasMany(() => ReceiptItem)
   receipt_items!: Array<ReceiptItem>
 }

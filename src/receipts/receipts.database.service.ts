@@ -3,6 +3,8 @@ import { Transaction } from 'sequelize'
 import Receipt from '../commons/services/orm/models/receipts.database.model'
 import { DetailedReceiptModel, ReceiptModel } from './models/receipts.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
+import ReceiptItem from '../commons/services/orm/models/receipt_items.database.model'
+import ShopItem from '../commons/services/orm/models/shop_items.database.model'
 
 export enum ReceiptsServiceError {
   ReceiptNotFound,
@@ -17,7 +19,11 @@ export default class ReceiptsService {
     transaction: Transaction | null = null
   ): ReceiptsServiceResult<DetailedReceiptModel> {
     return ResultAsync.fromPromise(
-      Receipt.findOne({ where: { id: receipt_id }, nest: true, transaction }),
+      Receipt.findOne({
+        where: { id: receipt_id },
+        include: [{ model: ReceiptItem, include: [{ model: ShopItem }] }],
+        transaction,
+      }),
       () => ReceiptsServiceError.DatabaseError
     )
       .andThen(okIfNotNullElse(ReceiptsServiceError.ReceiptNotFound))
@@ -25,7 +31,8 @@ export default class ReceiptsService {
         return {
           id: receipt.id,
           tva_percentage: receipt.tva_percentage,
-          items: receipt.items.map((item) => {
+          total_price: receipt.total_price,
+          items: (receipt.items || []).map((item) => {
             return {
               id: item.id,
               name: item.shop_item.name,
