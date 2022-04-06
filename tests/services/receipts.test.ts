@@ -1,5 +1,6 @@
 // @ts-ignore
 import { config } from '../common/config'
+import { add_padding } from '../common/service'
 import { initOrm, ShopItemCreationModel, ShopItemsService, ShopsServices } from '../../src'
 import { ReceiptModel } from '../../src/receipts/models/receipts.model'
 import ReceiptsService from '../../src/receipts/receipts.database.service'
@@ -23,7 +24,7 @@ describe('Receipts domain', () => {
     try {
       const receipt_sample: Omit<ReceiptModel, 'id'> = {
         tva_percentage: 10,
-        total_price: 'a total price',
+        total_price: '99.99',
       }
 
       const created_receipt = (
@@ -31,7 +32,7 @@ describe('Receipts domain', () => {
       )._unsafeUnwrap()
 
       expect(created_receipt.tva_percentage).toBe(receipt_sample.tva_percentage)
-      expect(created_receipt.total_price).toBe(receipt_sample.total_price)
+      expect(created_receipt.total_price).toBe(add_padding(receipt_sample.total_price))
     } finally {
       await transaction.rollback()
     }
@@ -43,7 +44,7 @@ describe('Receipts domain', () => {
     try {
       const receipt_sample: Omit<ReceiptModel, 'id'> = {
         tva_percentage: 10,
-        total_price: 'a total price',
+        total_price: '99.99',
       }
 
       const created_receipt = (
@@ -66,7 +67,7 @@ describe('Receipts domain', () => {
     try {
       const receipt_sample: Omit<ReceiptModel, 'id'> = {
         tva_percentage: 10,
-        total_price: 'a total price',
+        total_price: '99.99',
       }
 
       const created_receipt = (
@@ -77,7 +78,7 @@ describe('Receipts domain', () => {
       )._unsafeUnwrap()
 
       expect(retrieved_receipt.tva_percentage).toBe(created_receipt.tva_percentage)
-      expect(retrieved_receipt.total_price).toBe(created_receipt.total_price)
+      expect(retrieved_receipt.total_price).toBe(add_padding(created_receipt.total_price))
     } finally {
       await transaction.rollback()
     }
@@ -87,15 +88,15 @@ describe('Receipts domain', () => {
     const shop_items_sample: Array<ShopItemCreationModel> = [
       {
         name: 'kidney',
-        price: 3,
+        price: '3',
       },
       {
         name: 'lung',
-        price: 40,
+        price: '40.1',
       },
       {
         name: 'leg',
-        price: 450,
+        price: '450.34',
       },
     ]
     const transaction = await sequelize.transaction()
@@ -103,7 +104,7 @@ describe('Receipts domain', () => {
     try {
       const receipt_sample: Omit<ReceiptModel, 'id'> = {
         tva_percentage: 10,
-        total_price: 'a total price',
+        total_price: '1.404',
       }
       const created_receipt = (
         await ReceiptsService.createReceipt(receipt_sample.tva_percentage, receipt_sample.total_price, transaction)
