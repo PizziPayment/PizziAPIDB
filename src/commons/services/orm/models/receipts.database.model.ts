@@ -32,7 +32,7 @@ export default class Receipt extends Model<ReceiptAttributes, ReceiptCreation> {
   tva_percentage!: number
 
   @NotNull
-  @Column({ allowNull: false })
+  @Column({ allowNull: false, type: DataType.DECIMAL(16, 4) })
   total_price!: string
 
   @HasMany(() => ReceiptItem)

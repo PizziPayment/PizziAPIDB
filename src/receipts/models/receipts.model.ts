@@ -8,7 +8,7 @@ export interface DetailedReceiptModel extends ReceiptModel {
   items: Array<{
     id: number
     name: string
-    price: number
+    price: string
     quantity: number
     warranty: string
     eco_tax: number

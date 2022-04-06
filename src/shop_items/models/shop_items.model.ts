@@ -11,13 +11,13 @@ export enum Order {
 
 export interface ShopItemCreationModel {
   name: string
-  price: number
+  price: string
 }
 
 export interface ShopItemModel {
   id: number
   shop_id: number
   name: string
-  price: number
+  price: string
   created_at: Date
 }

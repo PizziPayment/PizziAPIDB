@@ -15,7 +15,7 @@ export class ShopItemsService {
   static createShopItem(
     shop_id: number,
     name: string,
-    price: number,
+    price: string,
     transaction: Transaction | null = null
   ): ShopItemsServiceResult<ShopItemModel> {
     return ResultAsync.fromPromise(
