@@ -31,7 +31,7 @@ export class ShopItemsService {
         { transaction }
       ),
       () => ShopItemsServiceError.DatabaseError
-    )
+    ).map(intoShopItemModel)
   }
 
   static createShopItems(
@@ -53,7 +53,7 @@ export class ShopItemsService {
         { validate: true, transaction }
       ),
       () => ShopItemsServiceError.DatabaseError
-    )
+    ).map((items) => items.map(intoShopItemModel))
   }
 
   static retrieveShopItemFromId(
@@ -76,7 +76,9 @@ export class ShopItemsService {
     return ResultAsync.fromPromise(
       ShopItem.findOne({ where: { id, enable }, transaction }),
       () => ShopItemsServiceError.DatabaseError
-    ).andThen(okIfNotNullElse(ShopItemsServiceError.NotFound))
+    )
+      .andThen(okIfNotNullElse(ShopItemsServiceError.NotFound))
+      .map(intoShopItemModel)
   }
 
   static retrieveShopItemPage(
@@ -98,7 +100,7 @@ export class ShopItemsService {
         transaction,
       }),
       () => ShopItemsServiceError.DatabaseError
-    ).map((result) => result.rows)
+    ).map((result) => result.rows.map(intoShopItemModel))
   }
 
   static updateShopItemFromId(
@@ -125,7 +127,7 @@ export class ShopItemsService {
       () => ShopItemsServiceError.NotFound
     )
       .andThen(okIfNotNullElse(ShopItemsServiceError.NotFound))
-      .map((updated_shop_items) => updated_shop_items[1][0])
+      .map((updated_shop_items) => intoShopItemModel(updated_shop_items[1][0]))
   }
 }
 
