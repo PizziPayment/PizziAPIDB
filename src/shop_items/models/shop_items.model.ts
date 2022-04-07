@@ -4,11 +4,6 @@ export enum SortBy {
   PRICE = 'price',
 }
 
-export enum Order {
-  ASC = 'asc',
-  DESC = 'desc',
-}
-
 export interface ShopItemCreationModel {
   name: string
   price: string
@@ -20,4 +15,5 @@ export interface ShopItemModel {
   name: string
   price: string
   created_at: Date
+  enable: boolean
 }

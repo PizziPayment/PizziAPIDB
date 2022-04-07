@@ -1,8 +1,9 @@
-import { Transaction, Op } from 'sequelize'
 import { ResultAsync } from 'neverthrow'
-import ShopItem from '../commons/services/orm/models/shop_items.database.model'
-import { ShopItemModel, ShopItemCreationModel, SortBy, Order } from './models/shop_items.model'
+import { Op, Transaction } from 'sequelize'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
+import { Order } from '../commons/models/sequelize.model'
+import ShopItem from '../commons/services/orm/models/shop_items.database.model'
+import { ShopItemCreationModel, ShopItemModel, SortBy } from './models/shop_items.model'
 
 export enum ShopItemsServiceError {
   NotFound,
@@ -25,6 +26,7 @@ export class ShopItemsService {
           price: price,
           shop_id: shop_id,
           created_at: new Date(),
+          enable: true,
         },
         { transaction }
       ),
@@ -45,6 +47,7 @@ export class ShopItemsService {
             name,
             price,
             created_at: new Date(),
+            enable: true,
           }
         }),
         { validate: true, transaction }
@@ -58,7 +61,18 @@ export class ShopItemsService {
     transaction: Transaction | null = null
   ): ShopItemsServiceResult<ShopItemModel> {
     return ResultAsync.fromPromise(
-      ShopItem.findOne({ where: { id: id }, transaction }),
+      ShopItem.findOne({ where: { id }, transaction }),
+      () => ShopItemsServiceError.DatabaseError
+    ).andThen(okIfNotNullElse(ShopItemsServiceError.NotFound))
+  }
+
+  static retrieveEnableShopItemFromIdAndEnable(
+    id: number,
+    enable: boolean,
+    transaction: Transaction | null = null
+  ): ShopItemsServiceResult<ShopItemModel> {
+    return ResultAsync.fromPromise(
+      ShopItem.findOne({ where: { id, enable }, transaction }),
       () => ShopItemsServiceError.DatabaseError
     ).andThen(okIfNotNullElse(ShopItemsServiceError.NotFound))
   }
@@ -111,8 +125,8 @@ export class ShopItemsService {
 
   static deleteShopItemById(id: number, transaction: Transaction | null = null): ShopItemsServiceResult<null> {
     return ResultAsync.fromPromise(
-      ShopItem.destroy({ where: { id: id }, transaction }),
-      () => ShopItemsServiceError.DatabaseError
+      ShopItem.update({ enable: false }, { where: { id: id }, transaction }),
+      () => ShopItemsServiceError.NotFound
     ).map(() => null)
   }
 }
