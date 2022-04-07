@@ -13,7 +13,7 @@ import {
 import Shop from './shops.database.model'
 import ReceiptItem from './receipt_items.database.model'
 
-interface ShopItemsAttributes {
+export interface ShopItemsAttributes {
   id: number
   name: string
   price: string

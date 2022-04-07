@@ -1,14 +1,13 @@
-// @ts-ignore
-import { config } from '../common/config'
-// @ts-ignore
-import { shop } from '../common/models'
-import { ShopItemsService } from '../../src/shop_items/shop_items.database.service'
-import { ShopsServices } from '../../src/shops/shops.database.service'
-import ShopItem from '../../src/commons/services/orm/models/shop_items.database.model'
-import { Order, ShopItemCreationModel, SortBy } from '../../src/shop_items/models/shop_items.model'
-import { initOrm } from '../../src'
 import { Sequelize } from 'sequelize'
 import { addPadding } from '../common/service'
+import { initOrm } from '../../src'
+import { Order } from '../../src/commons/models/sequelize.model'
+import ShopItem from '../../src/commons/services/orm/models/shop_items.database.model'
+import { ShopsServices } from '../../src/shops/shops.database.service'
+import { ShopItemCreationModel, SortBy } from '../../src/shop_items/models/shop_items.model'
+import { ShopItemsService } from '../../src/shop_items/shop_items.database.service'
+import { config } from '../common/config'
+import { shop } from '../common/models'
 
 // @ts-ignore
 let sequelize: Sequelize = undefined
@@ -165,5 +164,65 @@ describe('Shop item domain', () => {
         await t.rollback()
       }
     })
+  })
+
+  it('should be able to update a shop item info', async () => {
+    const new_price = '45'
+    const new_name = 'eyebrow'
+
+    const t = await sequelize.transaction()
+
+    try {
+      const shop_id = (
+        await ShopsServices.createShop(shop.name, shop.phone, shop.address, shop.zipcode, t)
+      )._unsafeUnwrap().id
+
+      let res = await ShopItemsService.createShopItem(shop_id, shop_items[1].name, shop_items[1].price, t)
+      expect(res.isOk()).toBeTruthy()
+      const shop_item = res._unsafeUnwrap()
+
+      res = await ShopItemsService.updateShopItemFromId(shop_item.id, new_name, new_price, t)
+      expect(res.isOk()).toBeTruthy()
+      const new_shop_item = res._unsafeUnwrap()
+
+      expect(new_shop_item.id).not.toBe(shop_item.id)
+      expect(new_shop_item.name).toBe(new_name)
+      expect(new_shop_item.price).toBe(addPadding(new_price))
+      expect(new_shop_item.enable).toBe(true)
+      expect(new_shop_item.shop_id).toBe(shop_id)
+
+      expect((await ShopItemsService.retrieveShopItemFromIdAndEnable(shop_item.id, false, t)).isOk())
+    } finally {
+      await t.rollback()
+    }
+  })
+
+  it('should be able to delete a shop item', async () => {
+    const t = await sequelize.transaction()
+
+    try {
+      const shop_id = (
+        await ShopsServices.createShop(shop.name, shop.phone, shop.address, shop.zipcode, t)
+      )._unsafeUnwrap().id
+
+      let res = await ShopItemsService.createShopItem(shop_id, shop_items[1].name, shop_items[1].price, t)
+      expect(res.isOk()).toBeTruthy()
+      const item = res._unsafeUnwrap()
+
+      res = await ShopItemsService.deleteShopItemById(item.id, t)
+      expect(res.isOk()).toBeTruthy()
+      const deleted_shop_item = res._unsafeUnwrap()
+
+      res = await ShopItemsService.retrieveShopItemFromIdAndEnable(item.id, false, t)
+      expect(res.isOk()).toBeTruthy()
+      const retrieved_shop_item = res._unsafeUnwrap()
+
+      expect(deleted_shop_item.id).toBe(item.id)
+      expect(deleted_shop_item.enable).toBe(false)
+      expect(deleted_shop_item.id).toBe(retrieved_shop_item.id)
+      expect(deleted_shop_item.enable).toBe(retrieved_shop_item.enable)
+    } finally {
+      await t.rollback()
+    }
   })
 })

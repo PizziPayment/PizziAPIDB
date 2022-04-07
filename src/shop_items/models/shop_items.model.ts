@@ -1,3 +1,5 @@
+import { ShopItemsAttributes } from '../../commons/services/orm/models/shop_items.database.model'
+
 export enum SortBy {
   DATE = 'created_at',
   NAME = 'name',
@@ -16,4 +18,15 @@ export interface ShopItemModel {
   price: string
   created_at: Date
   enable: boolean
+}
+
+export function intoShopItemModel(model: ShopItemsAttributes): ShopItemModel {
+  return {
+    id: model.id,
+    shop_id: model.shop_id,
+    name: model.name,
+    price: model.price,
+    created_at: model.created_at,
+    enable: model.enable,
+  }
 }
