@@ -26,7 +26,7 @@ export class ShopItemsService {
           price: price,
           shop_id: shop_id,
           created_at: new Date(),
-          enable: true,
+          enabled: true,
         },
         { transaction }
       ),
@@ -47,7 +47,7 @@ export class ShopItemsService {
             name,
             price,
             created_at: new Date(),
-            enable: true,
+            enabled: true,
           }
         }),
         { validate: true, transaction }
@@ -70,11 +70,11 @@ export class ShopItemsService {
 
   static retrieveShopItemFromIdAndEnable(
     id: number,
-    enable: boolean,
+    enabled: boolean,
     transaction: Transaction | null = null
   ): ShopItemsServiceResult<ShopItemModel> {
     return ResultAsync.fromPromise(
-      ShopItem.findOne({ where: { id, enable }, transaction }),
+      ShopItem.findOne({ where: { id, enabled }, transaction }),
       () => ShopItemsServiceError.DatabaseError
     )
       .andThen(okIfNotNullElse(ShopItemsServiceError.NotFound))
@@ -123,7 +123,7 @@ export class ShopItemsService {
 
   static deleteShopItemById(id: number, transaction: Transaction | null = null): ShopItemsServiceResult<ShopItemModel> {
     return ResultAsync.fromPromise(
-      ShopItem.update({ enable: false }, { where: { id, enable: true }, transaction, returning: true }),
+      ShopItem.update({ enabled: false }, { where: { id, enabled: true }, transaction, returning: true }),
       () => ShopItemsServiceError.NotFound
     )
       .andThen(okIfNotNullElse(ShopItemsServiceError.NotFound))

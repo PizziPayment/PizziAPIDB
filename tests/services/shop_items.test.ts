@@ -188,7 +188,7 @@ describe('Shop item domain', () => {
       expect(new_shop_item.id).not.toBe(shop_item.id)
       expect(new_shop_item.name).toBe(new_name)
       expect(new_shop_item.price).toBe(addPadding(new_price))
-      expect(new_shop_item.enable).toBe(true)
+      expect(new_shop_item.enabled).toBe(true)
       expect(new_shop_item.shop_id).toBe(shop_id)
 
       expect((await ShopItemsService.retrieveShopItemFromIdAndEnable(shop_item.id, false, t)).isOk())
@@ -218,9 +218,9 @@ describe('Shop item domain', () => {
       const retrieved_shop_item = res._unsafeUnwrap()
 
       expect(deleted_shop_item.id).toBe(item.id)
-      expect(deleted_shop_item.enable).toBe(false)
+      expect(deleted_shop_item.enabled).toBe(false)
       expect(deleted_shop_item.id).toBe(retrieved_shop_item.id)
-      expect(deleted_shop_item.enable).toBe(retrieved_shop_item.enable)
+      expect(deleted_shop_item.enabled).toBe(retrieved_shop_item.enabled)
     } finally {
       await t.rollback()
     }

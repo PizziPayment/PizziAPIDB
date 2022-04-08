@@ -19,7 +19,7 @@ export interface ShopItemsAttributes {
   price: string
   shop_id: number
   created_at: Date
-  enable: boolean
+  enabled: boolean
 }
 
 export type ShopItemsCreation = Omit<ShopItemsAttributes, 'id'>
@@ -49,7 +49,7 @@ export default class ShopItem extends Model<ShopItemsAttributes, ShopItemsCreati
   shop_id!: number
 
   @Column({ allowNull: false })
-  enable!: boolean
+  enabled!: boolean
 
   @BelongsTo(() => Shop)
   shop!: Shop

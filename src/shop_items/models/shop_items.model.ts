@@ -17,7 +17,7 @@ export interface ShopItemModel {
   name: string
   price: string
   created_at: Date
-  enable: boolean
+  enabled: boolean
 }
 
 export function intoShopItemModel(model: ShopItemsAttributes): ShopItemModel {
@@ -27,6 +27,6 @@ export function intoShopItemModel(model: ShopItemsAttributes): ShopItemModel {
     name: model.name,
     price: model.price,
     created_at: model.created_at,
-    enable: model.enable,
+    enabled: model.enabled,
   }
 }
