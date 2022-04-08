@@ -100,6 +100,7 @@ describe('Transaction domain', () => {
 
   it('should be to retrieve every pending transaction associated to a specific owner', async () => {
     const transaction = await sequelize.transaction()
+
     try {
       const receipt = (await ReceiptsService.createReceipt(10, '2000', transaction))._unsafeUnwrap()
       const user = (await UsersServices.createUser('test', 'test', 'test', 3000, transaction))._unsafeUnwrap()

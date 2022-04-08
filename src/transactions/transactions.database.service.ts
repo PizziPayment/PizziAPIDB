@@ -32,7 +32,7 @@ export class TransactionsService {
     transaction: SequelizeTransaction | null = null
   ): TransactionsServiceResult<Array<TransactionModel>> {
     return ResultAsync.fromPromise(
-      Transaction.findAll({ where: { state: state, [`${owner_type}_id`]: owner_id }, nest: true, transaction }),
+      Transaction.findAll({ where: { state: state, [`${owner_type}_id`]: owner_id }, transaction }),
       () => TransactionsServiceError.DatabaseError
     ).map((pizzi_transactions) => pizzi_transactions.map(intoTransactionModel))
   }
