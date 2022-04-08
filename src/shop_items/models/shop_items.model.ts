@@ -1,6 +1,6 @@
 import { ShopItemsAttributes } from '../../commons/services/orm/models/shop_items.database.model'
 
-export enum SortBy {
+export enum ShopItemSortBy {
   DATE = 'created_at',
   NAME = 'name',
   PRICE = 'price',

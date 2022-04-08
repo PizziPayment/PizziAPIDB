@@ -3,7 +3,7 @@ import { Op, Transaction } from 'sequelize'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import { Order } from '../commons/models/sequelize.model'
 import ShopItem from '../commons/services/orm/models/shop_items.database.model'
-import { intoShopItemModel, ShopItemCreationModel, ShopItemModel, SortBy } from './models/shop_items.model'
+import { intoShopItemModel, ShopItemCreationModel, ShopItemModel, ShopItemSortBy } from './models/shop_items.model'
 
 export enum ShopItemsServiceError {
   NotFound,
@@ -85,7 +85,7 @@ export class ShopItemsService {
     shop_id: number,
     page: number,
     nb_items: number,
-    sort_by: SortBy,
+    sort_by: ShopItemSortBy,
     order: Order,
     query: string = '',
     transaction: Transaction | null = null

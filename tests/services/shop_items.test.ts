@@ -4,7 +4,7 @@ import { initOrm } from '../../src'
 import { Order } from '../../src/commons/models/sequelize.model'
 import ShopItem from '../../src/commons/services/orm/models/shop_items.database.model'
 import { ShopsServices } from '../../src/shops/shops.database.service'
-import { ShopItemCreationModel, SortBy } from '../../src/shop_items/models/shop_items.model'
+import { ShopItemCreationModel, ShopItemSortBy } from '../../src/shop_items/models/shop_items.model'
 import { ShopItemsService } from '../../src/shop_items/shop_items.database.service'
 import { config } from '../common/config'
 import { shop } from '../common/models'
@@ -110,19 +110,37 @@ describe('Shop item domain', () => {
         {
           page: 1,
           nb_items: 3,
-          sort_by: SortBy.NAME,
+          sort_by: ShopItemSortBy.NAME,
           order: Order.ASC,
           query: '',
           expected_si: [shop_items[0], shop_items[2], shop_items[1]],
         },
       ],
-      [{ page: 2, nb_items: 1, sort_by: SortBy.NAME, order: Order.DESC, query: '', expected_si: [shop_items[2]] }],
-      [{ page: 1, nb_items: 1, sort_by: SortBy.NAME, order: Order.ASC, query: '', expected_si: [shop_items[0]] }],
+      [
+        {
+          page: 2,
+          nb_items: 1,
+          sort_by: ShopItemSortBy.NAME,
+          order: Order.DESC,
+          query: '',
+          expected_si: [shop_items[2]],
+        },
+      ],
+      [
+        {
+          page: 1,
+          nb_items: 1,
+          sort_by: ShopItemSortBy.NAME,
+          order: Order.ASC,
+          query: '',
+          expected_si: [shop_items[0]],
+        },
+      ],
       [
         {
           page: 1,
           nb_items: 2,
-          sort_by: SortBy.PRICE,
+          sort_by: ShopItemSortBy.PRICE,
           order: Order.DESC,
           query: '',
           expected_si: [shop_items[2], shop_items[1]],
@@ -132,7 +150,7 @@ describe('Shop item domain', () => {
         {
           page: 1,
           nb_items: 2,
-          sort_by: SortBy.NAME,
+          sort_by: ShopItemSortBy.NAME,
           order: Order.ASC,
           query: 'l',
           expected_si: [shop_items[2], shop_items[1]],
