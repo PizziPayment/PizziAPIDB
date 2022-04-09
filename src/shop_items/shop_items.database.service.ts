@@ -95,7 +95,7 @@ export class ShopItemsService {
         where: { name: { [Op.like]: `%${query}%` }, shop_id: shop_id },
         order: [[sort_by, order]],
         limit: nb_items,
-        offset: page - 1,
+        offset: (page - 1) * nb_items,
         raw: true,
         transaction,
       }),
