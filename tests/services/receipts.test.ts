@@ -1,6 +1,6 @@
 // @ts-ignore
 import { config } from '../common/config'
-import { add_padding } from '../common/service'
+import { addPadding } from '../common/service'
 import { initOrm, ShopItemCreationModel, ShopItemsService, ShopsServices } from '../../src'
 import { ReceiptModel } from '../../src/receipts/models/receipts.model'
 import ReceiptsService from '../../src/receipts/receipts.database.service'
@@ -32,7 +32,7 @@ describe('Receipts domain', () => {
       )._unsafeUnwrap()
 
       expect(created_receipt.tva_percentage).toBe(receipt_sample.tva_percentage)
-      expect(created_receipt.total_price).toBe(add_padding(receipt_sample.total_price))
+      expect(created_receipt.total_price).toBe(addPadding(receipt_sample.total_price))
     } finally {
       await transaction.rollback()
     }
@@ -78,7 +78,7 @@ describe('Receipts domain', () => {
       )._unsafeUnwrap()
 
       expect(retrieved_receipt.tva_percentage).toBe(created_receipt.tva_percentage)
-      expect(retrieved_receipt.total_price).toBe(add_padding(created_receipt.total_price))
+      expect(retrieved_receipt.total_price).toBe(addPadding(created_receipt.total_price))
     } finally {
       await transaction.rollback()
     }

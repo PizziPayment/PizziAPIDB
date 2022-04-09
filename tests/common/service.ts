@@ -1,4 +1,4 @@
-export function add_padding(str: string, n: number = 4) {
+export function addPadding(str: string, n: number = 4) {
   const i = str.lastIndexOf('.')
   const pad = '0'
 
