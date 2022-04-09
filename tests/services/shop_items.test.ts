@@ -8,6 +8,7 @@ import ShopItem from '../../src/commons/services/orm/models/shop_items.database.
 import { Order, ShopItemCreationModel, SortBy } from '../../src/shop_items/models/shop_items.model'
 import { initOrm } from '../../src'
 import { Sequelize } from 'sequelize'
+import { addPadding } from '../common/service'
 
 // @ts-ignore
 let sequelize: Sequelize = undefined
@@ -23,15 +24,15 @@ afterAll(() => {
 const shop_items: Array<ShopItemCreationModel> = [
   {
     name: 'kidney',
-    price: 3,
+    price: '3',
   },
   {
     name: 'lung',
-    price: 40,
+    price: '39.99',
   },
   {
     name: 'leg',
-    price: 450,
+    price: '450',
   },
 ]
 
@@ -53,7 +54,7 @@ describe('Shop item domain', () => {
       expect(retrieve_si).not.toBeNull()
       if (retrieve_si != null) {
         expect(retrieve_si.name).toBe(shop_item_sample.name)
-        expect(retrieve_si.price).toBe(shop_item_sample.price)
+        expect(retrieve_si.price).toBe(addPadding(shop_item_sample.price))
         expect(retrieve_si.shop_id).toBe(shop_id)
         expect(retrieve_si.id).toBe(created_si_id)
       }
@@ -76,7 +77,7 @@ describe('Shop item domain', () => {
       for (let i = 0; i < shop_items.length; i++) {
         expect(created_items[i].shop_id).toBe(shop_id)
         expect(created_items[i].name).toBe(shop_items[i].name)
-        expect(created_items[i].price).toBe(shop_items[i].price)
+        expect(created_items[i].price).toBe(addPadding(shop_items[i].price))
       }
     } finally {
       await t.rollback()
