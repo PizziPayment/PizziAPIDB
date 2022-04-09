@@ -1,5 +1,6 @@
 // @ts-ignore
 import { config } from '../common/config'
+// @ts-ignore
 import { addPadding } from '../common/service'
 import { initOrm, ShopItemCreationModel, ShopItemsService, ShopsServices } from '../../src'
 import { ReceiptModel } from '../../src/receipts/models/receipts.model'

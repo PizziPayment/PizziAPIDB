@@ -25,7 +25,7 @@ describe('Receipt items domain', () => {
     const shop_items_sample: Array<ShopItemCreationModel> = [
       {
         name: 'kidney',
-        price: 3,
+        price: '4',
       },
     ]
     const transaction = await sequelize.transaction()
