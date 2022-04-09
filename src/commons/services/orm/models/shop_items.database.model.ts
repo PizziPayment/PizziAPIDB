@@ -35,7 +35,7 @@ export default class ShopItem extends Model<ShopItemsAttributes, ShopItemsCreati
   name!: string
 
   @NotNull
-  @Column({ allowNull: false, type: DataType.DECIMAL(16, 4) })
+  @Column({ allowNull: false, type: DataType.DECIMAL(16, 2) })
   price!: string
 
   @NotNull
