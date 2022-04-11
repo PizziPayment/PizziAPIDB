@@ -9,22 +9,38 @@ jobs:
   jest:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
       - uses: webfactory/ssh-agent@v0.5.4
         with:
-          ssh-private-key: ${{ secrets.DB_DEPLOY_KEY }}
+            ssh-private-key: ${{ secrets.PIZZI_SSH_KEY }}
+      - uses: actions/checkout@v2
       - uses: actions/checkout@v2
         with:
           repository: PizziPayment/PizziBackDeploymentTools
           ref: master
           path: db
-          token: ${{ secrets.ACCESS_TOKEN }}
+          ssh-key: ${{ secrets.PIZZI_SSH_KEY }}
+      - uses: actions/checkout@v2
+        with:
+          repository: PizziPayment/DeployDB
+          ref: main
+          path: deploy
+          ssh-key: ${{ secrets.PIZZI_SSH_KEY }}
+
       - uses: actions/setup-node@v2
         with:
           node-version: '17'
-      - name: Create database.
+
+      - name: Create database
         working-directory: ./db
         run: docker compose up db -d
+
+      - name: Apply migration to database
+        run: |
+          yarn add "pizzi-db@ssh://git@github.com/PizziPayment/PizziAPIBdd#${{ github.event.pull_request.head.sha }}"
+          yarn install
+          yarn start table recreate
+        working-directory: ./deploy
+
       - name: Install dependencies.
         run: yarn install
       - name: Run jest tests.
