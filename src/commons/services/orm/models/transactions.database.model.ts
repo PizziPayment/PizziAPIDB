@@ -1,14 +1,4 @@
-import {
-  AutoIncrement,
-  BelongsTo,
-  Column,
-  ForeignKey,
-  IsIn,
-  Model,
-  NotNull,
-  PrimaryKey,
-  Table,
-} from 'sequelize-typescript'
+import { AutoIncrement, BelongsTo, Column, ForeignKey, IsIn, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import User from './users.database.model'
 import Receipt from './receipts.database.model'
 import Shop from './shops.database.model'

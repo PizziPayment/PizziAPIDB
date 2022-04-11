@@ -1,14 +1,4 @@
-import {
-  AutoIncrement,
-  Column,
-  DataType,
-  HasMany,
-  HasOne,
-  Model,
-  NotNull,
-  PrimaryKey,
-  Table,
-} from 'sequelize-typescript'
+import { AutoIncrement, Column, DataType, HasMany, HasOne, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import ReceiptItem from './receipt_items.database.model'
 import Transaction from './transactions.database.model'
 

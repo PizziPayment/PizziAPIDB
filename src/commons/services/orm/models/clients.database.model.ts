@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, Model, NotNull, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, Column, Model, PrimaryKey, Table } from 'sequelize-typescript'
 
 interface ClientAttributes {
   id: number

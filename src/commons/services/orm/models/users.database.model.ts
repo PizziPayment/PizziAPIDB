@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, ForeignKey, HasMany, Model, NotNull, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, Column, ForeignKey, HasMany, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import Picture from './pictures.database.model'
 import Transaction from './transactions.database.model'
 
