@@ -1,5 +1,6 @@
 dist/
 node_modules/
+coverage/
 .idea/
 
 # ignore list from https://next.yarnpkg.com/getting-started/qa#which-files-should-be-gitignored

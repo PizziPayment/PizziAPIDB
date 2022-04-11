@@ -20,12 +20,12 @@ describe('Receipt items domain', () => {
   it('should be able to create receipt item', async () => {
     const receipt_sample: Omit<ReceiptModel, 'id'> = {
       tva_percentage: 10,
-      total_price: '24',
+      total_price: '4',
     }
     const shop_items_sample: Array<ShopItemCreationModel> = [
       {
         name: 'kidney',
-        price: '3',
+        price: '4',
       },
     ]
     const transaction = await sequelize.transaction()

@@ -13,7 +13,8 @@
   "scripts": {
     "build": "tsc",
     "prepack": "yarn build",
-    "test": "jest --runInBand --verbose"
+    "test": "jest --runInBand --verbose",
+    "test-coverage": "jest --runInBand --verbose --coverage"
   },
   "devDependencies": {
     "@types/config": "^0.0.40",

@@ -1,13 +1,16 @@
+// @ts-ignore
 import { Sequelize } from 'sequelize'
-import { addPadding } from '../common/service'
 import { initOrm } from '../../src'
-import { Order } from '../../src/commons/services/sequelize/model'
 import ShopItem from '../../src/commons/services/orm/models/shop_items.database.model'
+import { Order } from '../../src/commons/services/sequelize/model'
 import { ShopsServices } from '../../src/shops/shops.database.service'
 import { ShopItemCreationModel, ShopItemSortBy } from '../../src/shop_items/models/shop_items.model'
 import { ShopItemsService } from '../../src/shop_items/shop_items.database.service'
 import { config } from '../common/config'
+// @ts-ignore
 import { shop } from '../common/models'
+// @ts-ignore
+import { addPadding } from '../common/service'
 
 // @ts-ignore
 let sequelize: Sequelize = undefined
