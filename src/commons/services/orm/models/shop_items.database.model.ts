@@ -13,12 +13,13 @@ import {
 import Shop from './shops.database.model'
 import ReceiptItem from './receipt_items.database.model'
 
-interface ShopItemsAttributes {
+export interface ShopItemsAttributes {
   id: number
   name: string
   price: string
   shop_id: number
   created_at: Date
+  enabled: boolean
 }
 
 export type ShopItemsCreation = Omit<ShopItemsAttributes, 'id'>
@@ -46,6 +47,9 @@ export default class ShopItem extends Model<ShopItemsAttributes, ShopItemsCreati
   @NotNull
   @Column({ allowNull: false })
   shop_id!: number
+
+  @Column({ allowNull: false })
+  enabled!: boolean
 
   @BelongsTo(() => Shop)
   shop!: Shop

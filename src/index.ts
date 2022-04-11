@@ -7,6 +7,8 @@ export * from './shops/models/shop.model'
 export * from './transactions/models/transaction.model'
 export * from './shop_items/models/shop_items.model'
 
+export * from './commons/services/sequelize/model'
+
 // Services
 export * from './credentials/credentials.database.service'
 export * from './tokens/tokens.database.service'

@@ -1,15 +1,16 @@
 // @ts-ignore
+import { Sequelize } from 'sequelize'
+import { initOrm } from '../../src'
+import ShopItem from '../../src/commons/services/orm/models/shop_items.database.model'
+import { Order } from '../../src/commons/services/sequelize/model'
+import { ShopsServices } from '../../src/shops/shops.database.service'
+import { ShopItemCreationModel, ShopItemSortBy } from '../../src/shop_items/models/shop_items.model'
+import { ShopItemsService } from '../../src/shop_items/shop_items.database.service'
 import { config } from '../common/config'
 // @ts-ignore
 import { shop } from '../common/models'
 // @ts-ignore
 import { addPadding } from '../common/service'
-import { ShopItemsService } from '../../src/shop_items/shop_items.database.service'
-import { ShopsServices } from '../../src/shops/shops.database.service'
-import ShopItem from '../../src/commons/services/orm/models/shop_items.database.model'
-import { Order, ShopItemCreationModel, SortBy } from '../../src/shop_items/models/shop_items.model'
-import { initOrm } from '../../src'
-import { Sequelize } from 'sequelize'
 
 // @ts-ignore
 let sequelize: Sequelize = undefined
@@ -112,19 +113,37 @@ describe('Shop item domain', () => {
         {
           page: 1,
           nb_items: 3,
-          sort_by: SortBy.NAME,
+          sort_by: ShopItemSortBy.NAME,
           order: Order.ASC,
           query: '',
           expected_si: [shop_items[0], shop_items[2], shop_items[1]],
         },
       ],
-      [{ page: 2, nb_items: 1, sort_by: SortBy.NAME, order: Order.DESC, query: '', expected_si: [shop_items[2]] }],
-      [{ page: 1, nb_items: 1, sort_by: SortBy.NAME, order: Order.ASC, query: '', expected_si: [shop_items[0]] }],
+      [
+        {
+          page: 2,
+          nb_items: 1,
+          sort_by: ShopItemSortBy.NAME,
+          order: Order.DESC,
+          query: '',
+          expected_si: [shop_items[2]],
+        },
+      ],
+      [
+        {
+          page: 1,
+          nb_items: 1,
+          sort_by: ShopItemSortBy.NAME,
+          order: Order.ASC,
+          query: '',
+          expected_si: [shop_items[0]],
+        },
+      ],
       [
         {
           page: 1,
           nb_items: 2,
-          sort_by: SortBy.PRICE,
+          sort_by: ShopItemSortBy.PRICE,
           order: Order.DESC,
           query: '',
           expected_si: [shop_items[2], shop_items[1]],
@@ -134,7 +153,7 @@ describe('Shop item domain', () => {
         {
           page: 1,
           nb_items: 2,
-          sort_by: SortBy.NAME,
+          sort_by: ShopItemSortBy.NAME,
           order: Order.ASC,
           query: 'l',
           expected_si: [shop_items[2], shop_items[1]],
@@ -166,5 +185,65 @@ describe('Shop item domain', () => {
         await t.rollback()
       }
     })
+  })
+
+  it('should be able to update a shop item info', async () => {
+    const new_price = '45'
+    const new_name = 'eyebrow'
+
+    const t = await sequelize.transaction()
+
+    try {
+      const shop_id = (
+        await ShopsServices.createShop(shop.name, shop.phone, shop.address, shop.zipcode, t)
+      )._unsafeUnwrap().id
+
+      let res = await ShopItemsService.createShopItem(shop_id, shop_items[1].name, shop_items[1].price, t)
+      expect(res.isOk()).toBeTruthy()
+      const shop_item = res._unsafeUnwrap()
+
+      res = await ShopItemsService.updateShopItemFromId(shop_item.id, new_name, new_price, t)
+      expect(res.isOk()).toBeTruthy()
+      const new_shop_item = res._unsafeUnwrap()
+
+      expect(new_shop_item.id).not.toBe(shop_item.id)
+      expect(new_shop_item.name).toBe(new_name)
+      expect(new_shop_item.price).toBe(addPadding(new_price))
+      expect(new_shop_item.enabled).toBe(true)
+      expect(new_shop_item.shop_id).toBe(shop_id)
+
+      expect((await ShopItemsService.retrieveShopItemFromIdAndEnable(shop_item.id, false, t)).isOk())
+    } finally {
+      await t.rollback()
+    }
+  })
+
+  it('should be able to delete a shop item', async () => {
+    const t = await sequelize.transaction()
+
+    try {
+      const shop_id = (
+        await ShopsServices.createShop(shop.name, shop.phone, shop.address, shop.zipcode, t)
+      )._unsafeUnwrap().id
+
+      let res = await ShopItemsService.createShopItem(shop_id, shop_items[1].name, shop_items[1].price, t)
+      expect(res.isOk()).toBeTruthy()
+      const item = res._unsafeUnwrap()
+
+      res = await ShopItemsService.deleteShopItemById(item.id, t)
+      expect(res.isOk()).toBeTruthy()
+      const deleted_shop_item = res._unsafeUnwrap()
+
+      res = await ShopItemsService.retrieveShopItemFromIdAndEnable(item.id, false, t)
+      expect(res.isOk()).toBeTruthy()
+      const retrieved_shop_item = res._unsafeUnwrap()
+
+      expect(deleted_shop_item.id).toBe(item.id)
+      expect(deleted_shop_item.enabled).toBe(false)
+      expect(deleted_shop_item.id).toBe(retrieved_shop_item.id)
+      expect(deleted_shop_item.enabled).toBe(retrieved_shop_item.enabled)
+    } finally {
+      await t.rollback()
+    }
   })
 })

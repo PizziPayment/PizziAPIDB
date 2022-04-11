@@ -1,8 +1,9 @@
-import { Transaction, Op } from 'sequelize'
 import { ResultAsync } from 'neverthrow'
-import ShopItem from '../commons/services/orm/models/shop_items.database.model'
-import { ShopItemModel, ShopItemCreationModel, SortBy, Order } from './models/shop_items.model'
+import { Op, Transaction } from 'sequelize'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
+import { Order } from '../commons/services/sequelize/model'
+import ShopItem from '../commons/services/orm/models/shop_items.database.model'
+import { intoShopItemModel, ShopItemCreationModel, ShopItemModel, ShopItemSortBy } from './models/shop_items.model'
 
 export enum ShopItemsServiceError {
   NotFound,
@@ -25,11 +26,12 @@ export class ShopItemsService {
           price: price,
           shop_id: shop_id,
           created_at: new Date(),
+          enabled: true,
         },
         { transaction }
       ),
       () => ShopItemsServiceError.DatabaseError
-    )
+    ).map(intoShopItemModel)
   }
 
   static createShopItems(
@@ -45,12 +47,13 @@ export class ShopItemsService {
             name,
             price,
             created_at: new Date(),
+            enabled: true,
           }
         }),
         { validate: true, transaction }
       ),
       () => ShopItemsServiceError.DatabaseError
-    )
+    ).map((items) => items.map(intoShopItemModel))
   }
 
   static retrieveShopItemFromId(
@@ -58,16 +61,31 @@ export class ShopItemsService {
     transaction: Transaction | null = null
   ): ShopItemsServiceResult<ShopItemModel> {
     return ResultAsync.fromPromise(
-      ShopItem.findOne({ where: { id: id }, transaction }),
+      ShopItem.findOne({ where: { id }, transaction }),
       () => ShopItemsServiceError.DatabaseError
-    ).andThen(okIfNotNullElse(ShopItemsServiceError.NotFound))
+    )
+      .andThen(okIfNotNullElse(ShopItemsServiceError.NotFound))
+      .map(intoShopItemModel)
+  }
+
+  static retrieveShopItemFromIdAndEnable(
+    id: number,
+    enabled: boolean,
+    transaction: Transaction | null = null
+  ): ShopItemsServiceResult<ShopItemModel> {
+    return ResultAsync.fromPromise(
+      ShopItem.findOne({ where: { id, enabled }, transaction }),
+      () => ShopItemsServiceError.DatabaseError
+    )
+      .andThen(okIfNotNullElse(ShopItemsServiceError.NotFound))
+      .map(intoShopItemModel)
   }
 
   static retrieveShopItemPage(
     shop_id: number,
     page: number,
     nb_items: number,
-    sort_by: SortBy,
+    sort_by: ShopItemSortBy,
     order: Order,
     query: string = '',
     transaction: Transaction | null = null
@@ -77,48 +95,44 @@ export class ShopItemsService {
         where: { name: { [Op.like]: `%${query}%` }, shop_id: shop_id },
         order: [[sort_by, order]],
         limit: nb_items,
-        offset: page - 1,
+        offset: (page - 1) * nb_items,
         raw: true,
         transaction,
       }),
       () => ShopItemsServiceError.DatabaseError
-    ).map((result) => result.rows)
+    ).map((result) => result.rows.map(intoShopItemModel))
   }
 
   static updateShopItemFromId(
     id: number,
     name: string | null,
-    price: number | null,
+    price: string | null,
     transaction: Transaction | null = null
   ): ShopItemsServiceResult<ShopItemModel> {
-    return ResultAsync.fromPromise(
-      ShopItem.findOne({
-        where: {
-          id: id,
-        },
-        transaction,
-      }),
-      () => ShopItemsServiceError.DatabaseError
-    )
-      .andThen(okIfNotNullElse(ShopItemsServiceError.NotFound))
-      .andThen((shop_item) =>
-        ResultAsync.fromPromise(
-          ShopItem.create(Object.assign(shop_item, nonNullShopItemValues(name, price)), { transaction }),
-          () => ShopItemsServiceError.DatabaseError
-        )
+    return ShopItemsService.deleteShopItemById(id, transaction).andThen((shop_item) => {
+      const new_shop_item = Object.assign(shop_item, nonNullShopItemValues(name, price))
+
+      return ShopItemsService.createShopItem(
+        new_shop_item.shop_id,
+        new_shop_item.name,
+        new_shop_item.price,
+        transaction
       )
+    })
   }
 
-  static deleteShopItemById(id: number, transaction: Transaction | null = null): ShopItemsServiceResult<null> {
+  static deleteShopItemById(id: number, transaction: Transaction | null = null): ShopItemsServiceResult<ShopItemModel> {
     return ResultAsync.fromPromise(
-      ShopItem.destroy({ where: { id: id }, transaction }),
-      () => ShopItemsServiceError.DatabaseError
-    ).map(() => null)
+      ShopItem.update({ enabled: false }, { where: { id, enabled: true }, transaction, returning: true }),
+      () => ShopItemsServiceError.NotFound
+    )
+      .andThen(okIfNotNullElse(ShopItemsServiceError.NotFound))
+      .map((updated_shop_items) => intoShopItemModel(updated_shop_items[1][0]))
   }
 }
 
-function nonNullShopItemValues(name: string | null, price: number | null): Record<string, string | number> {
-  const record: Record<string, string | number> = {}
+function nonNullShopItemValues(name: string | null, price: string | null): Record<string, string> {
+  const record: Record<string, string> = {}
   const values = { name: name, price: price }
 
   for (const [key, value] of Object.entries(values)) {

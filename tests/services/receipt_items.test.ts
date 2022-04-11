@@ -35,26 +35,28 @@ describe('Receipt items domain', () => {
         await ReceiptsService.createReceipt(receipt_sample.tva_percentage, receipt_sample.total_price, transaction)
       )._unsafeUnwrap()
 
-      ;(
-        await ShopsServices.createShop('test', '0202020202', 'address', 20000, transaction).map((shop) =>
-          ShopItemsService.createShopItems(shop.id, shop_items_sample, transaction).map((shop_items) =>
-            Promise.all(
-              shop_items.map(
-                async (shop_item) =>
-                  await ReceiptItemsService.createReceiptItem(
-                    created_receipt.id,
-                    shop_item.id,
-                    0,
-                    0,
-                    1,
-                    'tototot',
-                    transaction
-                  )
+      expect(
+        (
+          await ShopsServices.createShop('test', '0202020202', 'address', 20000, transaction).map((shop) =>
+            ShopItemsService.createShopItems(shop.id, shop_items_sample, transaction).map((shop_items) =>
+              Promise.all(
+                shop_items.map(
+                  async (shop_item) =>
+                    await ReceiptItemsService.createReceiptItem(
+                      created_receipt.id,
+                      shop_item.id,
+                      0,
+                      0,
+                      1,
+                      'tototot',
+                      transaction
+                    )
+                )
               )
             )
           )
-        )
-      )._unsafeUnwrap()
+        ).isOk()
+      )
       const retrieved_items = (
         await ReceiptItemsService.getReceiptsItems(created_receipt.id, transaction)
       )._unsafeUnwrap()
