@@ -27,11 +27,9 @@ export default class Receipt extends Model<ReceiptAttributes, ReceiptCreation> {
   @Column
   declare id: number
 
-  @NotNull
   @Column({ allowNull: false, type: DataType.FLOAT })
   tva_percentage!: number
 
-  @NotNull
   @Column({ allowNull: false, type: DataType.DECIMAL(16, 2) })
   total_price!: string
 

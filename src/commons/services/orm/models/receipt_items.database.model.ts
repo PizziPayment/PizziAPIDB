@@ -22,28 +22,22 @@ export default class ReceiptItem extends Model<ReceiptItemsAttributes, ReceiptIt
   declare id: number
 
   @ForeignKey(() => Receipt)
-  @NotNull
   @Column({ allowNull: false })
   receipt_id!: number
 
   @ForeignKey(() => ShopItem)
-  @NotNull
   @Column({ allowNull: false })
   shop_item_id!: number
 
-  @NotNull
   @Column({ allowNull: false })
   quantity!: number
 
-  @NotNull
   @Column({ allowNull: false })
   warranty!: string
 
-  @NotNull
   @Column({ allowNull: false })
   eco_tax!: number
 
-  @NotNull
   @Column({ allowNull: false })
   discount!: number
 

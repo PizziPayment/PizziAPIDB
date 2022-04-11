@@ -20,25 +20,20 @@ export default class Token extends Model<TokenAttributes, TokenCreation> {
   @Column
   declare id: number
 
-  @NotNull
   @Column({ allowNull: false })
   access_token!: string
 
-  @NotNull
   @Column({ allowNull: false })
   refresh_token!: string
 
-  @NotNull
   @Column({ allowNull: false, type: DataType.DATE })
   expires_at!: Date
 
   @ForeignKey(() => Client)
-  @NotNull
   @Column({ allowNull: false })
   client_id!: number
 
   @ForeignKey(() => Credential)
-  @NotNull
   @Column({ allowNull: false })
   credential_id!: number
 }

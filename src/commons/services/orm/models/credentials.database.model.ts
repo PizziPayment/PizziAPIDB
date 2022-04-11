@@ -21,11 +21,9 @@ export default class Credential extends Model<CredentialAttributes, CredentialCr
   @Column
   declare id: number
 
-  @NotNull
   @Column({ allowNull: false })
   email!: string
 
-  @NotNull
   @Column({ allowNull: false })
   password!: string
 

@@ -25,22 +25,18 @@ export default class Shop extends Model<ShopAttributes, ShopCreation> {
   @Column
   declare id: number
 
-  @NotNull
   @Column({ allowNull: false })
   name!: string
 
-  @NotNull
   @Column({ allowNull: false })
   phone!: string
 
   @Column
   description?: string
 
-  @NotNull
   @Column({ allowNull: false })
   address!: string
 
-  @NotNull
   @Column({ allowNull: false })
   zipcode!: number
 

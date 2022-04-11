@@ -31,20 +31,16 @@ export default class ShopItem extends Model<ShopItemsAttributes, ShopItemsCreati
   @Column
   declare id: number
 
-  @NotNull
   @Column({ allowNull: false })
   name!: string
 
-  @NotNull
   @Column({ allowNull: false, type: DataType.DECIMAL(16, 2) })
   price!: string
 
-  @NotNull
   @Column({ allowNull: false, type: DataType.DATE })
   created_at!: Date
 
   @ForeignKey(() => Shop)
-  @NotNull
   @Column({ allowNull: false })
   shop_id!: number
 

@@ -15,11 +15,9 @@ export default class Client extends Model<ClientAttributes, ClientCreation> {
   @Column
   declare id: number
 
-  @NotNull
   @Column({ allowNull: false })
   client_id!: string
 
-  @NotNull
   @Column({ allowNull: false })
   client_secret!: string
 }

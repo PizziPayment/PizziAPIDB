@@ -20,11 +20,9 @@ export default class User extends Model<UserAttributes, UserCreation> {
   @Column
   declare id: number
 
-  @NotNull
   @Column({ allowNull: false })
   firstname!: string
 
-  @NotNull
   @Column({ allowNull: false })
   surname!: string
 
@@ -32,11 +30,9 @@ export default class User extends Model<UserAttributes, UserCreation> {
   @Column
   picture_id?: number
 
-  @NotNull
   @Column({ allowNull: false })
   address!: string
 
-  @NotNull
   @Column({ allowNull: false })
   zipcode!: number
 
