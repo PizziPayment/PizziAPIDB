@@ -25,7 +25,7 @@ export class TransactionsService {
     ).map((pizzi_transactions) => pizzi_transactions.map(intoTransactionModel))
   }
 
-  static getOwnersTransactionsByState(
+  static getOwnerTransactionsByState(
     owner_type: 'user' | 'shop',
     owner_id: number,
     state: TransactionState,
@@ -77,16 +77,10 @@ export class TransactionsService {
     transaction: SequelizeTransaction | null = null
   ): TransactionsServiceResult<null> {
     return ResultAsync.fromPromise(
-      Transaction.findOne({ where: { id: transaction_id }, transaction }),
+      Transaction.update({ state: state }, { where: { id: transaction_id }, transaction, returning: true }),
       () => TransactionsServiceError.DatabaseError
     )
       .andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
-      .andThen((pizzi_transaction) =>
-        ResultAsync.fromPromise(
-          pizzi_transaction.set('state', state).save({ transaction }),
-          () => TransactionsServiceError.DatabaseError
-        )
-      )
       .map(() => null)
   }
 }

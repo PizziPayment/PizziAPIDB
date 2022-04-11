@@ -58,7 +58,7 @@ describe('Receipt items domain', () => {
         ).isOk()
       )
       const retrieved_items = (
-        await ReceiptItemsService.getReceiptsItems(created_receipt.id, transaction)
+        await ReceiptItemsService.getReceiptItems(created_receipt.id, transaction)
       )._unsafeUnwrap()
 
       expect(retrieved_items).toHaveLength(1)

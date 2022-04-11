@@ -12,7 +12,7 @@ export enum ReceiptItemsServiceError {
 export type ReceiptItemsServiceResult<T> = ResultAsync<T, ReceiptItemsServiceError>
 
 export class ReceiptItemsService {
-  static getReceiptsItems(
+  static getReceiptItems(
     receipt_id: number,
     transaction: Transaction | null = null
   ): ReceiptItemsServiceResult<Array<ReceiptItemModel>> {

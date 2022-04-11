@@ -1,10 +1,11 @@
 // @ts-ignore
 import { config } from '../common/config'
-import { ShopsServices, TransactionModel, TransactionsService, UsersServices } from '../../src/'
+import { ShopModel, ShopsServices, TransactionModel, TransactionsService, UserModel, UsersServices } from '../../src/'
 import { initOrm } from '../../src'
 import ReceiptsService from '../../src/receipts/receipts.database.service'
-import { Sequelize } from 'sequelize'
+import { Sequelize, Transaction } from 'sequelize'
 import { TransactionState } from '../../src/commons/services/orm/models/transactions.database.model'
+import { ReceiptModel } from '../../src/receipts/models/receipts.model'
 
 // @ts-ignore
 let sequelize: Sequelize = undefined
@@ -17,6 +18,14 @@ afterAll(() => {
   return sequelize.close()
 })
 
+async function setupReceiptUserAndShop(transaction: Transaction): Promise<[ReceiptModel, UserModel, ShopModel]> {
+  return [
+    (await ReceiptsService.createReceipt(10, '2000', transaction))._unsafeUnwrap(),
+    (await UsersServices.createUser('test', 'test', 'test', 3000, transaction))._unsafeUnwrap(),
+    (await ShopsServices.createShop('test', '0202020202', 'address', 20000, transaction))._unsafeUnwrap(),
+  ]
+}
+
 describe('Transaction domain', () => {
   it('should be able to create a pending transaction', async () => {
     const pending_transaction_sample: Omit<TransactionModel, 'id' | 'state' | 'shop_id' | 'user_id' | 'receipt_id'> = {
@@ -25,9 +34,7 @@ describe('Transaction domain', () => {
     const transaction = await sequelize.transaction()
 
     try {
-      const receipt = (await ReceiptsService.createReceipt(10, '2000', transaction))._unsafeUnwrap()
-      const user = (await UsersServices.createUser('test', 'test', 'test', 3000, transaction))._unsafeUnwrap()
-      const shop = (await ShopsServices.createShop('test', '0202020202', 'address', 20000, transaction))._unsafeUnwrap()
+      const [receipt, user, shop] = await setupReceiptUserAndShop(transaction)
       const tested_transaction = (
         await TransactionsService.createPendingTransaction(
           receipt.id,
@@ -52,9 +59,7 @@ describe('Transaction domain', () => {
     const transaction = await sequelize.transaction()
 
     try {
-      const receipt = (await ReceiptsService.createReceipt(10, '2000', transaction))._unsafeUnwrap()
-      const user = (await UsersServices.createUser('test', 'test', 'test', 3000, transaction))._unsafeUnwrap()
-      const shop = (await ShopsServices.createShop('test', '0202020202', 'address', 20000, transaction))._unsafeUnwrap()
+      const [receipt, user, shop] = await setupReceiptUserAndShop(transaction)
       const created_transaction = (
         await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction)
       )._unsafeUnwrap()
@@ -77,9 +82,7 @@ describe('Transaction domain', () => {
     const transaction = await sequelize.transaction()
     const new_state: TransactionState = 'validated'
     try {
-      const receipt = (await ReceiptsService.createReceipt(10, '2000', transaction))._unsafeUnwrap()
-      const user = (await UsersServices.createUser('test', 'test', 'test', 3000, transaction))._unsafeUnwrap()
-      const shop = (await ShopsServices.createShop('test', '0202020202', 'address', 20000, transaction))._unsafeUnwrap()
+      const [receipt, user, shop] = await setupReceiptUserAndShop(transaction)
       const created_transaction = (
         await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction)
       )._unsafeUnwrap()
@@ -102,9 +105,7 @@ describe('Transaction domain', () => {
     const transaction = await sequelize.transaction()
 
     try {
-      const receipt = (await ReceiptsService.createReceipt(10, '2000', transaction))._unsafeUnwrap()
-      const user = (await UsersServices.createUser('test', 'test', 'test', 3000, transaction))._unsafeUnwrap()
-      const shop = (await ShopsServices.createShop('test', '0202020202', 'address', 20000, transaction))._unsafeUnwrap()
+      const [receipt, user, shop] = await setupReceiptUserAndShop(transaction)
       const created_transaction = (
         await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction)
       )._unsafeUnwrap()
@@ -116,10 +117,10 @@ describe('Transaction domain', () => {
       )._unsafeUnwrap()
 
       const user_transactions = (
-        await TransactionsService.getOwnersTransactionsByState('user', user.id, 'pending', transaction)
+        await TransactionsService.getOwnerTransactionsByState('user', user.id, 'pending', transaction)
       )._unsafeUnwrap()
       const shop_transaction = (
-        await TransactionsService.getOwnersTransactionsByState('shop', shop.id, 'pending', transaction)
+        await TransactionsService.getOwnerTransactionsByState('shop', shop.id, 'pending', transaction)
       )._unsafeUnwrap()
 
       expect(user_transactions).toHaveLength(1)
