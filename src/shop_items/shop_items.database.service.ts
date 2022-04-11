@@ -1,7 +1,7 @@
 import { ResultAsync } from 'neverthrow'
 import { Op, Transaction } from 'sequelize'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
-import { Order } from '../commons/models/sequelize.model'
+import { Order } from '../commons/services/sequelize/model'
 import ShopItem from '../commons/services/orm/models/shop_items.database.model'
 import { intoShopItemModel, ShopItemCreationModel, ShopItemModel, ShopItemSortBy } from './models/shop_items.model'
 
