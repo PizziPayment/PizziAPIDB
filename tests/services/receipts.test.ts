@@ -62,6 +62,7 @@ describe('Receipts domain', () => {
       await transaction.rollback()
     }
   })
+
   it('should be able to retrieve a detailed receipt (without items) from its id', async () => {
     const transaction = await sequelize.transaction()
 
