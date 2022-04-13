@@ -60,6 +60,7 @@ export class TransactionsService {
       Transaction.create(
         {
           state: 'pending',
+          created_at: new Date(),
           user_id: user_id || undefined,
           shop_id: shop_id,
           payment_method: payment_method,

@@ -40,6 +40,7 @@ export default class ReceiptsService {
           id: receipt.id,
           tva_percentage: receipt.tva_percentage,
           total_price: receipt.total_price,
+          created_at: receipt.transaction.created_at,
           shop: {
             name: receipt.transaction.shop.name,
             logo: receipt.transaction.shop.logo,
@@ -80,6 +81,7 @@ export default class ReceiptsService {
           id: receipt.id,
           tva_percentage: receipt.tva_percentage,
           total_price: receipt.total_price,
+          created_at: receipt.transaction.created_at,
           shop: {
             name: receipt.transaction.shop.name,
             logo: receipt.transaction.shop.logo,
@@ -97,7 +99,7 @@ export default class ReceiptsService {
     tva_percentage: number,
     total_price: string,
     transaction: Transaction | null = null
-  ): ReceiptsServiceResult<ReceiptModel> {
+  ): ReceiptsServiceResult<Omit<ReceiptModel, 'created_at' | 'shop' | 'user'>> {
     return ResultAsync.fromPromise(
       Receipt.create({ tva_percentage: tva_percentage, total_price: total_price }, { transaction }),
       () => ReceiptsServiceError.DatabaseError
