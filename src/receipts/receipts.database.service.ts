@@ -66,7 +66,7 @@ export default class ReceiptsService {
   static getShortenedReceipts(
     receipt_ids: Array<number>,
     transaction: Transaction | null = null
-  ): ReceiptsServiceResult<Array<unknown>> {
+  ): ReceiptsServiceResult<Array<ReceiptModel>> {
     return ResultAsync.fromPromise(
       Receipt.findAll({
         where: { id: receipt_ids },
