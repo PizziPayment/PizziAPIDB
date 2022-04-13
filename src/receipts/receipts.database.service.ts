@@ -5,6 +5,9 @@ import { DetailedReceiptModel, ReceiptModel } from './models/receipts.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import ReceiptItem from '../commons/services/orm/models/receipt_items.database.model'
 import ShopItem from '../commons/services/orm/models/shop_items.database.model'
+import PizziTransaction from '../commons/services/orm/models/transactions.database.model'
+import Shop from '../commons/services/orm/models/shops.database.model'
+import User from '../commons/services/orm/models/users.database.model'
 
 export enum ReceiptsServiceError {
   ReceiptNotFound,
@@ -21,7 +24,12 @@ export default class ReceiptsService {
     return ResultAsync.fromPromise(
       Receipt.findOne({
         where: { id: receipt_id },
-        include: [{ model: ReceiptItem, include: [{ model: ShopItem }] }],
+        include: [
+          {
+            model: ReceiptItem,
+            include: [{ model: ShopItem }, { model: PizziTransaction, include: [{ model: Shop }, { model: User }] }],
+          },
+        ],
         transaction,
       }),
       () => ReceiptsServiceError.DatabaseError
@@ -32,6 +40,14 @@ export default class ReceiptsService {
           id: receipt.id,
           tva_percentage: receipt.tva_percentage,
           total_price: receipt.total_price,
+          shop: {
+            name: receipt.transaction.shop.name,
+            logo: receipt.transaction.shop.logo,
+          },
+          user: {
+            firstname: receipt.transaction.user.firstname,
+            surname: receipt.transaction.user.surname,
+          },
           items: (receipt.items || []).map((item) => {
             return {
               id: item.id,
@@ -50,10 +66,30 @@ export default class ReceiptsService {
   static getShortenedReceipts(
     receipt_ids: Array<number>,
     transaction: Transaction | null = null
-  ): ReceiptsServiceResult<Array<ReceiptModel>> {
+  ): ReceiptsServiceResult<Array<unknown>> {
     return ResultAsync.fromPromise(
-      Receipt.findAll({ where: { id: receipt_ids }, transaction }),
+      Receipt.findAll({
+        where: { id: receipt_ids },
+        include: [{ model: PizziTransaction, include: [{ model: Shop }, { model: User }] }],
+        transaction,
+      }),
       () => ReceiptsServiceError.DatabaseError
+    ).map((receipts) =>
+      receipts.map((receipt) => {
+        return {
+          id: receipt.id,
+          tva_percentage: receipt.tva_percentage,
+          total_price: receipt.total_price,
+          shop: {
+            name: receipt.transaction.shop.name,
+            logo: receipt.transaction.shop.logo,
+          },
+          user: {
+            firstname: receipt.transaction.user.firstname,
+            surname: receipt.transaction.user.surname,
+          },
+        }
+      })
     )
   }
 

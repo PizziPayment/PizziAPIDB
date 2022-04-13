@@ -2,6 +2,14 @@ export interface ReceiptModel {
   id: number
   tva_percentage: number
   total_price: string
+  shop?: {
+    name: string
+    logo?: number
+  }
+  user?: {
+    firstname: string
+    surname: string
+  }
 }
 
 interface DetailedReceiptItems {
