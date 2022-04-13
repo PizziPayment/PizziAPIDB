@@ -35,7 +35,7 @@
     "prettier": "^2.5.1",
     "reflect-metadata": "^0.1.13",
     "sequelize": "=6.12.4",
-    "sequelize-typescript": "^2.1.1"
+    "sequelize-typescript": "=2.1.2"
   },
   "packageManager": "yarn@3.2.0"
 }
