@@ -18,7 +18,9 @@ afterAll(() => {
   return sequelize.close()
 })
 
-async function setupReceiptUserAndShop(transaction: Transaction): Promise<[ReceiptModel, UserModel, ShopModel]> {
+async function setupReceiptUserAndShop(
+  transaction: Transaction
+): Promise<[Omit<ReceiptModel, 'created_at' | 'shop' | 'user'>, UserModel, ShopModel]> {
   return [
     (await ReceiptsService.createReceipt(10, '2000', transaction))._unsafeUnwrap(),
     (await UsersServices.createUser('test', 'test', 'test', 3000, transaction))._unsafeUnwrap(),

@@ -18,7 +18,7 @@ afterAll(() => {
 
 describe('Receipt items domain', () => {
   it('should be able to create receipt item', async () => {
-    const receipt_sample: Omit<ReceiptModel, 'id'> = {
+    const receipt_sample: Omit<ReceiptModel, 'id' | 'shop' | 'user' | 'created_at'> = {
       tva_percentage: 10,
       total_price: '4',
     }

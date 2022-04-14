@@ -17,10 +17,13 @@ export enum ReceiptsServiceError {
 export type ReceiptsServiceResult<T> = ResultAsync<T, ReceiptsServiceError>
 
 export default class ReceiptsService {
-  static getDetailedReceiptById(
+  static getDetailedReceiptById<Nested extends boolean>(
     receipt_id: number,
+    nested: Nested = false as Nested,
     transaction: Transaction | null = null
-  ): ReceiptsServiceResult<DetailedReceiptModel> {
+  ): Nested extends true
+    ? ReceiptsServiceResult<DetailedReceiptModel>
+    : ReceiptsServiceResult<Omit<DetailedReceiptModel, 'shop' | 'created_at' | 'user'>> {
     return ResultAsync.fromPromise(
       Receipt.findOne({
         where: { id: receipt_id },
@@ -40,14 +43,14 @@ export default class ReceiptsService {
           id: receipt.id,
           tva_percentage: receipt.tva_percentage,
           total_price: receipt.total_price,
-          created_at: receipt.transaction.created_at,
+          created_at: receipt.transaction?.created_at,
           shop: {
-            name: receipt.transaction.shop.name,
-            logo: receipt.transaction.shop.logo,
+            name: receipt.transaction?.shop.name,
+            logo: receipt.transaction?.shop.logo,
           },
           user: {
-            firstname: receipt.transaction.user.firstname,
-            surname: receipt.transaction.user.surname,
+            firstname: receipt.transaction?.user.firstname,
+            surname: receipt.transaction?.user.surname,
           },
           items: (receipt.items || []).map((item) => {
             return {
@@ -64,10 +67,13 @@ export default class ReceiptsService {
       })
   }
 
-  static getShortenedReceipts(
+  static getShortenedReceipts<Nested extends boolean>(
     receipt_ids: Array<number>,
+    nested: Nested = false as Nested,
     transaction: Transaction | null = null
-  ): ReceiptsServiceResult<Array<ReceiptModel>> {
+  ): Nested extends true
+    ? ReceiptsServiceResult<Array<ReceiptModel>>
+    : ReceiptsServiceResult<Array<Omit<ReceiptModel, 'created_at' | 'shop' | 'user'>>> {
     return ResultAsync.fromPromise(
       Receipt.findAll({
         where: { id: receipt_ids },
@@ -81,14 +87,14 @@ export default class ReceiptsService {
           id: receipt.id,
           tva_percentage: receipt.tva_percentage,
           total_price: receipt.total_price,
-          created_at: receipt.transaction.created_at,
+          created_at: receipt.transaction?.created_at,
           shop: {
-            name: receipt.transaction.shop.name,
-            logo: receipt.transaction.shop.logo,
+            name: receipt.transaction?.shop.name,
+            logo: receipt.transaction?.shop.logo,
           },
           user: {
-            firstname: receipt.transaction.user.firstname,
-            surname: receipt.transaction.user.surname,
+            firstname: receipt.transaction?.user.firstname,
+            surname: receipt.transaction?.user.surname,
           },
         }
       })
@@ -100,6 +106,7 @@ export default class ReceiptsService {
     total_price: string,
     transaction: Transaction | null = null
   ): ReceiptsServiceResult<Omit<ReceiptModel, 'created_at' | 'shop' | 'user'>> {
+    console.log()
     return ResultAsync.fromPromise(
       Receipt.create({ tva_percentage: tva_percentage, total_price: total_price }, { transaction }),
       () => ReceiptsServiceError.DatabaseError

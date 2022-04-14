@@ -19,15 +19,15 @@ afterAll(() => {
 })
 
 describe('Receipts domain', () => {
+  const receipt_sample: Omit<ReceiptModel, 'id' | 'created_at' | 'shop' | 'user'> = {
+    tva_percentage: 10,
+    total_price: '99.99',
+  }
+
   it('should be able to create a receipt', async () => {
     const transaction = await sequelize.transaction()
 
     try {
-      const receipt_sample: Omit<ReceiptModel, 'id'> = {
-        tva_percentage: 10,
-        total_price: '99.99',
-      }
-
       const created_receipt = (
         await ReceiptsService.createReceipt(receipt_sample.tva_percentage, receipt_sample.total_price, transaction)
       )._unsafeUnwrap()
@@ -43,11 +43,6 @@ describe('Receipts domain', () => {
     const transaction = await sequelize.transaction()
 
     try {
-      const receipt_sample: Omit<ReceiptModel, 'id'> = {
-        tva_percentage: 10,
-        total_price: '99.99',
-      }
-
       const created_receipt = (
         await ReceiptsService.createReceipt(receipt_sample.tva_percentage, receipt_sample.total_price, transaction)
       )._unsafeUnwrap()
@@ -67,11 +62,6 @@ describe('Receipts domain', () => {
     const transaction = await sequelize.transaction()
 
     try {
-      const receipt_sample: Omit<ReceiptModel, 'id'> = {
-        tva_percentage: 10,
-        total_price: '99.99',
-      }
-
       const created_receipt = (
         await ReceiptsService.createReceipt(receipt_sample.tva_percentage, receipt_sample.total_price, transaction)
       )._unsafeUnwrap()
@@ -104,10 +94,6 @@ describe('Receipts domain', () => {
     const transaction = await sequelize.transaction()
 
     try {
-      const receipt_sample: Omit<ReceiptModel, 'id'> = {
-        tva_percentage: 10,
-        total_price: '1.404',
-      }
       const created_receipt = (
         await ReceiptsService.createReceipt(receipt_sample.tva_percentage, receipt_sample.total_price, transaction)
       )._unsafeUnwrap()
