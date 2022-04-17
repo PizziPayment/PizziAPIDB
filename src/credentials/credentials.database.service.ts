@@ -35,7 +35,7 @@ export class CredentialsService {
     ).andThen(okIfNotNullElse(CredentialsServiceError.OwnerNotFound))
   }
 
-  static getCredentialFromMailAndPassword(
+  static getCredentialFromEmailAndPassword(
     email: string,
     hashed_password: string,
     transaction: Transaction | null = null
@@ -92,14 +92,14 @@ export class CredentialsService {
     id_type: 'user' | 'shop' | 'admin',
     id: number,
     email: string,
-    password: string,
+    hashed_password: string,
     transaction: Transaction | null = null
   ): CredentialsServiceResult<CredentialModel> {
     return ResultAsync.fromPromise(
       Credential.create(
         {
           email: email,
-          password: password,
+          password: hashed_password,
           [`${id_type}_id`]: id,
         },
         { transaction }
@@ -117,25 +117,6 @@ export class CredentialsService {
       .andThen(okIfNotNullElse(CredentialsServiceError.DuplicatedEmail))
       .map(() => null)
   }
-}
-
-function nonNullCredentialValues(
-  email: string | null,
-  password: string | null,
-  user_id: number | null,
-  shop_id: number | null,
-  admin_id: number | null
-): Record<string, string | number> {
-  const record: Record<string, string | number> = {}
-  const values = { email: email, password: password, user_id: user_id, shop_id: shop_id, admin_id: admin_id }
-
-  for (const [key, value] of Object.entries(values)) {
-    if (value !== undefined && value !== null) {
-      record[key] = value
-    }
-  }
-
-  return record
 }
 
 // Pipeline
