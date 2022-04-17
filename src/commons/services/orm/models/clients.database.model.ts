@@ -1,4 +1,5 @@
-import { AutoIncrement, Column, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, Column, Model, HasMany, PrimaryKey, Table } from 'sequelize-typescript'
+import Token from './tokens.database.model'
 
 interface ClientAttributes {
   id: number
@@ -20,4 +21,7 @@ export default class Client extends Model<ClientAttributes, ClientCreation> {
 
   @Column({ allowNull: false })
   client_secret!: string
+
+  @HasMany(() => Token, { onDelete: 'CASCADE' })
+  tokens!: Array<Token>
 }

@@ -7,11 +7,14 @@ import {
   initOrm,
   ShopModel,
   ShopsServices,
+  TokensService,
+  TokensServiceError,
   UserModel,
   UsersServices,
 } from '../../src'
 import { config } from '../common/config'
 import { credential, shop, user } from '../common/models'
+import { setupToken } from './tokens.test'
 
 // @ts-ignore
 let sequelize: Sequelize = undefined
@@ -96,6 +99,17 @@ describe('Credential domain', () => {
       expect(retrieve_credential.shop_id).toBeNull()
       expect(retrieve_credential.user_id).toBe(created_user.id)
     })
+  })
+
+  it('should be able to delete a credential and its tokens', async () => {
+    const [_, __, created_cred, created_token] = await setupToken(transaction)
+
+    expect((await CredentialsService.deleteCredentialFromId(created_cred.id, transaction)).isOk()).toBeTruthy()
+    const res = await TokensService.getTokenFromId(created_token.id, transaction)
+    expect(res.isErr()).toBeTruthy()
+    const error = res._unsafeUnwrapErr()
+
+    expect(error).toBe(TokensServiceError.TokenNotFound)
   })
 
   describe('should be able to change', () => {

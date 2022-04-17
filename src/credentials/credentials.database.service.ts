@@ -1,4 +1,4 @@
-import { ResultAsync } from 'neverthrow'
+import { errAsync, okAsync, ResultAsync } from 'neverthrow'
 import Credential from '../commons/services/orm/models/credentials.database.model'
 import Token from '../commons/services/orm/models/tokens.database.model'
 import { CredentialModel } from './models/credential.model'
@@ -19,10 +19,16 @@ export class CredentialsService {
     credential_id: number,
     transaction: Transaction | null = null
   ): CredentialsServiceResult<null> {
-    return this.getCredentialFromId(credential_id, transaction)
-      .andThen(onTransaction(transaction, destroyOwnersTokens))
-      .andThen(onTransaction(transaction, destroyCredential))
-      .map(() => null)
+    return ResultAsync.fromPromise(
+      Credential.destroy({ where: { id: credential_id }, transaction }),
+      () => CredentialsServiceError.DatabaseError
+    ).andThen((nb) => {
+      if (nb == 0) {
+        return errAsync(CredentialsServiceError.OwnerNotFound)
+      } else {
+        return okAsync(null)
+      }
+    })
   }
 
   static getCredentialFromId(
@@ -127,16 +133,6 @@ function destroyOwnersTokens(
 ): CredentialsServiceResult<CredentialModel> {
   return ResultAsync.fromPromise(
     Token.destroy({ where: { credential_id: credential.id }, transaction }),
-    () => CredentialsServiceError.DatabaseError
-  ).map(() => credential)
-}
-
-function destroyCredential(
-  credential: CredentialModel,
-  transaction: Transaction | null
-): CredentialsServiceResult<CredentialModel> {
-  return ResultAsync.fromPromise(
-    Credential.destroy({ where: { id: credential.id }, transaction }),
     () => CredentialsServiceError.DatabaseError
   ).map(() => credential)
 }
