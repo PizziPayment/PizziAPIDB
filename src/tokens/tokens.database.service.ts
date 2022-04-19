@@ -2,7 +2,7 @@ import { randomBytes } from 'crypto'
 import { ResultAsync } from 'neverthrow'
 import { Transaction } from 'sequelize'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
-import { createDateWithOffset } from '../commons/services/date.service'
+import { createAccessTokenLifetime, createRefreshTokenLifetime } from '../commons/services/date.service'
 import Token, { TokenCreation } from '../commons/services/orm/models/tokens.database.model'
 import { TokenModel } from './models/token.model'
 
@@ -13,31 +13,33 @@ export enum TokensServiceError {
   DatabaseError,
 }
 
-const createAccessTokenLifetime = () => {
-  return createDateWithOffset('hour', 1)
-}
-const createRefreshTokenLifetime = () => {
-  return createDateWithOffset('day', 30)
-}
-
 export class TokensService {
   static generateTokenBetweenClientAndCredential(
     client_id: number,
     credential_id: number,
+    access_expires_at: Date = createAccessTokenLifetime(),
+    refresh_expires_at: Date = createRefreshTokenLifetime(),
     transaction: Transaction | null = null
   ): TokensServiceResult<TokenModel> {
     return ResultAsync.fromPromise(
-      Token.create(TokensService.generateToken(client_id, credential_id), { transaction }),
+      Token.create(TokensService.generateToken(client_id, credential_id, access_expires_at, refresh_expires_at), {
+        transaction,
+      }),
       () => TokensServiceError.DatabaseError
     )
   }
 
-  static refreshToken(token: TokenModel, transaction: Transaction | null = null): TokensServiceResult<TokenModel> {
+  static refreshToken(
+    token: TokenModel,
+    access_expires_at: Date = createAccessTokenLifetime(),
+    refresh_expires_at: Date = createRefreshTokenLifetime(),
+    transaction: Transaction | null = null
+  ): TokensServiceResult<TokenModel> {
     return ResultAsync.fromPromise(
       Token.update(
         {
-          access_expires_at: createAccessTokenLifetime(),
-          refresh_expires_at: createRefreshTokenLifetime(),
+          access_expires_at,
+          refresh_expires_at,
         },
         { where: { id: token.id }, transaction, returning: true }
       ),
@@ -89,15 +91,19 @@ export class TokensService {
     ).map(() => null)
   }
 
-  private static generateToken(client_id: number, credential_id: number): TokenCreation {
-    const token = {
+  private static generateToken(
+    client_id: number,
+    credential_id: number,
+    access_expires_at: Date,
+    refresh_expires_at: Date
+  ): TokenCreation {
+    return {
       access_token: randomBytes(20).toString('hex'),
-      access_expires_at: createAccessTokenLifetime(),
+      access_expires_at,
       refresh_token: randomBytes(20).toString('hex'),
-      refresh_expires_at: createRefreshTokenLifetime(),
+      refresh_expires_at,
       client_id,
       credential_id,
     }
-    return token
   }
 }

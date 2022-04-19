@@ -22,13 +22,9 @@ export class CredentialsService {
     return ResultAsync.fromPromise(
       Credential.destroy({ where: { id: credential_id }, transaction }),
       () => CredentialsServiceError.DatabaseError
-    ).andThen((nb) => {
-      if (nb == 0) {
-        return errAsync(CredentialsServiceError.OwnerNotFound)
-      } else {
-        return okAsync(null)
-      }
-    })
+    )
+      .andThen(okIfNotNullElse(CredentialsServiceError.OwnerNotFound))
+      .map(() => null)
   }
 
   static getCredentialFromId(

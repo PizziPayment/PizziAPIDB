@@ -11,6 +11,8 @@ import {
   TokensServiceError,
   UserModel,
   UsersServices,
+  createAccessTokenLifetime,
+  createRefreshTokenLifetime,
 } from '../../src'
 import { config } from '../common/config'
 import { credential, user } from '../common/models'
@@ -55,7 +57,13 @@ export async function setupToken(t: Transaction): Promise<[ClientModel, UserMode
   expect(res_cred.isOk()).toBeTruthy()
   const created_cred = res_cred._unsafeUnwrap()
 
-  const res_token = await TokensService.generateTokenBetweenClientAndCredential(created_client.id, created_cred.id, t)
+  const res_token = await TokensService.generateTokenBetweenClientAndCredential(
+    created_client.id,
+    created_cred.id,
+    createAccessTokenLifetime(),
+    createRefreshTokenLifetime(),
+    t
+  )
   expect(res_token.isOk()).toBeTruthy()
   const created_token = res_token._unsafeUnwrap()
 
@@ -76,7 +84,12 @@ describe('Token domain', () => {
   it('should be able to refresh an expired token', async () => {
     const [_, __, ___, expried_token] = await setupToken(transaction)
 
-    const res = await TokensService.refreshToken(expried_token, transaction)
+    const res = await TokensService.refreshToken(
+      expried_token,
+      createAccessTokenLifetime(),
+      createRefreshTokenLifetime(),
+      transaction
+    )
     expect(res.isOk()).toBeTruthy()
     const new_token = res._unsafeUnwrap()
 
@@ -148,7 +161,15 @@ describe('Token domain', () => {
       const [_, __, created_cred, ___] = await setupToken(transaction)
 
       expect(
-        (await TokensService.generateTokenBetweenClientAndCredential(666, created_cred.id, transaction)).isErr()
+        (
+          await TokensService.generateTokenBetweenClientAndCredential(
+            666,
+            created_cred.id,
+            createAccessTokenLifetime(),
+            createRefreshTokenLifetime(),
+            transaction
+          )
+        ).isErr()
       ).toBeTruthy()
     })
 
@@ -156,7 +177,15 @@ describe('Token domain', () => {
       const [created_client, _, __, ___] = await setupToken(transaction)
 
       expect(
-        (await TokensService.generateTokenBetweenClientAndCredential(created_client.id, 666, transaction)).isErr()
+        (
+          await TokensService.generateTokenBetweenClientAndCredential(
+            created_client.id,
+            666,
+            createAccessTokenLifetime(),
+            createRefreshTokenLifetime(),
+            transaction
+          )
+        ).isErr()
       ).toBeTruthy()
     })
   })

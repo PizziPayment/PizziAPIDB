@@ -20,5 +20,6 @@ export * from './transactions/transactions.database.service'
 export * from './shop_items/shop_items.database.service'
 export * from './receipts/receipts.database.service'
 
+export * from './commons/services/date.service'
 export * from './commons/services/encryption/encryption.service'
 export * from './init'
