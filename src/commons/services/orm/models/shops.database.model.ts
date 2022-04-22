@@ -1,4 +1,5 @@
-import { AutoIncrement, Column, ForeignKey, HasMany, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, Column, ForeignKey, HasMany, HasOne, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import Credential from './credentials.database.model'
 import Picture from './pictures.database.model'
 import Transaction from './transactions.database.model'
 
@@ -14,6 +15,7 @@ interface ShopAttributes {
   instagram?: string
   twitter?: string
   facebook?: string
+  enabled: boolean
 }
 
 export type ShopCreation = Omit<ShopAttributes, 'id'>
@@ -55,6 +57,12 @@ export default class Shop extends Model<ShopAttributes, ShopCreation> {
 
   @Column
   facebook?: string
+
+  @Column
+  enabled!: boolean
+
+  @HasOne(() => Credential)
+  credential!: Credential
 
   @HasMany(() => Transaction)
   transactions!: Array<Transaction>

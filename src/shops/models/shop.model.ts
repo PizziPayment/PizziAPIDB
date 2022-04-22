@@ -10,4 +10,7 @@ export interface ShopModel {
   instagram?: string
   twitter?: string
   facebook?: string
+  enabled: boolean
 }
+
+export type ShopUpdateModel = Pick<ShopModel, 'description' | 'website' | 'instagram' | 'twitter' | 'facebook'>

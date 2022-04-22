@@ -1,8 +1,11 @@
 import { ResultAsync } from 'neverthrow'
-import { ShopModel } from './models/shop.model'
+import { ShopModel, ShopUpdateModel } from './models/shop.model'
 import Shop from '../commons/services/orm/models/shops.database.model'
-import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
+import { okIfNotNullElse, mapUpdatedRow } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
+import { assignNonNullValues } from '../commons/services/util.service'
+import Credential from '../commons/services/orm/models/credentials.database.model'
+import { CredentialsService } from '../credentials/credentials.database.service'
 import { onTransaction } from '../commons/extensions/generators.extension'
 
 export type ShopsServiceResult<T> = ResultAsync<T, ShopsServiceError>
@@ -13,15 +16,40 @@ export enum ShopsServiceError {
 }
 
 export class ShopsServices {
-  static deleteShopById(shop_id: number, transaction: Transaction | null = null): ShopsServiceResult<null> {
-    return this.getShopFromId(shop_id, transaction)
-      .andThen(onTransaction(transaction, destroyShop))
-      .map(() => null)
+  static disableShopById(id: number, transaction: Transaction): ShopsServiceResult<null> {
+    return ResultAsync.fromPromise(
+      Shop.findOne({ where: { id, enabled: true }, include: [{ model: Credential }], transaction }),
+      () => ShopsServiceError.DatabaseError
+    )
+      .andThen(okIfNotNullElse(ShopsServiceError.ShopNotFound))
+      .andThen(
+        onTransaction(
+          transaction,
+          (shop: Shop, transaction: Transaction | null): ShopsServiceResult<Shop> =>
+            ResultAsync.fromPromise(
+              shop.set('enabled', false).save({ transaction }),
+              () => ShopsServiceError.DatabaseError
+            )
+        )
+      )
+      .andThen(
+        onTransaction(
+          transaction,
+          (shop: Shop, transaction: Transaction | null): ShopsServiceResult<null> =>
+            CredentialsService.deleteCredentialFromId(shop.credential.id, transaction)
+              .map(() => null)
+              .mapErr(() => ShopsServiceError.DatabaseError)
+        )
+      )
   }
 
-  static getShopFromId(shop_id: number, transaction: Transaction | null = null): ShopsServiceResult<ShopModel> {
+  static getShopFromId(
+    id: number,
+    enabled: boolean = true,
+    transaction: Transaction | null = null
+  ): ShopsServiceResult<ShopModel> {
     return ResultAsync.fromPromise(
-      Shop.findOne({ where: { id: shop_id }, transaction }),
+      Shop.findOne({ where: { id, enabled }, transaction }),
       () => ShopsServiceError.DatabaseError
     ).andThen(okIfNotNullElse(ShopsServiceError.ShopNotFound))
   }
@@ -46,19 +74,26 @@ export class ShopsServices {
           instagram: undefined,
           twitter: undefined,
           website: undefined,
+          enabled: true,
         },
         { transaction }
       ),
       () => ShopsServiceError.DatabaseError
     )
   }
-}
 
-// Pipeline
-
-function destroyShop(shop: ShopModel, transaction: Transaction | null): ShopsServiceResult<ShopModel> {
-  return ResultAsync.fromPromise(
-    Shop.destroy({ where: { id: shop.id }, transaction }),
-    () => ShopsServiceError.DatabaseError
-  ).map(() => shop)
+  static updateShopFromId(
+    id: number,
+    model: ShopUpdateModel,
+    transaction: Transaction | null = null
+  ): ShopsServiceResult<ShopModel> {
+    return ResultAsync.fromPromise(
+      Shop.update(assignNonNullValues(model), {
+        where: { id },
+        returning: true,
+        transaction,
+      }),
+      () => ShopsServiceError.DatabaseError
+    ).andThen(mapUpdatedRow(ShopsServiceError.ShopNotFound))
+  }
 }
