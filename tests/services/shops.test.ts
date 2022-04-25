@@ -1,15 +1,7 @@
 import { Sequelize, Transaction } from 'sequelize'
-import {
-  CredentialsService,
-  CredentialsServiceError,
-  initOrm,
-  ShopItemsService,
-  ShopModel,
-  ShopsServices,
-  ShopUpdateModel,
-} from '../../src'
+import { initOrm, ShopModel, ShopsServices, ShopUpdateModel } from '../../src'
 import { config } from '../common/config'
-import { credential, shop } from '../common/models'
+import { shop } from '../common/models'
 
 // @ts-ignore
 let sequelize: Sequelize = undefined
@@ -85,22 +77,8 @@ describe('Shop domain', () => {
   it('should be able able to disable a shop', async () => {
     const created_shop = await setupShop()
 
-    let res_cred = await CredentialsService.createCredentialWithId(
-      'shop',
-      created_shop.id,
-      credential.email,
-      credential.password,
-      transaction
-    )
-    expect(res_cred.isOk()).toBeTruthy()
-    const created_cred = res_cred._unsafeUnwrap()
-
     expect((await ShopsServices.disableShopById(created_shop.id, transaction)).isOk()).toBeTruthy()
 
     expect((await ShopsServices.getShopFromId(created_shop.id, false, transaction)).isOk()).toBeTruthy()
-
-    res_cred = await CredentialsService.getCredentialFromId(created_cred.id, transaction)
-    expect(res_cred.isErr()).toBeTruthy()
-    expect(res_cred._unsafeUnwrapErr()).toBe(CredentialsServiceError.OwnerNotFound)
   })
 })

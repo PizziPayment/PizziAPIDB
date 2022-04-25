@@ -4,9 +4,6 @@ import Shop from '../commons/services/orm/models/shops.database.model'
 import { okIfNotNullElse, mapUpdatedRow } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
 import { assignNonNullValues } from '../commons/services/util.service'
-import Credential from '../commons/services/orm/models/credentials.database.model'
-import { CredentialsService } from '../credentials/credentials.database.service'
-import { onTransaction } from '../commons/extensions/generators.extension'
 
 export type ShopsServiceResult<T> = ResultAsync<T, ShopsServiceError>
 
@@ -16,31 +13,13 @@ export enum ShopsServiceError {
 }
 
 export class ShopsServices {
-  static disableShopById(id: number, transaction: Transaction): ShopsServiceResult<null> {
+  static disableShopById(id: number, transaction: Transaction | null = null): ShopsServiceResult<null> {
     return ResultAsync.fromPromise(
-      Shop.findOne({ where: { id, enabled: true }, include: [{ model: Credential }], transaction }),
+      Shop.update({ enabled: false }, { where: { id, enabled: true }, transaction }),
       () => ShopsServiceError.DatabaseError
     )
       .andThen(okIfNotNullElse(ShopsServiceError.ShopNotFound))
-      .andThen(
-        onTransaction(
-          transaction,
-          (shop: Shop, transaction: Transaction | null): ShopsServiceResult<Shop> =>
-            ResultAsync.fromPromise(
-              shop.set('enabled', false).save({ transaction }),
-              () => ShopsServiceError.DatabaseError
-            )
-        )
-      )
-      .andThen(
-        onTransaction(
-          transaction,
-          (shop: Shop, transaction: Transaction | null): ShopsServiceResult<null> =>
-            CredentialsService.deleteCredentialFromId(shop.credential.id, transaction)
-              .map(() => null)
-              .mapErr(() => ShopsServiceError.DatabaseError)
-        )
-      )
+      .map(() => null)
   }
 
   static getShopFromId(
