@@ -13,6 +13,12 @@ export enum ShopsServiceError {
 }
 
 export class ShopsServices {
+  static deleteShopById(id: number, transaction: Transaction | null = null): ShopsServiceResult<null> {
+    return ResultAsync.fromPromise(Shop.destroy({ where: { id }, transaction }), () => ShopsServiceError.DatabaseError)
+      .andThen(okIfNotNullElse(ShopsServiceError.ShopNotFound))
+      .map(() => null)
+  }
+
   static disableShopById(id: number, transaction: Transaction | null = null): ShopsServiceResult<null> {
     return ResultAsync.fromPromise(
       Shop.update({ enabled: false }, { where: { id, enabled: true }, transaction }),
@@ -22,9 +28,16 @@ export class ShopsServices {
       .map(() => null)
   }
 
-  static getShopFromId(
+  static getShopFromId(id: number, transaction: Transaction | null = null): ShopsServiceResult<ShopModel> {
+    return ResultAsync.fromPromise(
+      Shop.findOne({ where: { id }, transaction }),
+      () => ShopsServiceError.DatabaseError
+    ).andThen(okIfNotNullElse(ShopsServiceError.ShopNotFound))
+  }
+
+  static getShopFromIdAndEnable(
     id: number,
-    enabled: boolean = true,
+    enabled: boolean,
     transaction: Transaction | null = null
   ): ShopsServiceResult<ShopModel> {
     return ResultAsync.fromPromise(

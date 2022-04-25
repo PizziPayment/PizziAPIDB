@@ -1,5 +1,5 @@
 import { Sequelize, Transaction } from 'sequelize'
-import { initOrm, ShopModel, ShopsServices, ShopUpdateModel } from '../../src'
+import { initOrm, ShopModel, ShopsServiceError, ShopsServices, ShopUpdateModel } from '../../src'
 import { config } from '../common/config'
 import { shop } from '../common/models'
 
@@ -35,7 +35,7 @@ describe('Shop domain', () => {
   it('should be able able to create a shop', async () => {
     const created_shop = await setupShop()
 
-    const res = await ShopsServices.getShopFromId(created_shop.id, true, transaction)
+    const res = await ShopsServices.getShopFromId(created_shop.id, transaction)
     expect(res.isOk()).toBeTruthy()
     const retrieved_shop = res._unsafeUnwrap()
 
@@ -79,6 +79,16 @@ describe('Shop domain', () => {
 
     expect((await ShopsServices.disableShopById(created_shop.id, transaction)).isOk()).toBeTruthy()
 
-    expect((await ShopsServices.getShopFromId(created_shop.id, false, transaction)).isOk()).toBeTruthy()
+    expect((await ShopsServices.getShopFromIdAndEnable(created_shop.id, false, transaction)).isOk()).toBeTruthy()
+  })
+
+  it('should be able able to delete a shop', async () => {
+    const created_shop = await setupShop()
+
+    expect((await ShopsServices.deleteShopById(created_shop.id, transaction)).isOk()).toBeTruthy()
+
+    const res = await ShopsServices.getShopFromId(created_shop.id, transaction)
+    expect(res.isErr()).toBeTruthy()
+    expect(res._unsafeUnwrapErr()).toBe(ShopsServiceError.ShopNotFound)
   })
 })
