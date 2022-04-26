@@ -69,7 +69,9 @@ export class UsersServices {
       .andThen(okIfNotNullElse(UsersServiceError.UserNotFound))
       .andThen((user) =>
         ResultAsync.fromPromise(
-          Object.assign(user, assignNonNullValues({ name, surname, address, zipcode })).save({ transaction }),
+          Object.assign(user, assignNonNullValues({ firstname: name, surname, address, zipcode })).save({
+            transaction,
+          }),
           () => UsersServiceError.DatabaseError
         )
       )
