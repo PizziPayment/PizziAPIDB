@@ -88,11 +88,12 @@ export class ShopItemsService {
     sort_by: ShopItemSortBy,
     order: Order,
     query: string = '',
+    enabled: boolean = true,
     transaction: Transaction | null = null
   ): ShopItemsServiceResult<Array<ShopItemModel>> {
     return ResultAsync.fromPromise(
       ShopItem.findAndCountAll({
-        where: { name: { [Op.like]: `%${query}%` }, shop_id: shop_id },
+        where: { name: { [Op.like]: `%${query}%` }, shop_id, enabled },
         order: [[sort_by, order]],
         limit: nb_items,
         offset: (page - 1) * nb_items,
