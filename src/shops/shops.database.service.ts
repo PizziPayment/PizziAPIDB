@@ -19,29 +19,9 @@ export class ShopsServices {
       .map(() => null)
   }
 
-  static disableShopById(id: number, transaction: Transaction | null = null): ShopsServiceResult<null> {
-    return ResultAsync.fromPromise(
-      Shop.update({ enabled: false }, { where: { id, enabled: true }, transaction }),
-      () => ShopsServiceError.DatabaseError
-    )
-      .andThen(okIfNotNullElse(ShopsServiceError.ShopNotFound))
-      .map(() => null)
-  }
-
   static getShopFromId(id: number, transaction: Transaction | null = null): ShopsServiceResult<ShopModel> {
     return ResultAsync.fromPromise(
       Shop.findOne({ where: { id }, transaction }),
-      () => ShopsServiceError.DatabaseError
-    ).andThen(okIfNotNullElse(ShopsServiceError.ShopNotFound))
-  }
-
-  static getShopFromIdAndEnable(
-    id: number,
-    enabled: boolean,
-    transaction: Transaction | null = null
-  ): ShopsServiceResult<ShopModel> {
-    return ResultAsync.fromPromise(
-      Shop.findOne({ where: { id, enabled }, transaction }),
       () => ShopsServiceError.DatabaseError
     ).andThen(okIfNotNullElse(ShopsServiceError.ShopNotFound))
   }
@@ -66,7 +46,6 @@ export class ShopsServices {
           instagram: undefined,
           twitter: undefined,
           website: undefined,
-          enabled: true,
         },
         { transaction }
       ),

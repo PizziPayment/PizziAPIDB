@@ -74,14 +74,6 @@ describe('Shop domain', () => {
     expect(updated_shop.facebook).toBe(new_values.facebook)
   })
 
-  it('should be able able to disable a shop', async () => {
-    const created_shop = await setupShop()
-
-    expect((await ShopsServices.disableShopById(created_shop.id, transaction)).isOk()).toBeTruthy()
-
-    expect((await ShopsServices.getShopFromIdAndEnable(created_shop.id, false, transaction)).isOk()).toBeTruthy()
-  })
-
   it('should be able able to delete a shop', async () => {
     const created_shop = await setupShop()
 

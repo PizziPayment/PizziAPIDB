@@ -15,7 +15,6 @@ interface ShopAttributes {
   instagram?: string
   twitter?: string
   facebook?: string
-  enabled: boolean
 }
 
 export type ShopCreation = Omit<ShopAttributes, 'id'>
@@ -57,9 +56,6 @@ export default class Shop extends Model<ShopAttributes, ShopCreation> {
 
   @Column
   facebook?: string
-
-  @Column
-  enabled!: boolean
 
   @HasOne(() => Credential)
   credential!: Credential
