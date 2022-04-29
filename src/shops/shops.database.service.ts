@@ -1,7 +1,7 @@
 import { ResultAsync } from 'neverthrow'
 import { ShopModel, ShopUpdateModel } from './models/shop.model'
 import Shop from '../commons/services/orm/models/shops.database.model'
-import { okIfNotNullElse, mapUpdatedRow } from '../commons/extensions/neverthrow.extension'
+import { okIfNotNullElse, okIfOneElse } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
 import { assignNonNullValues } from '../commons/services/util.service'
 
@@ -65,6 +65,6 @@ export class ShopsServices {
         transaction,
       }),
       () => ShopsServiceError.DatabaseError
-    ).andThen(mapUpdatedRow(ShopsServiceError.ShopNotFound))
+    ).andThen(okIfOneElse(ShopsServiceError.ShopNotFound))
   }
 }
