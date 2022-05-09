@@ -1,9 +1,9 @@
 import { ResultAsync } from 'neverthrow'
-import { ShopModel } from './models/shop.model'
+import { ShopModel, ShopUpdateModel } from './models/shop.model'
 import Shop from '../commons/services/orm/models/shops.database.model'
-import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
+import { okIfNotNullElse, okIfOneElse } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
-import { onTransaction } from '../commons/extensions/generators.extension'
+import { assignNonNullValues } from '../commons/services/util.service'
 
 export type ShopsServiceResult<T> = ResultAsync<T, ShopsServiceError>
 
@@ -13,15 +13,15 @@ export enum ShopsServiceError {
 }
 
 export class ShopsServices {
-  static deleteShopById(shop_id: number, transaction: Transaction | null = null): ShopsServiceResult<null> {
-    return this.getShopFromId(shop_id, transaction)
-      .andThen(onTransaction(transaction, destroyShop))
+  static deleteShopById(id: number, transaction: Transaction | null = null): ShopsServiceResult<null> {
+    return ResultAsync.fromPromise(Shop.destroy({ where: { id }, transaction }), () => ShopsServiceError.DatabaseError)
+      .andThen(okIfNotNullElse(ShopsServiceError.ShopNotFound))
       .map(() => null)
   }
 
-  static getShopFromId(shop_id: number, transaction: Transaction | null = null): ShopsServiceResult<ShopModel> {
+  static getShopFromId(id: number, transaction: Transaction | null = null): ShopsServiceResult<ShopModel> {
     return ResultAsync.fromPromise(
-      Shop.findOne({ where: { id: shop_id }, transaction }),
+      Shop.findOne({ where: { id }, transaction }),
       () => ShopsServiceError.DatabaseError
     ).andThen(okIfNotNullElse(ShopsServiceError.ShopNotFound))
   }
@@ -52,13 +52,19 @@ export class ShopsServices {
       () => ShopsServiceError.DatabaseError
     )
   }
-}
 
-// Pipeline
-
-function destroyShop(shop: ShopModel, transaction: Transaction | null): ShopsServiceResult<ShopModel> {
-  return ResultAsync.fromPromise(
-    Shop.destroy({ where: { id: shop.id }, transaction }),
-    () => ShopsServiceError.DatabaseError
-  ).map(() => shop)
+  static updateShopFromId(
+    id: number,
+    model: ShopUpdateModel,
+    transaction: Transaction | null = null
+  ): ShopsServiceResult<ShopModel> {
+    return ResultAsync.fromPromise(
+      Shop.update(assignNonNullValues(model), {
+        where: { id },
+        returning: true,
+        transaction,
+      }),
+      () => ShopsServiceError.DatabaseError
+    ).andThen(okIfOneElse(ShopsServiceError.ShopNotFound))
+  }
 }

@@ -11,3 +11,5 @@ export interface ShopModel {
   twitter?: string
   facebook?: string
 }
+
+export type ShopUpdateModel = Pick<ShopModel, 'description' | 'website' | 'instagram' | 'twitter' | 'facebook'>

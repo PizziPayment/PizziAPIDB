@@ -4,6 +4,7 @@ import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import { Order } from '../commons/services/sequelize/model'
 import ShopItem from '../commons/services/orm/models/shop_items.database.model'
 import { intoShopItemModel, ShopItemCreationModel, ShopItemModel, ShopItemSortBy } from './models/shop_items.model'
+import { assignNonNullValues } from '../commons/services/util.service'
 
 export enum ShopItemsServiceError {
   NotFound,
@@ -111,7 +112,7 @@ export class ShopItemsService {
     transaction: Transaction | null = null
   ): ShopItemsServiceResult<ShopItemModel> {
     return ShopItemsService.deleteShopItemById(id, transaction).andThen((shop_item) => {
-      const new_shop_item = Object.assign(shop_item, nonNullShopItemValues(name, price))
+      const new_shop_item = Object.assign(shop_item, assignNonNullValues({ name, price }))
 
       return ShopItemsService.createShopItem(
         new_shop_item.shop_id,
@@ -130,16 +131,4 @@ export class ShopItemsService {
       .andThen(okIfNotNullElse(ShopItemsServiceError.NotFound))
       .map((updated_shop_items) => intoShopItemModel(updated_shop_items[1][0]))
   }
-}
-
-function nonNullShopItemValues(name: string | null, price: string | null): Record<string, string> {
-  const record: Record<string, string> = {}
-  const values = { name: name, price: price }
-
-  for (const [key, value] of Object.entries(values)) {
-    if (value !== undefined && value !== null) {
-      record[key] = value
-    }
-  }
-  return record
 }

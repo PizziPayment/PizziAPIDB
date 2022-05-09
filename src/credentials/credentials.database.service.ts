@@ -119,25 +119,6 @@ export class CredentialsService {
   }
 }
 
-function nonNullCredentialValues(
-  email: string | null,
-  password: string | null,
-  user_id: number | null,
-  shop_id: number | null,
-  admin_id: number | null
-): Record<string, string | number> {
-  const record: Record<string, string | number> = {}
-  const values = { email: email, password: password, user_id: user_id, shop_id: shop_id, admin_id: admin_id }
-
-  for (const [key, value] of Object.entries(values)) {
-    if (value !== undefined && value !== null) {
-      record[key] = value
-    }
-  }
-
-  return record
-}
-
 // Pipeline
 
 function destroyOwnersTokens(
