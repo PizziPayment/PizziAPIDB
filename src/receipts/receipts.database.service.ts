@@ -13,7 +13,7 @@ export enum ReceiptsServiceError {
 
 export type ReceiptsServiceResult<T> = ResultAsync<T, ReceiptsServiceError>
 
-export default class ReceiptsService {
+export class ReceiptsService {
   static getDetailedReceiptById(
     receipt_id: number,
     transaction: Transaction | null = null
