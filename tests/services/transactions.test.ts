@@ -1,8 +1,15 @@
 // @ts-ignore
 import { config } from '../common/config'
-import { ShopModel, ShopsServices, TransactionModel, TransactionsService, UserModel, UsersServices } from '../../src/'
+import {
+  ShopModel,
+  ShopsServices,
+  TransactionModel,
+  TransactionsService,
+  UserModel,
+  UsersServices,
+  ReceiptsService,
+} from '../../src/'
 import { initOrm } from '../../src'
-import ReceiptsService from '../../src/receipts/receipts.database.service'
 import { Sequelize, Transaction } from 'sequelize'
 import { TransactionState } from '../../src/commons/services/orm/models/transactions.database.model'
 import { ReceiptModel } from '../../src/receipts/models/receipts.model'
