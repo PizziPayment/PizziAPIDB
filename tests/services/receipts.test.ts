@@ -1,16 +1,16 @@
+import {
+  initOrm,
+  ReceiptItemsService,
+  ReceiptModel,
+  ReceiptsService,
+  ShopItemCreationModel,
+  ShopItemsService,
+  ShopsServices,
+} from '../../src'
 // @ts-ignore
 import { config } from '../common/config'
 // @ts-ignore
 import { addPadding } from '../common/service'
-import {
-  initOrm,
-  ShopItemCreationModel,
-  ShopItemsService,
-  ShopsServices,
-  ReceiptsService,
-  ReceiptItemsService,
-} from '../../src'
-import { ReceiptModel } from '../../src/receipts/models/receipts.model'
 
 // @ts-ignore
 let sequelize: Sequelize = undefined

@@ -1,14 +1,14 @@
-// @ts-ignore
-import { config } from '../common/config'
 import {
   initOrm,
+  ReceiptItemsService,
+  ReceiptModel,
+  ReceiptsService,
   ShopItemCreationModel,
   ShopItemsService,
   ShopsServices,
-  ReceiptsService,
-  ReceiptItemsService,
 } from '../../src'
-import { ReceiptModel } from '../../src/receipts/models/receipts.model'
+// @ts-ignore
+import { config } from '../common/config'
 
 // @ts-ignore
 let sequelize: Sequelize = undefined
