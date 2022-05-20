@@ -12,7 +12,7 @@ export interface TransactionAttributes {
   receipt_id: number
 }
 
-export type PaymentMethod = 'card' | 'cash'
+export type PaymentMethod = 'card' | 'cash' | 'unassigned'
 export type TransactionState = 'failed' | 'pending' | 'validated'
 
 export type TransactionCreation = Omit<TransactionAttributes, 'id'>

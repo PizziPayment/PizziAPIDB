@@ -71,6 +71,19 @@ export class TransactionsService {
     ).map(intoTransactionModel)
   }
 
+  static updateTransactionPaymentMethodFromId(
+    transaction_id: number,
+    payment_method: PaymentMethod,
+    transaction: SequelizeTransaction | null = null
+  ): TransactionsServiceResult<null> {
+    return ResultAsync.fromPromise(
+      Transaction.update({ payment_method: payment_method }, { where: { id: transaction_id }, transaction, returning: true }),
+      () => TransactionsServiceError.DatabaseError
+    )
+    .andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
+    .map(() => null)
+  }
+
   static updateTransactionStateFromId(
     transaction_id: number,
     state: TransactionState,

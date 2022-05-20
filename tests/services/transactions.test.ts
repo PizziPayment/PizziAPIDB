@@ -10,7 +10,7 @@ import {
   UserModel,
   UsersServices,
 } from '../../src/'
-import { TransactionState } from '../../src/commons/services/orm/models/transactions.database.model'
+import { PaymentMethod, TransactionState } from '../../src/commons/services/orm/models/transactions.database.model'
 // @ts-ignore
 import { config } from '../common/config'
 
@@ -103,6 +103,29 @@ describe('Transaction domain', () => {
       )._unsafeUnwrap()
 
       expect(retrieved_transaction.state).toBe(new_state)
+    } finally {
+      await transaction.rollback()
+    }
+  })
+
+  it("should be able to change a transaction's payment method", async () => {
+    const transaction = await sequelize.transaction()
+    const new_payment_method: PaymentMethod = 'cash'
+    try {
+      const [receipt, user, shop] = await setupReceiptUserAndShop(transaction)
+      const created_transaction = (
+        await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction)
+      )._unsafeUnwrap()
+
+      expect(
+        (await TransactionsService.updateTransactionPaymentMethodFromId(created_transaction.id, new_payment_method, transaction)).isOk()
+      ).toBeTruthy()
+
+      const retrieved_transaction = (
+        await TransactionsService.getTransactionById(created_transaction.id, transaction)
+      )._unsafeUnwrap()
+
+      expect(retrieved_transaction.payment_method).toBe(new_payment_method)
     } finally {
       await transaction.rollback()
     }
