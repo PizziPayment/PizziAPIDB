@@ -17,6 +17,18 @@ export interface TransactionModel {
   updated_at?: Date
 }
 
+export interface ExpandedTransactionModel extends Omit<TransactionModel, 'shop_id' | 'receipt_id'> {
+  shop: {
+    id: number
+    name: string
+    logo?: number
+  }
+  receipt: {
+    id: number
+    total_ttc: string
+  }
+}
+
 export function intoTransactionModel(model: TransactionAttributes): TransactionModel {
   return {
     id: model.id,
@@ -29,3 +41,4 @@ export function intoTransactionModel(model: TransactionAttributes): TransactionM
     updated_at: model.updated_at
   }
 }
+
