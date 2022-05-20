@@ -13,6 +13,8 @@ export interface TransactionModel {
   user_id?: number
   shop_id: number
   receipt_id: number
+  created_at: Date
+  updated_at?: Date
 }
 
 export function intoTransactionModel(model: TransactionAttributes): TransactionModel {
@@ -23,5 +25,7 @@ export function intoTransactionModel(model: TransactionAttributes): TransactionM
     user_id: model.user_id,
     shop_id: model.shop_id,
     receipt_id: model.receipt_id,
+    created_at: model.created_at,
+    updated_at: model.updated_at
   }
 }

@@ -35,7 +35,7 @@ async function setupReceiptUserAndShop(transaction: Transaction): Promise<[Recei
 
 describe('Transaction domain', () => {
   it('should be able to create a pending transaction', async () => {
-    const pending_transaction_sample: Omit<TransactionModel, 'id' | 'state' | 'shop_id' | 'user_id' | 'receipt_id'> = {
+    const pending_transaction_sample: Omit<TransactionModel, 'id' | 'state' | 'shop_id' | 'user_id' | 'receipt_id' | 'created_at' | 'updated_at'> = {
       payment_method: 'card',
     }
     const transaction = await sequelize.transaction()
