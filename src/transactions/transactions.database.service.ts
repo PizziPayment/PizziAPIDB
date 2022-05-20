@@ -70,7 +70,8 @@ export class TransactionsService {
         },
         receipt: {
           id: transaction.receipt_id,
-          total_ttc: transaction.receipt.total_price
+          total_ht: transaction.receipt.total_price,
+          tva_percentage: transaction.receipt.tva_percentage
         }
       }
     }))
