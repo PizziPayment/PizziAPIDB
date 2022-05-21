@@ -7,7 +7,7 @@ export interface TransactionAttributes {
   id: number
   state: string
   payment_method: string
-  user_id?: number | null
+  user_id?: number
   shop_id: number
   receipt_id: number
   created_at: Date
@@ -35,8 +35,7 @@ export default class Transaction extends Model<TransactionAttributes, Transactio
   payment_method!: string
 
   @ForeignKey(() => User)
-  @Column({ allowNull: true })
-  user_id?: number | null
+  user_id?: number
 
   @ForeignKey(() => Shop)
   @Column({ allowNull: false })
