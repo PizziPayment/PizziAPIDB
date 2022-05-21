@@ -30,6 +30,7 @@ export class ShopsServices {
     name: string,
     phone: string,
     address: string,
+    city: string,
     zipcode: number,
     transaction: Transaction | null = null
   ): ShopsServiceResult<ShopModel> {
@@ -37,6 +38,7 @@ export class ShopsServices {
       Shop.create(
         {
           address: address,
+          city: city,
           name: name,
           phone: phone,
           description: undefined,

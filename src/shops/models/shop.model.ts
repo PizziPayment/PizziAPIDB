@@ -4,6 +4,7 @@ export interface ShopModel {
   phone: string
   description?: string
   address: string
+  city: string
   zipcode: number
   logo?: number
   website?: string

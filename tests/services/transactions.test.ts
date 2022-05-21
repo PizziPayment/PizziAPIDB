@@ -29,7 +29,7 @@ async function setupReceiptUserAndShop(transaction: Transaction): Promise<[Recei
   return [
     (await ReceiptsService.createReceipt(10, '2000', transaction))._unsafeUnwrap(),
     (await UsersServices.createUser('test', 'test', 'test', 3000, transaction))._unsafeUnwrap(),
-    (await ShopsServices.createShop('test', '0202020202', 'address', 20000, transaction))._unsafeUnwrap(),
+    (await ShopsServices.createShop('test', '0202020202', 'address', 'city', 20000, transaction))._unsafeUnwrap(),
   ]
 }
 

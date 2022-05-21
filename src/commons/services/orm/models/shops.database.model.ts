@@ -9,6 +9,7 @@ interface ShopAttributes {
   phone: string
   description?: string
   address: string
+  city: string
   zipcode: number
   logo?: number
   website?: string
@@ -37,6 +38,9 @@ export default class Shop extends Model<ShopAttributes, ShopCreation> {
 
   @Column({ allowNull: false })
   address!: string
+
+  @Column({ allowNull: false })
+  city!: string
 
   @Column({ allowNull: false })
   zipcode!: number
