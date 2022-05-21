@@ -10,7 +10,7 @@ export interface TransactionModel {
   id: number
   state: TransactionState
   payment_method: PaymentMethod
-  user_id?: number
+  user_id?: number | null
   shop_id: number
   receipt_id: number
   created_at: Date
