@@ -37,7 +37,7 @@ export function intoTransactionModel(model: TransactionAttributes): TransactionM
     payment_method: model.payment_method as PaymentMethod,
     user_id: model.user_id,
     shop_id: model.shop_id,
-    receipt_id: model.receipt_id,
+    receipt_id: model.receipt_id || 1234567890,
     created_at: model.created_at,
     updated_at: model.updated_at
   }
