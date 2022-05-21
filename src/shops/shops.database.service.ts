@@ -29,6 +29,7 @@ export class ShopsServices {
   static createShop(
     name: string,
     phone: string,
+    siret: number,
     address: string,
     city: string,
     zipcode: number,
@@ -37,6 +38,7 @@ export class ShopsServices {
     return ResultAsync.fromPromise(
       Shop.create(
         {
+          siret: siret,
           address: address,
           city: city,
           name: name,
@@ -51,7 +53,10 @@ export class ShopsServices {
         },
         { transaction }
       ),
-      () => ShopsServiceError.DatabaseError
+      (e) => {
+        console.log(e)
+        return ShopsServiceError.DatabaseError
+      }
     )
   }
 

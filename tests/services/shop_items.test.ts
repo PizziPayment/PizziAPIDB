@@ -47,7 +47,7 @@ describe('Shop item domain', () => {
 
     try {
       const shop_id = (
-        await ShopsServices.createShop(shop.name, shop.phone, shop.address, shop.city, shop.zipcode, t)
+        await ShopsServices.createShop(shop.name, shop.phone, shop.siret,shop.address, shop.city, shop.zipcode, t)
       )._unsafeUnwrap().id
       const shop_item_sample = shop_items[0]
 
@@ -73,7 +73,7 @@ describe('Shop item domain', () => {
 
     try {
       const shop_id = (
-        await ShopsServices.createShop(shop.name, shop.phone, shop.address, shop.city, shop.zipcode, t)
+        await ShopsServices.createShop(shop.name, shop.phone, shop.siret, shop.address, shop.city, shop.zipcode, t)
       )._unsafeUnwrap().id
 
       const res = await ShopItemsService.createShopItems(shop_id, shop_items, t)
@@ -94,7 +94,7 @@ describe('Shop item domain', () => {
 
     try {
       const shop_id = (
-        await ShopsServices.createShop(shop.name, shop.phone, shop.address, shop.city, shop.zipcode, t)
+        await ShopsServices.createShop(shop.name, shop.phone, shop.siret, shop.address, shop.city, shop.zipcode, t)
       )._unsafeUnwrap().id
 
       let res = await ShopItemsService.createShopItem(shop_id, shop_items[0].name, shop_items[0].price, t)
@@ -170,7 +170,7 @@ describe('Shop item domain', () => {
 
       try {
         const shop_id = (
-          await ShopsServices.createShop(shop.name, shop.phone, shop.address, shop.city, shop.zipcode, t)
+          await ShopsServices.createShop(shop.name, shop.phone, shop.siret,shop.address, shop.city, shop.zipcode, t)
         )._unsafeUnwrap().id
 
         const res = await ShopItemsService.createShopItems(shop_id, shop_items, t)
@@ -198,7 +198,7 @@ describe('Shop item domain', () => {
 
     try {
       const shop_id = (
-        await ShopsServices.createShop(shop.name, shop.phone, shop.address, shop.city, shop.zipcode, t)
+        await ShopsServices.createShop(shop.name, shop.phone, shop.siret, shop.address, shop.city, shop.zipcode, t)
       )._unsafeUnwrap().id
 
       let res = await ShopItemsService.createShopItem(shop_id, shop_items[1].name, shop_items[1].price, t)
@@ -226,7 +226,7 @@ describe('Shop item domain', () => {
 
     try {
       const shop_id = (
-        await ShopsServices.createShop(shop.name, shop.phone, shop.address, shop.city, shop.zipcode, t)
+        await ShopsServices.createShop(shop.name, shop.phone, shop.siret, shop.address, shop.city, shop.zipcode, t)
       )._unsafeUnwrap().id
 
       let res = await ShopItemsService.createShopItem(shop_id, shop_items[1].name, shop_items[1].price, t)
