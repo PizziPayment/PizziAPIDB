@@ -108,10 +108,7 @@ export class TransactionsService {
         },
         { transaction }
       ),
-      (e) => {
-        console.log(e)
-        return TransactionsServiceError.DatabaseError
-      }
+      () => TransactionsServiceError.DatabaseError
     ).map(intoTransactionModel)
   }
 
