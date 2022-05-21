@@ -30,7 +30,7 @@ export default class Transaction extends Model<TransactionAttributes, Transactio
   @Column({ allowNull: false })
   state!: string
 
-  @IsIn([['card', 'cash']])
+  @IsIn([['card', 'cash', 'unassigned']])
   @Column({ allowNull: false })
   payment_method!: string
 
