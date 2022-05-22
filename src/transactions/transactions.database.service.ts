@@ -131,10 +131,7 @@ export class TransactionsService {
     transaction: SequelizeTransaction | null = null
   ): TransactionsServiceResult<null> {
     return ResultAsync.fromPromise(
-      Transaction.update(
-        { user_id: user_id, updated_at: new Date() },
-        { where: { id: transaction_id }, transaction, returning: true }
-      ),
+      Transaction.update({ user_id: user_id, updated_at: new Date() }, { where: { id: transaction_id }, transaction }),
       () => TransactionsServiceError.DatabaseError
     )
       .andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
@@ -155,7 +152,6 @@ export class TransactionsService {
         {
           where: { id: transaction_id },
           transaction,
-          returning: true,
         }
       ),
       () => TransactionsServiceError.DatabaseError
@@ -170,10 +166,7 @@ export class TransactionsService {
     transaction: SequelizeTransaction | null = null
   ): TransactionsServiceResult<null> {
     return ResultAsync.fromPromise(
-      Transaction.update(
-        { state: state, updated_at: new Date() },
-        { where: { id: transaction_id }, transaction, returning: true }
-      ),
+      Transaction.update({ state: state, updated_at: new Date() }, { where: { id: transaction_id }, transaction }),
       () => TransactionsServiceError.DatabaseError
     )
       .andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
