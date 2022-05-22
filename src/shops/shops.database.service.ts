@@ -53,10 +53,7 @@ export class ShopsServices {
         },
         { transaction }
       ),
-      (e) => {
-        console.log(e)
-        return ShopsServiceError.DatabaseError
-      }
+      () => ShopsServiceError.DatabaseError
     )
   }
 
