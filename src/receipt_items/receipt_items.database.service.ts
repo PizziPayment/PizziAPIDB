@@ -28,25 +28,25 @@ export class ReceiptItemsService {
     transaction: Transaction | null = null
   ): ReceiptItemsServiceResult<Array<DetailedReceiptItemModel>> {
     return ResultAsync.fromPromise(
-      ReceiptItem.findAll({ where: { receipt_id: receipt_id }, include:[{ model: ShopItem }], transaction }),
+      ReceiptItem.findAll({ where: { receipt_id: receipt_id }, include: [{ model: ShopItem }], transaction }),
       () => ReceiptItemsServiceError.DatabaseError
     )
-    .map((receipt_items) => {
-      return receipt_items.map((receipt_item) => {
-        return {
-          id: receipt_item.id,
-          receipt_id: receipt_item.receipt_id,
-          shop_item_id: receipt_item.shop_item_id,
-          discount: receipt_item.discount,
-          eco_tax: receipt_item.eco_tax,
-          quantity: receipt_item.quantity,
-          warranty: receipt_item.warranty,
-          name: receipt_item.shop_item.name,
-          price: receipt_item.shop_item.price
-        }
+      .map((receipt_items) => {
+        return receipt_items.map((receipt_item) => {
+          return {
+            id: receipt_item.id,
+            receipt_id: receipt_item.receipt_id,
+            shop_item_id: receipt_item.shop_item_id,
+            discount: receipt_item.discount,
+            eco_tax: receipt_item.eco_tax,
+            quantity: receipt_item.quantity,
+            warranty: receipt_item.warranty,
+            name: receipt_item.shop_item.name,
+            price: receipt_item.shop_item.price,
+          }
+        })
       })
-    })
-    .andThen(okIfNotNullElse(ReceiptItemsServiceError.ReceiptNotFound))
+      .andThen(okIfNotNullElse(ReceiptItemsServiceError.ReceiptNotFound))
   }
 
   static createReceiptItem(

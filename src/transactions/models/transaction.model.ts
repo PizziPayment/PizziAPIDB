@@ -39,7 +39,6 @@ export function intoTransactionModel(model: TransactionAttributes): TransactionM
     shop_id: model.shop_id,
     receipt_id: model.receipt_id,
     created_at: model.created_at,
-    updated_at: model.updated_at
+    updated_at: model.updated_at,
   }
 }
-

@@ -39,7 +39,6 @@ export class TransactionsService {
     ).map((pizzi_transactions) => pizzi_transactions.map(intoTransactionModel))
   }
 
-
   static getOwnerExpandedTransactionsByState(
     owner_type: 'user' | 'shop',
     owner_id: number,
@@ -49,32 +48,34 @@ export class TransactionsService {
     return ResultAsync.fromPromise(
       Transaction.findAll({
         where: { state: state, [`${owner_type}_id`]: owner_id },
-        include: [{model: Shop}, {model: Receipt}],
-        transaction
+        include: [{ model: Shop }, { model: Receipt }],
+        transaction,
       }),
       () => TransactionsServiceError.DatabaseError
-    ).map((pizzi_transactions) => pizzi_transactions.map((transaction) => {
-      return {
-        id: transaction.id,
-        state: transaction.state,
-        payment_method: transaction.payment_method,
-        user_id: transaction.user_id,
-        shop_id: transaction.shop_id,
-        receipt_id: transaction.receipt_id,
-        created_at: transaction.created_at,
-        updated_at: transaction.updated_at,
-        shop: {
-          id: transaction.shop_id,
-          name: transaction.shop.name,
-          logo: transaction.shop.logo
-        },
-        receipt: {
-          id: transaction.receipt_id,
-          total_ht: transaction.receipt.total_price,
-          tva_percentage: transaction.receipt.tva_percentage
+    ).map((pizzi_transactions) =>
+      pizzi_transactions.map((transaction) => {
+        return {
+          id: transaction.id,
+          state: transaction.state,
+          payment_method: transaction.payment_method,
+          user_id: transaction.user_id,
+          shop_id: transaction.shop_id,
+          receipt_id: transaction.receipt_id,
+          created_at: transaction.created_at,
+          updated_at: transaction.updated_at,
+          shop: {
+            id: transaction.shop_id,
+            name: transaction.shop.name,
+            logo: transaction.shop.logo,
+          },
+          receipt: {
+            id: transaction.receipt_id,
+            total_ht: transaction.receipt.total_price,
+            tva_percentage: transaction.receipt.tva_percentage,
+          },
         }
-      }
-    }))
+      })
+    )
   }
 
   static getTransactionById(
@@ -120,8 +121,8 @@ export class TransactionsService {
       Transaction.findOne({ where: { receipt_id: receipt_id }, transaction }),
       () => TransactionsServiceError.DatabaseError
     )
-    .andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
-    .map(intoTransactionModel)
+      .andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
+      .map(intoTransactionModel)
   }
 
   static updateTransactionUserIdFromId(
@@ -130,11 +131,14 @@ export class TransactionsService {
     transaction: SequelizeTransaction | null = null
   ): TransactionsServiceResult<null> {
     return ResultAsync.fromPromise(
-      Transaction.update({ user_id: user_id, updated_at: new Date() }, { where: { id: transaction_id }, transaction, returning: true }),
+      Transaction.update(
+        { user_id: user_id, updated_at: new Date() },
+        { where: { id: transaction_id }, transaction, returning: true }
+      ),
       () => TransactionsServiceError.DatabaseError
     )
-    .andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
-    .map(() => null)
+      .andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
+      .map(() => null)
   }
 
   static updateTransactionPaymentMethodFromId(
@@ -143,19 +147,21 @@ export class TransactionsService {
     transaction: SequelizeTransaction | null = null
   ): TransactionsServiceResult<null> {
     return ResultAsync.fromPromise(
-      Transaction.update({
-        payment_method: payment_method,
-        updated_at: new Date()
-      },
-      {
-        where: { id: transaction_id },
-        transaction,
-        returning: true
-      }),
+      Transaction.update(
+        {
+          payment_method: payment_method,
+          updated_at: new Date(),
+        },
+        {
+          where: { id: transaction_id },
+          transaction,
+          returning: true,
+        }
+      ),
       () => TransactionsServiceError.DatabaseError
     )
-    .andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
-    .map(() => null)
+      .andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
+      .map(() => null)
   }
 
   static updateTransactionStateFromId(
@@ -164,7 +170,10 @@ export class TransactionsService {
     transaction: SequelizeTransaction | null = null
   ): TransactionsServiceResult<null> {
     return ResultAsync.fromPromise(
-      Transaction.update({ state: state, updated_at: new Date() }, { where: { id: transaction_id }, transaction, returning: true }),
+      Transaction.update(
+        { state: state, updated_at: new Date() },
+        { where: { id: transaction_id }, transaction, returning: true }
+      ),
       () => TransactionsServiceError.DatabaseError
     )
       .andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))

@@ -1,4 +1,14 @@
-import { AutoIncrement, BelongsTo, DataType, Column, ForeignKey, IsIn, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import {
+  AutoIncrement,
+  BelongsTo,
+  DataType,
+  Column,
+  ForeignKey,
+  IsIn,
+  Model,
+  PrimaryKey,
+  Table,
+} from 'sequelize-typescript'
 import User from './users.database.model'
 import Receipt from './receipts.database.model'
 import Shop from './shops.database.model'
@@ -45,7 +55,7 @@ export default class Transaction extends Model<TransactionAttributes, Transactio
   @Column({ allowNull: false })
   receipt_id!: number
 
-  @Column({allowNull: false})
+  @Column({ allowNull: false })
   created_at!: Date
 
   @Column(DataType.DATE)
