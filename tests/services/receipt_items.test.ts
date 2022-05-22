@@ -42,7 +42,7 @@ describe('Receipt items domain', () => {
 
       expect(
         (
-          await ShopsServices.createShop('test', '0202020202', 'address', 20000, transaction).map((shop) =>
+          await ShopsServices.createShop('test', '0202020202',1232132131 ,'address', 'city', 20000, transaction).map((shop) =>
             ShopItemsService.createShopItems(shop.id, shop_items_sample, transaction).map((shop_items) =>
               Promise.all(
                 shop_items.map(

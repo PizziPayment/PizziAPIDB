@@ -1,4 +1,14 @@
-import { AutoIncrement, Column, ForeignKey, HasMany, HasOne, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import {
+  AutoIncrement,
+  Column,
+  ForeignKey,
+  HasMany,
+  HasOne,
+  Model,
+  PrimaryKey,
+  Table,
+  DataType,
+} from 'sequelize-typescript'
 import Credential from './credentials.database.model'
 import Picture from './pictures.database.model'
 import Transaction from './transactions.database.model'
@@ -8,7 +18,9 @@ interface ShopAttributes {
   name: string
   phone: string
   description?: string
+  siret: number
   address: string
+  city: string
   zipcode: number
   logo?: number
   website?: string
@@ -35,8 +47,14 @@ export default class Shop extends Model<ShopAttributes, ShopCreation> {
   @Column
   description?: string
 
+  @Column({ type: DataType.BIGINT, allowNull: false })
+  siret!: number
+
   @Column({ allowNull: false })
   address!: string
+
+  @Column({ allowNull: false })
+  city!: string
 
   @Column({ allowNull: false })
   zipcode!: number

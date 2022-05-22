@@ -25,7 +25,7 @@ afterEach(async () => {
 })
 
 async function setupShop(): Promise<ShopModel> {
-  let res = await ShopsServices.createShop(shop.name, shop.phone, shop.address, shop.zipcode, transaction)
+  let res = await ShopsServices.createShop(shop.name, shop.phone, shop.siret, shop.address, shop.city, shop.zipcode, transaction)
   expect(res.isOk()).toBeTruthy()
 
   return res._unsafeUnwrap()
@@ -45,6 +45,10 @@ describe('Shop domain', () => {
     expect(retrieved_shop.phone).toBe(shop.phone)
     expect(created_shop.address).toBe(shop.address)
     expect(retrieved_shop.address).toBe(shop.address)
+    expect(created_shop.siret).toBe(shop.siret)
+    expect(retrieved_shop.siret).toBe(shop.siret)
+    expect(created_shop.city).toBe(shop.city)
+    expect(retrieved_shop.city).toBe(shop.city)
     expect(created_shop.zipcode).toBe(shop.zipcode)
     expect(retrieved_shop.zipcode).toBe(shop.zipcode)
   })
@@ -66,6 +70,7 @@ describe('Shop domain', () => {
     expect(updated_shop.name).toBe(shop.name)
     expect(updated_shop.phone).toBe(shop.phone)
     expect(updated_shop.address).toBe(shop.address)
+    expect(updated_shop.city).toBe(shop.city)
     expect(updated_shop.zipcode).toBe(shop.zipcode)
     expect(updated_shop.description).toBe(new_values.description)
     expect(updated_shop.website).toBe(new_values.website)

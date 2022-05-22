@@ -29,14 +29,18 @@ export class ShopsServices {
   static createShop(
     name: string,
     phone: string,
+    siret: number,
     address: string,
+    city: string,
     zipcode: number,
     transaction: Transaction | null = null
   ): ShopsServiceResult<ShopModel> {
     return ResultAsync.fromPromise(
       Shop.create(
         {
+          siret: siret,
           address: address,
+          city: city,
           name: name,
           phone: phone,
           description: undefined,
