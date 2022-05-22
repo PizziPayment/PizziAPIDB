@@ -28,11 +28,11 @@ export default class Transaction extends Model<TransactionAttributes, Transactio
 
   @IsIn([['failed', 'pending', 'validated']])
   @Column({ allowNull: false })
-  state!: string
+  state!: TransactionState
 
   @IsIn([['card', 'cash', 'unassigned']])
   @Column({ allowNull: false })
-  payment_method!: string
+  payment_method!: PaymentMethod
 
   @ForeignKey(() => User)
   user_id?: number

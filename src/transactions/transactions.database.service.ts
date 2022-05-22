@@ -56,8 +56,8 @@ export class TransactionsService {
     ).map((pizzi_transactions) => pizzi_transactions.map((transaction) => {
       return {
         id: transaction.id,
-        state: transaction.state as TransactionState,
-        payment_method: transaction.payment_method as PaymentMethod,
+        state: transaction.state,
+        payment_method: transaction.payment_method,
         user_id: transaction.user_id,
         shop_id: transaction.shop_id,
         receipt_id: transaction.receipt_id,
