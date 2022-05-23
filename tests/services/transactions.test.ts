@@ -29,13 +29,18 @@ async function setupReceiptUserAndShop(transaction: Transaction): Promise<[Recei
   return [
     (await ReceiptsService.createReceipt(10, '2000', transaction))._unsafeUnwrap(),
     (await UsersServices.createUser('test', 'test', 'test', 3000, transaction))._unsafeUnwrap(),
-    (await ShopsServices.createShop('test', '0202020202', 2131313213, 'address', 'city', 20000, transaction))._unsafeUnwrap(),
+    (
+      await ShopsServices.createShop('test', '0202020202', 2131313213, 'address', 'city', 20000, transaction)
+    )._unsafeUnwrap(),
   ]
 }
 
 describe('Transaction domain', () => {
   it('should be able to create a pending transaction', async () => {
-    const pending_transaction_sample: Omit<TransactionModel, 'id' | 'state' | 'shop_id' | 'user_id' | 'receipt_id' | 'created_at' | 'updated_at'> = {
+    const pending_transaction_sample: Omit<
+      TransactionModel,
+      'id' | 'state' | 'shop_id' | 'user_id' | 'receipt_id' | 'created_at' | 'updated_at'
+    > = {
       payment_method: 'card',
     }
     const transaction = await sequelize.transaction()
@@ -118,7 +123,13 @@ describe('Transaction domain', () => {
       )._unsafeUnwrap()
 
       expect(
-        (await TransactionsService.updateTransactionPaymentMethodFromId(created_transaction.id, new_payment_method, transaction)).isOk()
+        (
+          await TransactionsService.updateTransactionPaymentMethodFromId(
+            created_transaction.id,
+            new_payment_method,
+            transaction
+          )
+        ).isOk()
       ).toBeTruthy()
 
       const retrieved_transaction = (
@@ -225,7 +236,7 @@ describe('Transaction domain', () => {
       )._unsafeUnwrap()
 
       const expanded_transactions = (
-        await TransactionsService.getOwnerExpandedTransactionsByState("user", user.id, "pending", transaction)
+        await TransactionsService.getOwnerExpandedTransactionsByState('user', user.id, 'pending', transaction)
       )._unsafeUnwrap()
 
       expect(expanded_transactions).toHaveLength(1)
@@ -255,7 +266,7 @@ describe('Transaction domain', () => {
       )._unsafeUnwrap()
 
       const expanded_transactions = (
-        await TransactionsService.getOwnerExpandedTransactionsByState("shop", shop.id, "pending", transaction)
+        await TransactionsService.getOwnerExpandedTransactionsByState('shop', shop.id, 'pending', transaction)
       )._unsafeUnwrap()
 
       expect(expanded_transactions).toHaveLength(1)
@@ -285,7 +296,7 @@ describe('Transaction domain', () => {
       )._unsafeUnwrap()
 
       const expanded_transactions = (
-        await TransactionsService.getOwnerExpandedTransactionsByState("shop", shop.id, "validated", transaction)
+        await TransactionsService.getOwnerExpandedTransactionsByState('shop', shop.id, 'validated', transaction)
       )._unsafeUnwrap()
 
       expect(expanded_transactions).toHaveLength(0)
