@@ -55,6 +55,7 @@ describe('Transaction Token domain', () => {
       await transaction.rollback()
     }
   })
+
   it('should be able to retrieve a transaction token with its id', async () => {
     const transaction = await sequelize.transaction()
 
