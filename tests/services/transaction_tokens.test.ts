@@ -8,6 +8,7 @@ import {
   TransactionModel,
   TransactionsService,
   TransactionTokensService,
+  TransactionTokensServiceError,
   UserModel,
   UsersServices,
 } from '../../src/'
@@ -87,7 +88,7 @@ describe('Transaction Token domain', () => {
 
       expect(
         (
-          await TransactionTokensService.validateTransactionToken(
+          await TransactionTokensService.getTransactionTokenByTransactionIdAndToken(
             tested_transaction_token.transaction_id,
             tested_transaction_token.token
           )
@@ -110,8 +111,11 @@ describe('Transaction Token domain', () => {
       await TransactionTokensService.deleteTransactionTokenById(tested_transaction_token.id)
       expect((await TransactionTokensService.getTransactionTokenById(tested_transaction_token.id)).isOk()).toBeFalsy()
       expect(
+        (await TransactionTokensService.getTransactionTokenById(tested_transaction_token.id))._unsafeUnwrapErr()
+      ).toBe(TransactionTokensServiceError.TransactionTokenNotFound)
+      expect(
         (
-          await TransactionTokensService.validateTransactionToken(
+          await TransactionTokensService.getTransactionTokenByTransactionIdAndToken(
             tested_transaction_token.transaction_id,
             tested_transaction_token.token
           )
