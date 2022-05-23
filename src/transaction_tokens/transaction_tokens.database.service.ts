@@ -23,17 +23,16 @@ export class TransactionTokensService {
     ).map(() => null)
   }
 
-  static validateTransactionToken(
+  static getTransactionTokenByTransactionIdAndToken(
     transaction_id: number,
     token: string,
     transaction: Transaction | null = null
-  ): TransactionTokensServiceResult<null> {
+  ): TransactionTokensServiceResult<TransactionTokenModel> {
     return ResultAsync.fromPromise(
       TransactionToken.findOne({ where: { transaction_id: transaction_id, token: token }, transaction }),
       () => TransactionTokensServiceError.DatabaseError
     )
       .andThen(okIfNotNullElse(TransactionTokensServiceError.TransactionTokenNotFound))
-      .map(() => null)
   }
 
   static getTransactionTokenById(
