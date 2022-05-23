@@ -49,6 +49,20 @@ export class ReceiptItemsService {
       .andThen(okIfNotNullElse(ReceiptItemsServiceError.ReceiptNotFound))
   }
 
+  static createReceiptItems(
+    receipt_id: number,
+    receipt_items: Array<{ shop_item_id: number, discount: number, eco_tax: number, quantity: number, warranty: string }>,
+    transaction: Transaction | null = null
+  ): ReceiptItemsServiceResult<Array<ReceiptItemModel>> {
+    return ResultAsync.fromPromise(
+      ReceiptItem.bulkCreate(
+        receipt_items.map(item => {return {...item, receipt_id}}),
+        { validate: true, transaction }
+      ),
+      () => ReceiptItemsServiceError.DatabaseError
+    )
+  }
+
   static createReceiptItem(
     receipt_id: number,
     shop_item_id: number,

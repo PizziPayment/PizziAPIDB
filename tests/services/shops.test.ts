@@ -25,7 +25,15 @@ afterEach(async () => {
 })
 
 async function setupShop(): Promise<ShopModel> {
-  let res = await ShopsServices.createShop(shop.name, shop.phone, shop.siret, shop.address, shop.city, shop.zipcode, transaction)
+  let res = await ShopsServices.createShop(
+    shop.name,
+    shop.phone,
+    shop.siret,
+    shop.address,
+    shop.city,
+    shop.zipcode,
+    transaction
+  )
   expect(res.isOk()).toBeTruthy()
 
   return res._unsafeUnwrap()

@@ -118,23 +118,24 @@ describe('Receipts domain', () => {
       )._unsafeUnwrap()
 
       ;(
-        await ShopsServices.createShop('test', '0202020202', 123213, 'address', 'city', 20000, transaction).map((shop) =>
-          ShopItemsService.createShopItems(shop.id, shop_items_sample, transaction).map((shop_items) =>
-            Promise.all(
-              shop_items.map(
-                async (shop_item) =>
-                  await ReceiptItemsService.createReceiptItem(
-                    created_receipt.id,
-                    shop_item.id,
-                    0,
-                    0,
-                    1,
-                    'tototot',
-                    transaction
-                  )
+        await ShopsServices.createShop('test', '0202020202', 123213, 'address', 'city', 20000, transaction).map(
+          (shop) =>
+            ShopItemsService.createShopItems(shop.id, shop_items_sample, transaction).map((shop_items) =>
+              Promise.all(
+                shop_items.map(
+                  async (shop_item) =>
+                    await ReceiptItemsService.createReceiptItem(
+                      created_receipt.id,
+                      shop_item.id,
+                      0,
+                      0,
+                      1,
+                      'tototot',
+                      transaction
+                    )
+                )
               )
             )
-          )
         )
       )._unsafeUnwrap()
 
