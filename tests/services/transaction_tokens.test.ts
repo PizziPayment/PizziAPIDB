@@ -109,18 +109,24 @@ describe('Transaction Token domain', () => {
       )._unsafeUnwrap()
 
       await TransactionTokensService.deleteTransactionTokenById(tested_transaction_token.id)
-      expect((await TransactionTokensService.getTransactionTokenById(tested_transaction_token.id)).isOk()).toBeFalsy()
-      expect(
-        (await TransactionTokensService.getTransactionTokenById(tested_transaction_token.id))._unsafeUnwrapErr()
-      ).toBe(TransactionTokensServiceError.TransactionTokenNotFound)
-      expect(
-        (
-          await TransactionTokensService.getTransactionTokenByTransactionIdAndToken(
-            tested_transaction_token.transaction_id,
-            tested_transaction_token.token
-          )
-        ).isOk()
-      ).toBeFalsy()
+
+      const retrieved_transaction_token_by_id = await TransactionTokensService.getTransactionTokenById(
+        tested_transaction_token.id
+      )
+      expect(retrieved_transaction_token_by_id.isOk()).toBeFalsy()
+      expect(retrieved_transaction_token_by_id._unsafeUnwrapErr()).toBe(
+        TransactionTokensServiceError.TransactionTokenNotFound
+      )
+
+      const retrieved_transaction_token_by_token =
+        await TransactionTokensService.getTransactionTokenByTransactionIdAndToken(
+          tested_transaction_token.transaction_id,
+          tested_transaction_token.token
+        )
+      expect(retrieved_transaction_token_by_token.isOk()).toBeFalsy()
+      expect(retrieved_transaction_token_by_token._unsafeUnwrapErr()).toBe(
+        TransactionTokensServiceError.TransactionTokenNotFound
+      )
     } finally {
       await transaction.rollback()
     }
