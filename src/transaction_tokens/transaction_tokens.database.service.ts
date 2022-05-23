@@ -58,13 +58,7 @@ export class TransactionTokensService {
         },
         { transaction }
       ),
-      (e) => {
-        const err = e as Error
-        console.log(err.name)
-        console.log(err.message)
-        console.log(transaction_id)
-        return TransactionTokensServiceError.DatabaseError
-      }
+      () => TransactionTokensServiceError.DatabaseError
     )
   }
 }
