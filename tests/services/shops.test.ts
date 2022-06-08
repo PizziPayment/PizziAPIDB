@@ -1,8 +1,7 @@
 import { Sequelize, Transaction } from 'sequelize'
-import { initOrm, ShopModel, ShopsServices, ShopUpdateModel } from '../../src'
+import { ErrorCause, initOrm, ShopModel, ShopsServices, ShopUpdateModel } from '../../src'
 import { config } from '../common/config'
 import { shop } from '../common/models'
-import { ErrorCause } from '../../src/commons/models/service.error.model'
 
 // @ts-ignore
 let sequelize: Sequelize = undefined

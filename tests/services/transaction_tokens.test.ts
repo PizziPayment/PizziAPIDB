@@ -1,5 +1,6 @@
 import { Transaction as STransaction } from 'sequelize'
 import {
+  ErrorCause,
   initOrm,
   ReceiptModel,
   ReceiptsService,
@@ -13,7 +14,6 @@ import {
 } from '../../src/'
 // @ts-ignore
 import { config } from '../common/config'
-import { ErrorCause } from '../../src/commons/models/service.error.model'
 
 // @ts-ignore
 let sequelize: Sequelize = undefined
