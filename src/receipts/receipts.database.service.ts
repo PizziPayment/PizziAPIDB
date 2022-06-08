@@ -5,13 +5,9 @@ import { DetailedReceiptModel, ReceiptModel } from './models/receipts.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import ReceiptItem from '../commons/services/orm/models/receipt_items.database.model'
 import ShopItem from '../commons/services/orm/models/shop_items.database.model'
+import { ErrorCause, IPizziError, PizziError } from '../commons/models/service.error.model'
 
-export enum ReceiptsServiceError {
-  ReceiptNotFound,
-  DatabaseError,
-}
-
-export type ReceiptsServiceResult<T> = ResultAsync<T, ReceiptsServiceError>
+export type ReceiptsServiceResult<T> = ResultAsync<T, IPizziError>
 
 export class ReceiptsService {
   static getDetailedReceiptById(
@@ -24,9 +20,13 @@ export class ReceiptsService {
         include: [{ model: ReceiptItem, include: [{ model: ShopItem }] }],
         transaction,
       }),
-      () => ReceiptsServiceError.DatabaseError
+      () => PizziError.internalError()
     )
-      .andThen(okIfNotNullElse(ReceiptsServiceError.ReceiptNotFound))
+      .andThen(
+        okIfNotNullElse(
+          new PizziError(`Receipt not found: invalid receipt_id: ${receipt_id}`, ErrorCause.ReceiptNotFound)
+        )
+      )
       .map((receipt) => {
         return {
           id: receipt.id,
@@ -51,9 +51,8 @@ export class ReceiptsService {
     receipt_ids: Array<number>,
     transaction: Transaction | null = null
   ): ReceiptsServiceResult<Array<ReceiptModel>> {
-    return ResultAsync.fromPromise(
-      Receipt.findAll({ where: { id: receipt_ids }, transaction }),
-      () => ReceiptsServiceError.DatabaseError
+    return ResultAsync.fromPromise(Receipt.findAll({ where: { id: receipt_ids }, transaction }), () =>
+      PizziError.internalError()
     )
   }
 
@@ -64,7 +63,7 @@ export class ReceiptsService {
   ): ReceiptsServiceResult<ReceiptModel> {
     return ResultAsync.fromPromise(
       Receipt.create({ tva_percentage: tva_percentage, total_price: total_price }, { transaction }),
-      () => ReceiptsServiceError.DatabaseError
+      () => PizziError.internalError()
     )
   }
 }

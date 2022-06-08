@@ -1,7 +1,8 @@
 import { Sequelize, Transaction } from 'sequelize'
-import { initOrm, ShopModel, ShopsServiceError, ShopsServices, ShopUpdateModel } from '../../src'
+import { initOrm, ShopModel, ShopsServices, ShopUpdateModel } from '../../src'
 import { config } from '../common/config'
 import { shop } from '../common/models'
+import { ErrorCause } from '../../src/commons/models/service.error.model'
 
 // @ts-ignore
 let sequelize: Sequelize = undefined
@@ -94,6 +95,6 @@ describe('Shop domain', () => {
 
     const res = await ShopsServices.getShopFromId(created_shop.id, transaction)
     expect(res.isErr()).toBeTruthy()
-    expect(res._unsafeUnwrapErr()).toBe(ShopsServiceError.ShopNotFound)
+    expect(res._unsafeUnwrapErr().code).toBe(ErrorCause.ShopNotFound)
   })
 })

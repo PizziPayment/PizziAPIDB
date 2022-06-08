@@ -7,13 +7,9 @@ import { onTransaction } from '../commons/extensions/generators.extension'
 import { randomBytes } from 'crypto'
 import { ClientModel } from '../clients/models/client.model'
 import { CredentialModel } from '../credentials/models/credential.model'
+import { ErrorCause, IPizziError, PizziError } from '../commons/models/service.error.model'
 
-export type TokensServiceResult<T> = ResultAsync<T, TokensServiceError>
-
-export enum TokensServiceError {
-  TokenNotFound,
-  DatabaseError,
-}
+export type TokensServiceResult<T> = ResultAsync<T, IPizziError>
 
 export class TokensService {
   static generateTokenBetweenClientAndCredential(
@@ -29,34 +25,33 @@ export class TokensService {
         },
         transaction,
       }),
-      () => TokensServiceError.DatabaseError
+      () => PizziError.internalError()
     ).andThen((token) => {
       if (!token) {
-        return ResultAsync.fromPromise(
-          Token.create(this.generateToken(client, credential), { transaction }),
-          () => TokensServiceError.DatabaseError
+        return ResultAsync.fromPromise(Token.create(this.generateToken(client, credential), { transaction }), () =>
+          PizziError.internalError()
         )
       } else {
         return ResultAsync.fromPromise(
           Object.assign(token, this.generateToken(client, credential)).save({ transaction }),
-          () => TokensServiceError.DatabaseError
+          () => PizziError.internalError()
         )
       }
     })
   }
 
   static getTokenFromValue(token: string, transaction: Transaction | null = null): TokensServiceResult<TokenModel> {
-    return ResultAsync.fromPromise(
-      Token.findOne({ where: { access_token: token }, transaction }),
-      () => TokensServiceError.DatabaseError
-    ).andThen(okIfNotNullElse(TokensServiceError.TokenNotFound))
+    return ResultAsync.fromPromise(Token.findOne({ where: { access_token: token }, transaction }), () =>
+      PizziError.internalError()
+    ).andThen(okIfNotNullElse(new PizziError(`Token not found: invalid token: ${token}`, ErrorCause.TokenNotFound)))
   }
 
   static getTokenFromId(token_id: number, transaction: Transaction | null = null): TokensServiceResult<TokenModel> {
-    return ResultAsync.fromPromise(
-      Token.findOne({ where: { id: token_id }, transaction }),
-      () => TokensServiceError.DatabaseError
-    ).andThen(okIfNotNullElse(TokensServiceError.TokenNotFound))
+    return ResultAsync.fromPromise(Token.findOne({ where: { id: token_id }, transaction }), () =>
+      PizziError.internalError()
+    ).andThen(
+      okIfNotNullElse(new PizziError(`Token not found: invalid token_id ${token_id}`, ErrorCause.TokenNotFound))
+    )
   }
 
   static deleteUserToken(token: TokenModel, transaction: Transaction | null = null): TokensServiceResult<null> {
@@ -69,9 +64,8 @@ export class TokensService {
     credential_id: number,
     transaction: Transaction | null = null
   ): TokensServiceResult<null> {
-    return ResultAsync.fromPromise(
-      Token.destroy({ where: { credential_id: credential_id }, transaction }),
-      () => TokensServiceError.DatabaseError
+    return ResultAsync.fromPromise(Token.destroy({ where: { credential_id: credential_id }, transaction }), () =>
+      PizziError.internalError()
     ).map(() => null)
   }
 
@@ -89,8 +83,7 @@ export class TokensService {
 // Pipeline
 
 function destroyToken(token: TokenModel, transaction: Transaction | null): TokensServiceResult<TokenModel> {
-  return ResultAsync.fromPromise(
-    Token.destroy({ where: { id: token.id }, transaction }),
-    () => TokensServiceError.DatabaseError
+  return ResultAsync.fromPromise(Token.destroy({ where: { id: token.id }, transaction }), () =>
+    PizziError.internalError()
   ).map(() => token)
 }

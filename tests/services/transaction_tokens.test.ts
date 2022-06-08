@@ -8,12 +8,12 @@ import {
   TransactionModel,
   TransactionsService,
   TransactionTokensService,
-  TransactionTokensServiceError,
   UserModel,
   UsersServices,
 } from '../../src/'
 // @ts-ignore
 import { config } from '../common/config'
+import { ErrorCause } from '../../src/commons/models/service.error.model'
 
 // @ts-ignore
 let sequelize: Sequelize = undefined
@@ -114,9 +114,7 @@ describe('Transaction Token domain', () => {
         tested_transaction_token.id
       )
       expect(retrieved_transaction_token_by_id.isOk()).toBeFalsy()
-      expect(retrieved_transaction_token_by_id._unsafeUnwrapErr()).toBe(
-        TransactionTokensServiceError.TransactionTokenNotFound
-      )
+      expect(retrieved_transaction_token_by_id._unsafeUnwrapErr().code).toBe(ErrorCause.TransactionTokenNotFound)
 
       const retrieved_transaction_token_by_token =
         await TransactionTokensService.getTransactionTokenByTransactionIdAndToken(
@@ -124,9 +122,7 @@ describe('Transaction Token domain', () => {
           tested_transaction_token.token
         )
       expect(retrieved_transaction_token_by_token.isOk()).toBeFalsy()
-      expect(retrieved_transaction_token_by_token._unsafeUnwrapErr()).toBe(
-        TransactionTokensServiceError.TransactionTokenNotFound
-      )
+      expect(retrieved_transaction_token_by_token._unsafeUnwrapErr().code).toBe(ErrorCause.TransactionTokenNotFound)
     } finally {
       await transaction.rollback()
     }

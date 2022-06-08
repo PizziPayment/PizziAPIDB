@@ -5,13 +5,9 @@ import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
 import { onTransaction } from '../commons/extensions/generators.extension'
 import { assignNonNullValues } from '../commons/services/util.service'
+import { ErrorCause, IPizziError, PizziError } from '../commons/models/service.error.model'
 
-export type UsersServiceResult<T> = ResultAsync<T, UsersServiceError>
-
-export enum UsersServiceError {
-  DatabaseError,
-  UserNotFound,
-}
+export type UsersServiceResult<T> = ResultAsync<T, IPizziError>
 
 export class UsersServices {
   static deleteUserById(user_id: number, transaction: Transaction | null = null): UsersServiceResult<null> {
@@ -21,10 +17,9 @@ export class UsersServices {
   }
 
   static getUserFromId(user_id: number, transaction: Transaction | null = null): UsersServiceResult<UserModel> {
-    return ResultAsync.fromPromise(
-      User.findOne({ where: { id: user_id }, transaction }),
-      () => UsersServiceError.DatabaseError
-    ).andThen(okIfNotNullElse(UsersServiceError.UserNotFound))
+    return ResultAsync.fromPromise(User.findOne({ where: { id: user_id }, transaction }), () =>
+      PizziError.internalError()
+    ).andThen(okIfNotNullElse(new PizziError(`User not found: Invalid user_id: ${user_id}`, ErrorCause.UserNotFound)))
   }
 
   static createUser(
@@ -45,7 +40,7 @@ export class UsersServices {
         },
         { transaction }
       ),
-      () => UsersServiceError.DatabaseError
+      () => PizziError.internalError()
     )
   }
 
@@ -64,15 +59,15 @@ export class UsersServices {
         },
         transaction,
       }),
-      () => UsersServiceError.DatabaseError
+      () => PizziError.internalError()
     )
-      .andThen(okIfNotNullElse(UsersServiceError.UserNotFound))
+      .andThen(okIfNotNullElse(new PizziError(`User not found: Invalid user_id: ${user_id}`, ErrorCause.UserNotFound)))
       .andThen((user) =>
         ResultAsync.fromPromise(
           Object.assign(user, assignNonNullValues({ firstname: name, surname, address, zipcode })).save({
             transaction,
           }),
-          () => UsersServiceError.DatabaseError
+          () => PizziError.internalError()
         )
       )
   }
@@ -81,8 +76,7 @@ export class UsersServices {
 // Pipeline
 
 function destroyUser(user: UserModel, transaction: Transaction | null): UsersServiceResult<UserModel> {
-  return ResultAsync.fromPromise(
-    User.destroy({ where: { id: user.id }, transaction }),
-    () => UsersServiceError.DatabaseError
+  return ResultAsync.fromPromise(User.destroy({ where: { id: user.id }, transaction }), () =>
+    PizziError.internalError()
   ).map(() => user)
 }

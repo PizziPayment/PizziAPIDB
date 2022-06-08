@@ -8,22 +8,17 @@ import { ExpandedTransactionModel, intoTransactionModel, TransactionModel } from
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import Shop from '../commons/services/orm/models/shops.database.model'
 import Receipt from '../commons/services/orm/models/receipts.database.model'
+import { ErrorCause, IPizziError, PizziError } from '../commons/models/service.error.model'
 
-export type TransactionsServiceResult<T> = ResultAsync<T, TransactionsServiceError>
-
-export enum TransactionsServiceError {
-  TransactionNotFound,
-  DatabaseError,
-}
+export type TransactionsServiceResult<T> = ResultAsync<T, IPizziError>
 
 export class TransactionsService {
   static getTransactionsByState(
     state: TransactionState,
     transaction: SequelizeTransaction | null = null
   ): TransactionsServiceResult<Array<TransactionModel>> {
-    return ResultAsync.fromPromise(
-      Transaction.findAll({ where: { state: state }, transaction }),
-      () => TransactionsServiceError.DatabaseError
+    return ResultAsync.fromPromise(Transaction.findAll({ where: { state: state }, transaction }), () =>
+      PizziError.internalError()
     ).map((pizzi_transactions) => pizzi_transactions.map(intoTransactionModel))
   }
 
@@ -35,7 +30,7 @@ export class TransactionsService {
   ): TransactionsServiceResult<Array<TransactionModel>> {
     return ResultAsync.fromPromise(
       Transaction.findAll({ where: { state: state, [`${owner_type}_id`]: owner_id }, transaction }),
-      () => TransactionsServiceError.DatabaseError
+      () => PizziError.internalError()
     ).map((pizzi_transactions) => pizzi_transactions.map(intoTransactionModel))
   }
 
@@ -51,7 +46,7 @@ export class TransactionsService {
         include: [{ model: Shop }, { model: Receipt }],
         transaction,
       }),
-      () => TransactionsServiceError.DatabaseError
+      () => PizziError.internalError()
     ).map((pizzi_transactions) =>
       pizzi_transactions.map((transaction) => {
         return {
@@ -82,11 +77,12 @@ export class TransactionsService {
     id: number,
     transaction: SequelizeTransaction | null = null
   ): TransactionsServiceResult<TransactionModel> {
-    return ResultAsync.fromPromise(
-      Transaction.findOne({ where: { id: id }, transaction }),
-      () => TransactionsServiceError.DatabaseError
+    return ResultAsync.fromPromise(Transaction.findOne({ where: { id: id }, transaction }), () =>
+      PizziError.internalError()
     )
-      .andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
+      .andThen(
+        okIfNotNullElse(new PizziError(`Transaction not found: invalid id: ${id}`, ErrorCause.TransactionNotFound))
+      )
       .map(intoTransactionModel)
   }
 
@@ -109,7 +105,7 @@ export class TransactionsService {
         },
         { transaction }
       ),
-      () => TransactionsServiceError.DatabaseError
+      () => PizziError.internalError()
     ).map(intoTransactionModel)
   }
 
@@ -117,11 +113,12 @@ export class TransactionsService {
     receipt_id: number,
     transaction: SequelizeTransaction | null = null
   ): TransactionsServiceResult<TransactionModel> {
-    return ResultAsync.fromPromise(
-      Transaction.findOne({ where: { receipt_id: receipt_id }, transaction }),
-      () => TransactionsServiceError.DatabaseError
+    return ResultAsync.fromPromise(Transaction.findOne({ where: { receipt_id: receipt_id }, transaction }), () =>
+      PizziError.internalError()
     )
-      .andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
+      .andThen(
+        okIfNotNullElse(new PizziError(`Receipt not found: invalid id: ${receipt_id}`, ErrorCause.ReceiptNotFound))
+      )
       .map(intoTransactionModel)
   }
 
@@ -132,9 +129,13 @@ export class TransactionsService {
   ): TransactionsServiceResult<null> {
     return ResultAsync.fromPromise(
       Transaction.update({ user_id: user_id, updated_at: new Date() }, { where: { id: transaction_id }, transaction }),
-      () => TransactionsServiceError.DatabaseError
+      () => PizziError.internalError()
     )
-      .andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
+      .andThen(
+        okIfNotNullElse(
+          new PizziError(`Transaction not found: invalid id: ${transaction_id}`, ErrorCause.TransactionNotFound)
+        )
+      )
       .map(() => null)
   }
 
@@ -154,9 +155,13 @@ export class TransactionsService {
           transaction,
         }
       ),
-      () => TransactionsServiceError.DatabaseError
+      () => PizziError.internalError()
     )
-      .andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
+      .andThen(
+        okIfNotNullElse(
+          new PizziError(`Transaction not found: invalid id: ${transaction_id}`, ErrorCause.TransactionNotFound)
+        )
+      )
       .map(() => null)
   }
 
@@ -167,9 +172,13 @@ export class TransactionsService {
   ): TransactionsServiceResult<null> {
     return ResultAsync.fromPromise(
       Transaction.update({ state: state, updated_at: new Date() }, { where: { id: transaction_id }, transaction }),
-      () => TransactionsServiceError.DatabaseError
+      () => PizziError.internalError()
     )
-      .andThen(okIfNotNullElse(TransactionsServiceError.TransactionNotFound))
+      .andThen(
+        okIfNotNullElse(
+          new PizziError(`Transaction not found: invalid id: ${transaction_id}`, ErrorCause.TransactionNotFound)
+        )
+      )
       .map(() => null)
   }
 }

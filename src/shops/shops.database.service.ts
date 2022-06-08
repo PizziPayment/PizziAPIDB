@@ -4,26 +4,21 @@ import Shop from '../commons/services/orm/models/shops.database.model'
 import { okIfNotNullElse, okIfOneElse } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
 import { assignNonNullValues } from '../commons/services/util.service'
+import { ErrorCause, IPizziError, PizziError } from '../commons/models/service.error.model'
 
-export type ShopsServiceResult<T> = ResultAsync<T, ShopsServiceError>
-
-export enum ShopsServiceError {
-  DatabaseError,
-  ShopNotFound,
-}
+export type ShopsServiceResult<T> = ResultAsync<T, IPizziError>
 
 export class ShopsServices {
   static deleteShopById(id: number, transaction: Transaction | null = null): ShopsServiceResult<null> {
-    return ResultAsync.fromPromise(Shop.destroy({ where: { id }, transaction }), () => ShopsServiceError.DatabaseError)
-      .andThen(okIfNotNullElse(ShopsServiceError.ShopNotFound))
+    return ResultAsync.fromPromise(Shop.destroy({ where: { id }, transaction }), () => PizziError.internalError())
+      .andThen(okIfNotNullElse(new PizziError(`Shop not found: invalid id: ${id}`, ErrorCause.ShopNotFound)))
       .map(() => null)
   }
 
   static getShopFromId(id: number, transaction: Transaction | null = null): ShopsServiceResult<ShopModel> {
-    return ResultAsync.fromPromise(
-      Shop.findOne({ where: { id }, transaction }),
-      () => ShopsServiceError.DatabaseError
-    ).andThen(okIfNotNullElse(ShopsServiceError.ShopNotFound))
+    return ResultAsync.fromPromise(Shop.findOne({ where: { id }, transaction }), () =>
+      PizziError.internalError()
+    ).andThen(okIfNotNullElse(new PizziError(`Shop not found: invalid id: ${id}`, ErrorCause.ShopNotFound)))
   }
 
   static createShop(
@@ -53,7 +48,7 @@ export class ShopsServices {
         },
         { transaction }
       ),
-      () => ShopsServiceError.DatabaseError
+      () => PizziError.internalError()
     )
   }
 
@@ -68,7 +63,7 @@ export class ShopsServices {
         returning: true,
         transaction,
       }),
-      () => ShopsServiceError.DatabaseError
-    ).andThen(okIfOneElse(ShopsServiceError.ShopNotFound))
+      () => PizziError.internalError()
+    ).andThen(okIfOneElse(new PizziError(`Shop not found: invalid id: ${id}`, ErrorCause.ShopNotFound)))
   }
 }
