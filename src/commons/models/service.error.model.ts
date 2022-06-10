@@ -16,13 +16,13 @@ export enum ErrorCause {
 export interface IPizziError {
   source: string
   message: string
-  code: number
+  code: ErrorCause
 }
 
 export class PizziError implements IPizziError {
   source: string = 'Unknown'
   message: string
-  code: number
+  code: ErrorCause
 
   constructor(message: string, code: ErrorCause) {
     this.source = PizziError.getCallersName(3)
