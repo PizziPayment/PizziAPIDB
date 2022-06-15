@@ -8,7 +8,9 @@ export const credential: Omit<CredentialModel, 'id'> = {
 export const shop: Omit<ShopModel, 'id'> = {
   name: 'toto',
   phone: '0652076382',
-  address: '13 rue de la ville Ville',
+  siret: 1234567891234,
+  city: 'Ville',
+  address: '13 rue de la ville',
   zipcode: 25619,
 }
 

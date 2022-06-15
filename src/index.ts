@@ -7,6 +7,8 @@ export * from './shops/models/shop.model'
 export * from './transactions/models/transaction.model'
 export * from './shop_items/models/shop_items.model'
 export * from './receipts/models/receipts.model'
+export * from './receipt_items/models/receipt_items.model'
+export * from './transaction_tokens/models/transaction_token.model'
 
 export * from './commons/services/sequelize/model'
 
@@ -19,6 +21,8 @@ export * from './shops/shops.database.service'
 export * from './transactions/transactions.database.service'
 export * from './shop_items/shop_items.database.service'
 export * from './receipts/receipts.database.service'
+export * from './receipt_items/receipt_items.database.service'
+export * from './transaction_tokens/transaction_tokens.database.service'
 
 export * from './commons/services/date.service'
 export * from './commons/services/encryption/encryption.service'

@@ -7,3 +7,8 @@ export default interface ReceiptItemModel {
   quantity: number
   warranty: string
 }
+
+export interface DetailedReceiptItemModel extends ReceiptItemModel {
+  name: string
+  price: string
+}

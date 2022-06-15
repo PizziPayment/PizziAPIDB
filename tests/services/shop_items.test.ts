@@ -47,7 +47,7 @@ describe('Shop item domain', () => {
 
     try {
       const shop_id = (
-        await ShopsServices.createShop(shop.name, shop.phone, shop.address, shop.zipcode, t)
+        await ShopsServices.createShop(shop.name, shop.phone, shop.siret, shop.address, shop.city, shop.zipcode, t)
       )._unsafeUnwrap().id
       const shop_item_sample = shop_items[0]
 
@@ -73,7 +73,7 @@ describe('Shop item domain', () => {
 
     try {
       const shop_id = (
-        await ShopsServices.createShop(shop.name, shop.phone, shop.address, shop.zipcode, t)
+        await ShopsServices.createShop(shop.name, shop.phone, shop.siret, shop.address, shop.city, shop.zipcode, t)
       )._unsafeUnwrap().id
 
       const res = await ShopItemsService.createShopItems(shop_id, shop_items, t)
@@ -94,7 +94,7 @@ describe('Shop item domain', () => {
 
     try {
       const shop_id = (
-        await ShopsServices.createShop(shop.name, shop.phone, shop.address, shop.zipcode, t)
+        await ShopsServices.createShop(shop.name, shop.phone, shop.siret, shop.address, shop.city, shop.zipcode, t)
       )._unsafeUnwrap().id
 
       let res = await ShopItemsService.createShopItem(shop_id, shop_items[0].name, shop_items[0].price, t)
@@ -170,12 +170,21 @@ describe('Shop item domain', () => {
 
       try {
         const shop_id = (
-          await ShopsServices.createShop(shop.name, shop.phone, shop.address, shop.zipcode, t)
+          await ShopsServices.createShop(shop.name, shop.phone, shop.siret, shop.address, shop.city, shop.zipcode, t)
         )._unsafeUnwrap().id
 
         const res = await ShopItemsService.createShopItems(shop_id, shop_items, t)
         expect(res.isOk()).toBeTruthy()
-        const res_items = await ShopItemsService.retrieveShopItemPage(shop_id, page, nb_items, sort_by, order, query, t)
+        const res_items = await ShopItemsService.retrieveShopItemPage(
+          shop_id,
+          page,
+          nb_items,
+          sort_by,
+          order,
+          query,
+          true,
+          t
+        )
 
         expect(res_items.isOk()).toBeTruthy()
         const paged_items = res_items._unsafeUnwrap()
@@ -198,7 +207,7 @@ describe('Shop item domain', () => {
 
     try {
       const shop_id = (
-        await ShopsServices.createShop(shop.name, shop.phone, shop.address, shop.zipcode, t)
+        await ShopsServices.createShop(shop.name, shop.phone, shop.siret, shop.address, shop.city, shop.zipcode, t)
       )._unsafeUnwrap().id
 
       let res = await ShopItemsService.createShopItem(shop_id, shop_items[1].name, shop_items[1].price, t)
@@ -226,7 +235,7 @@ describe('Shop item domain', () => {
 
     try {
       const shop_id = (
-        await ShopsServices.createShop(shop.name, shop.phone, shop.address, shop.zipcode, t)
+        await ShopsServices.createShop(shop.name, shop.phone, shop.siret, shop.address, shop.city, shop.zipcode, t)
       )._unsafeUnwrap().id
 
       let res = await ShopItemsService.createShopItem(shop_id, shop_items[1].name, shop_items[1].price, t)

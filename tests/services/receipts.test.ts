@@ -1,11 +1,16 @@
+import {
+  initOrm,
+  ReceiptItemsService,
+  ReceiptModel,
+  ReceiptsService,
+  ShopItemCreationModel,
+  ShopItemsService,
+  ShopsServices,
+} from '../../src'
 // @ts-ignore
 import { config } from '../common/config'
 // @ts-ignore
 import { addPadding } from '../common/service'
-import { initOrm, ShopItemCreationModel, ShopItemsService, ShopsServices } from '../../src'
-import { ReceiptModel } from '../../src/receipts/models/receipts.model'
-import ReceiptsService from '../../src/receipts/receipts.database.service'
-import { ReceiptItemsService } from '../../src/receipt_items/receipt_items.database.service'
 
 // @ts-ignore
 let sequelize: Sequelize = undefined
@@ -113,23 +118,24 @@ describe('Receipts domain', () => {
       )._unsafeUnwrap()
 
       ;(
-        await ShopsServices.createShop('test', '0202020202', 'address', 20000, transaction).map((shop) =>
-          ShopItemsService.createShopItems(shop.id, shop_items_sample, transaction).map((shop_items) =>
-            Promise.all(
-              shop_items.map(
-                async (shop_item) =>
-                  await ReceiptItemsService.createReceiptItem(
-                    created_receipt.id,
-                    shop_item.id,
-                    0,
-                    0,
-                    1,
-                    'tototot',
-                    transaction
-                  )
+        await ShopsServices.createShop('test', '0202020202', 123213, 'address', 'city', 20000, transaction).map(
+          (shop) =>
+            ShopItemsService.createShopItems(shop.id, shop_items_sample, transaction).map((shop_items) =>
+              Promise.all(
+                shop_items.map(
+                  async (shop_item) =>
+                    await ReceiptItemsService.createReceiptItem(
+                      created_receipt.id,
+                      shop_item.id,
+                      0,
+                      0,
+                      1,
+                      'tototot',
+                      transaction
+                    )
+                )
               )
             )
-          )
         )
       )._unsafeUnwrap()
 
