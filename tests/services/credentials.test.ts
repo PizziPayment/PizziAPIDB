@@ -52,7 +52,15 @@ async function setupCredential(kind: 'shop' | 'user'): Promise<[ShopModel | User
   }
 
   if (kind == 'shop') {
-    let res = await ShopsServices.createShop(shop.name, shop.phone, shop.address, shop.zipcode, transaction)
+    let res = await ShopsServices.createShop(
+      shop.name,
+      shop.phone,
+      shop.siret,
+      shop.address,
+      shop.city,
+      shop.zipcode,
+      transaction
+    )
     expect(res.isOk()).toBeTruthy()
     const created_shop = res._unsafeUnwrap()
 
