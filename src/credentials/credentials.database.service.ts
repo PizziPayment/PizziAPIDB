@@ -19,9 +19,11 @@ export class CredentialsService {
     credential_id: number,
     transaction: Transaction | null = null
   ): CredentialsServiceResult<null> {
-    return this.getCredentialFromId(credential_id, transaction)
-      .andThen(onTransaction(transaction, destroyOwnersTokens))
-      .andThen(onTransaction(transaction, destroyCredential))
+    return ResultAsync.fromPromise(
+      Credential.destroy({ where: { id: credential_id }, transaction }),
+      () => CredentialsServiceError.DatabaseError
+    )
+      .andThen(okIfNotNullElse(CredentialsServiceError.OwnerNotFound))
       .map(() => null)
   }
 
@@ -35,7 +37,7 @@ export class CredentialsService {
     ).andThen(okIfNotNullElse(CredentialsServiceError.OwnerNotFound))
   }
 
-  static getCredentialFromMailAndPassword(
+  static getCredentialFromEmailAndPassword(
     email: string,
     hashed_password: string,
     transaction: Transaction | null = null
@@ -92,14 +94,14 @@ export class CredentialsService {
     id_type: 'user' | 'shop' | 'admin',
     id: number,
     email: string,
-    password: string,
+    hashed_password: string,
     transaction: Transaction | null = null
   ): CredentialsServiceResult<CredentialModel> {
     return ResultAsync.fromPromise(
       Credential.create(
         {
           email: email,
-          password: password,
+          password: hashed_password,
           [`${id_type}_id`]: id,
         },
         { transaction }
@@ -127,16 +129,6 @@ function destroyOwnersTokens(
 ): CredentialsServiceResult<CredentialModel> {
   return ResultAsync.fromPromise(
     Token.destroy({ where: { credential_id: credential.id }, transaction }),
-    () => CredentialsServiceError.DatabaseError
-  ).map(() => credential)
-}
-
-function destroyCredential(
-  credential: CredentialModel,
-  transaction: Transaction | null
-): CredentialsServiceResult<CredentialModel> {
-  return ResultAsync.fromPromise(
-    Credential.destroy({ where: { id: credential.id }, transaction }),
     () => CredentialsServiceError.DatabaseError
   ).map(() => credential)
 }

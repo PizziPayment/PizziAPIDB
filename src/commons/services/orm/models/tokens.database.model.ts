@@ -5,8 +5,9 @@ import Credential from './credentials.database.model'
 interface TokenAttributes {
   id: number
   access_token: string
+  access_expires_at: Date
   refresh_token: string
-  expires_at: Date
+  refresh_expires_at: Date
   client_id: number
   credential_id: number
 }
@@ -23,11 +24,14 @@ export default class Token extends Model<TokenAttributes, TokenCreation> {
   @Column({ allowNull: false })
   access_token!: string
 
+  @Column({ allowNull: false, type: DataType.DATE })
+  access_expires_at!: Date
+
   @Column({ allowNull: false })
   refresh_token!: string
 
   @Column({ allowNull: false, type: DataType.DATE })
-  expires_at!: Date
+  refresh_expires_at!: Date
 
   @ForeignKey(() => Client)
   @Column({ allowNull: false })
