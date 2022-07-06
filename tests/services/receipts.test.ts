@@ -9,8 +9,6 @@ import {
 } from '../../src'
 // @ts-ignore
 import { config } from '../common/config'
-// @ts-ignore
-import { addPadding } from '../common/service'
 
 // @ts-ignore
 let sequelize: Sequelize = undefined
@@ -30,7 +28,7 @@ describe('Receipts domain', () => {
     try {
       const receipt_sample: Omit<ReceiptModel, 'id'> = {
         tva_percentage: 10,
-        total_price: '99.99',
+        total_price: 9999,
       }
 
       const created_receipt = (
@@ -38,7 +36,7 @@ describe('Receipts domain', () => {
       )._unsafeUnwrap()
 
       expect(created_receipt.tva_percentage).toBe(receipt_sample.tva_percentage)
-      expect(created_receipt.total_price).toBe(addPadding(receipt_sample.total_price))
+      expect(created_receipt.total_price).toBe(receipt_sample.total_price)
     } finally {
       await transaction.rollback()
     }
@@ -50,7 +48,7 @@ describe('Receipts domain', () => {
     try {
       const receipt_sample: Omit<ReceiptModel, 'id'> = {
         tva_percentage: 10,
-        total_price: '99.99',
+        total_price: 9999,
       }
 
       const created_receipt = (
@@ -74,7 +72,7 @@ describe('Receipts domain', () => {
     try {
       const receipt_sample: Omit<ReceiptModel, 'id'> = {
         tva_percentage: 10,
-        total_price: '99.99',
+        total_price: 9999,
       }
 
       const created_receipt = (
@@ -85,7 +83,7 @@ describe('Receipts domain', () => {
       )._unsafeUnwrap()
 
       expect(retrieved_receipt.tva_percentage).toBe(created_receipt.tva_percentage)
-      expect(retrieved_receipt.total_price).toBe(addPadding(created_receipt.total_price))
+      expect(retrieved_receipt.total_price).toBe(created_receipt.total_price)
     } finally {
       await transaction.rollback()
     }
@@ -95,15 +93,15 @@ describe('Receipts domain', () => {
     const shop_items_sample: Array<ShopItemCreationModel> = [
       {
         name: 'kidney',
-        price: '3',
+        price: 300,
       },
       {
         name: 'lung',
-        price: '40.1',
+        price: 4010,
       },
       {
         name: 'leg',
-        price: '450.34',
+        price: 45034,
       },
     ]
     const transaction = await sequelize.transaction()
@@ -111,33 +109,33 @@ describe('Receipts domain', () => {
     try {
       const receipt_sample: Omit<ReceiptModel, 'id'> = {
         tva_percentage: 10,
-        total_price: '1.404',
+        total_price: 140,
       }
       const created_receipt = (
         await ReceiptsService.createReceipt(receipt_sample.tva_percentage, receipt_sample.total_price, transaction)
       )._unsafeUnwrap()
 
-      ;(
-        await ShopsServices.createShop('test', '0202020202', 123213, 'address', 'city', 20000, transaction).map(
-          (shop) =>
-            ShopItemsService.createShopItems(shop.id, shop_items_sample, transaction).map((shop_items) =>
-              Promise.all(
-                shop_items.map(
-                  async (shop_item) =>
-                    await ReceiptItemsService.createReceiptItem(
-                      created_receipt.id,
-                      shop_item.id,
-                      0,
-                      0,
-                      1,
-                      'tototot',
-                      transaction
-                    )
+        ; (
+          await ShopsServices.createShop('test', '0202020202', 123213, 'address', 'city', 20000, transaction).map(
+            (shop) =>
+              ShopItemsService.createShopItems(shop.id, shop_items_sample, transaction).map((shop_items) =>
+                Promise.all(
+                  shop_items.map(
+                    async (shop_item) =>
+                      await ReceiptItemsService.createReceiptItem(
+                        created_receipt.id,
+                        shop_item.id,
+                        0,
+                        0,
+                        1,
+                        'tototot',
+                        transaction
+                      )
+                  )
                 )
               )
-            )
-        )
-      )._unsafeUnwrap()
+          )
+        )._unsafeUnwrap()
 
       const retrieved_receipt = (
         await ReceiptsService.getDetailedReceiptById(created_receipt.id, transaction)

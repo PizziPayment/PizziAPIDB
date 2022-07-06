@@ -25,7 +25,7 @@ export interface ExpandedTransactionModel extends Omit<TransactionModel, 'shop_i
   }
   receipt: {
     id: number
-    total_ht: string
+    total_ht: number
     tva_percentage: number
   }
 }

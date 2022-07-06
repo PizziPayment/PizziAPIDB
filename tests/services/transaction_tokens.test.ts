@@ -29,7 +29,7 @@ afterAll(() => {
 async function setupReceiptUserShopAndTransaction(
   transaction: STransaction
 ): Promise<[ReceiptModel, UserModel, ShopModel, TransactionModel]> {
-  const receipt = (await ReceiptsService.createReceipt(10, '2000', transaction))._unsafeUnwrap()
+  const receipt = (await ReceiptsService.createReceipt(10, 2000, transaction))._unsafeUnwrap()
   const user = (await UsersServices.createUser('test', 'test', 'test', 3000, transaction))._unsafeUnwrap()
   const shop = (
     await ShopsServices.createShop('test', '0202020202', 2131313213, 'address', 'city', 20000, transaction)

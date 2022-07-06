@@ -5,7 +5,7 @@ import Transaction from './transactions.database.model'
 export interface ReceiptAttributes {
   id: number
   tva_percentage: number
-  total_price: string
+  total_price: number
 }
 
 export type ReceiptCreation = Omit<ReceiptAttributes, 'id'>
@@ -20,8 +20,8 @@ export default class Receipt extends Model<ReceiptAttributes, ReceiptCreation> {
   @Column({ allowNull: false, type: DataType.FLOAT })
   tva_percentage!: number
 
-  @Column({ allowNull: false, type: DataType.DECIMAL(16, 2) })
-  total_price!: string
+  @Column({ allowNull: false, type: DataType.INTEGER })
+  total_price!: number
 
   @HasMany(() => ReceiptItem)
   items!: Array<ReceiptItem>

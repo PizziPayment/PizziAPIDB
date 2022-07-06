@@ -10,5 +10,5 @@ export default interface ReceiptItemModel {
 
 export interface DetailedReceiptItemModel extends ReceiptItemModel {
   name: string
-  price: string
+  price: number
 }

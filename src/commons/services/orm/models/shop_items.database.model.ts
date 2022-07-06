@@ -15,7 +15,7 @@ import ReceiptItem from './receipt_items.database.model'
 export interface ShopItemsAttributes {
   id: number
   name: string
-  price: string
+  price: number
   shop_id: number
   created_at: Date
   enabled: boolean
@@ -33,8 +33,8 @@ export default class ShopItem extends Model<ShopItemsAttributes, ShopItemsCreati
   @Column({ allowNull: false })
   name!: string
 
-  @Column({ allowNull: false, type: DataType.DECIMAL(16, 2) })
-  price!: string
+  @Column({ allowNull: false, type: DataType.INTEGER })
+  price!: number
 
   @Column({ allowNull: false, type: DataType.DATE })
   created_at!: Date
