@@ -19,7 +19,7 @@ export class UsersServices {
   static getUserFromId(user_id: number, transaction: Transaction | null = null): UsersServiceResult<UserModel> {
     return ResultAsync.fromPromise(User.findOne({ where: { id: user_id }, transaction }), () =>
       PizziError.internalError()
-    ).andThen(okIfNotNullElse(new PizziError(`User not found: Invalid user_id: ${user_id}`, ErrorCause.UserNotFound)))
+    ).andThen(okIfNotNullElse(new PizziError(`invalid user_id: ${user_id}`, ErrorCause.UserNotFound)))
   }
 
   static createUser(
@@ -61,7 +61,7 @@ export class UsersServices {
       }),
       () => PizziError.internalError()
     )
-      .andThen(okIfNotNullElse(new PizziError(`User not found: Invalid user_id: ${user_id}`, ErrorCause.UserNotFound)))
+      .andThen(okIfNotNullElse(new PizziError(`invalid user_id: ${user_id}`, ErrorCause.UserNotFound)))
       .andThen((user) =>
         ResultAsync.fromPromise(
           Object.assign(user, assignNonNullValues({ firstname: name, surname, address, zipcode })).save({

@@ -25,7 +25,7 @@ export class ClientsService {
     ).andThen(
       okIfNotNullElse(
         new PizziError(
-          `Client not found: invalid client_id: ${client_id} or client_secret: ${client_secret}`,
+          `invalid client_id: ${client_id} or client_secret: ${client_secret}`,
           ErrorCause.ClientNotFound
         )
       )

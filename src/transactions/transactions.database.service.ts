@@ -81,7 +81,7 @@ export class TransactionsService {
       PizziError.internalError()
     )
       .andThen(
-        okIfNotNullElse(new PizziError(`Transaction not found: invalid id: ${id}`, ErrorCause.TransactionNotFound))
+        okIfNotNullElse(new PizziError(`invalid id: ${id}`, ErrorCause.TransactionNotFound))
       )
       .map(intoTransactionModel)
   }
@@ -117,7 +117,7 @@ export class TransactionsService {
       PizziError.internalError()
     )
       .andThen(
-        okIfNotNullElse(new PizziError(`Receipt not found: invalid id: ${receipt_id}`, ErrorCause.ReceiptNotFound))
+        okIfNotNullElse(new PizziError(`invalid id: ${receipt_id}`, ErrorCause.ReceiptNotFound))
       )
       .map(intoTransactionModel)
   }
@@ -133,7 +133,7 @@ export class TransactionsService {
     )
       .andThen(
         okIfNotNullElse(
-          new PizziError(`Transaction not found: invalid id: ${transaction_id}`, ErrorCause.TransactionNotFound)
+          new PizziError(`invalid id: ${transaction_id}`, ErrorCause.TransactionNotFound)
         )
       )
       .map(() => null)
@@ -159,7 +159,7 @@ export class TransactionsService {
     )
       .andThen(
         okIfNotNullElse(
-          new PizziError(`Transaction not found: invalid id: ${transaction_id}`, ErrorCause.TransactionNotFound)
+          new PizziError(`invalid id: ${transaction_id}`, ErrorCause.TransactionNotFound)
         )
       )
       .map(() => null)
@@ -176,7 +176,7 @@ export class TransactionsService {
     )
       .andThen(
         okIfNotNullElse(
-          new PizziError(`Transaction not found: invalid id: ${transaction_id}`, ErrorCause.TransactionNotFound)
+          new PizziError(`invalid id: ${transaction_id}`, ErrorCause.TransactionNotFound)
         )
       )
       .map(() => null)

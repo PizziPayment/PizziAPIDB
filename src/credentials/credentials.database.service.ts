@@ -34,7 +34,7 @@ export class CredentialsService {
       PizziError.internalError()
     ).andThen(
       okIfNotNullElse(
-        new PizziError(`Credential not found: invalid credential_id: ${credential_id}`, ErrorCause.CredentialNotFound)
+        new PizziError(`invalid credential_id: ${credential_id}`, ErrorCause.CredentialNotFound)
       )
     )
   }
@@ -53,7 +53,7 @@ export class CredentialsService {
     ).andThen(
       okIfNotNullElse(
         new PizziError(
-          `Credential not found: invalid email: ${email} or password: ${hashed_password}`,
+          `invalid email: ${email} or password: ${hashed_password}`,
           ErrorCause.CredentialNotFound
         )
       )
@@ -70,7 +70,7 @@ export class CredentialsService {
     )
       .andThen(
         okIfNotNullElse(
-          new PizziError(`Credential not found: invalid credential_id: ${credential_id}`, ErrorCause.CredentialNotFound)
+          new PizziError(`invalid credential_id: ${credential_id}`, ErrorCause.CredentialNotFound)
         )
       )
       .andThen((credential) =>
@@ -92,7 +92,7 @@ export class CredentialsService {
     )
       .andThen(
         okIfNotNullElse(
-          new PizziError(`Credential not found: invalid credential_id: ${credential_id}`, ErrorCause.CredentialNotFound)
+          new PizziError(`invalid credential_id: ${credential_id}`, ErrorCause.CredentialNotFound)
         )
       )
       .andThen((credential) =>
@@ -126,7 +126,7 @@ export class CredentialsService {
       PizziError.internalError()
     )
       .map((t) => !t) // Reverse null and not null to match `okIfNotNullElse` function.
-      .andThen(okIfNotNullElse(new PizziError(`Duplicated email: ${email}`, ErrorCause.DuplicatedEmail)))
+      .andThen(okIfNotNullElse(new PizziError(email, ErrorCause.DuplicatedEmail)))
       .map(() => null)
   }
 }

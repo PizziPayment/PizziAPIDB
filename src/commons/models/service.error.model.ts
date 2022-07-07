@@ -1,5 +1,5 @@
 export enum ErrorCause {
-  DatabaseError,
+  DatabaseError = 0,
   TransactionNotFound,
   TransactionTokenNotFound,
   ShopNotFound,
@@ -26,8 +26,25 @@ export class PizziError implements IPizziError {
 
   constructor(message: string, code: ErrorCause) {
     this.source = PizziError.getCallersName(3)
-    this.message = message
+    this.message = `${PizziError.getErrorCauseMessage(code)}: ${message}`
     this.code = code
+  }
+
+  static getErrorCauseMessage(cause: ErrorCause): string {
+    return [
+      'Database error',
+      'Transaction not found',
+      'Transaction token not found',
+      'Shop not found',
+      'User not found',
+      'Token not found',
+      'Shop item not found',
+      'Receipt not found',
+      'Receipt item not found',
+      'Credential not found',
+      'Duplicated email',
+      'Client not found',
+    ][cause]
   }
 
   static internalError(): PizziError {

@@ -58,7 +58,7 @@ export class ShopItemsService {
     transaction: Transaction | null = null
   ): ShopItemsServiceResult<ShopItemModel> {
     return ResultAsync.fromPromise(ShopItem.findOne({ where: { id }, transaction }), () => PizziError.internalError())
-      .andThen(okIfNotNullElse(new PizziError(`Shop item not found: invalid id: ${id}`, ErrorCause.ShopItemNotFound)))
+      .andThen(okIfNotNullElse(new PizziError(`invalid id: ${id}`, ErrorCause.ShopItemNotFound)))
       .map(intoShopItemModel)
   }
 
@@ -70,7 +70,7 @@ export class ShopItemsService {
     return ResultAsync.fromPromise(ShopItem.findOne({ where: { id, enabled }, transaction }), () =>
       PizziError.internalError()
     )
-      .andThen(okIfNotNullElse(new PizziError(`Shop item not found: invalid id: ${id}`, ErrorCause.ShopItemNotFound)))
+      .andThen(okIfNotNullElse(new PizziError(`invalid id: ${id}`, ErrorCause.ShopItemNotFound)))
       .map(intoShopItemModel)
   }
 

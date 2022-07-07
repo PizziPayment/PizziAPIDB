@@ -17,7 +17,7 @@ export class ReceiptItemsService {
       PizziError.internalError()
     ).andThen(
       okIfNotNullElse(
-        new PizziError(`Receipt item not found: invalid receipt_id: ${receipt_id}`, ErrorCause.ReceiptItemNotFound)
+        new PizziError(`invalid receipt_id: ${receipt_id}`, ErrorCause.ReceiptItemNotFound)
       )
     )
   }
@@ -47,7 +47,7 @@ export class ReceiptItemsService {
       })
       .andThen(
         okIfNotNullElse(
-          new PizziError(`Receipt item not found: invalid receipt_id: ${receipt_id}`, ErrorCause.ReceiptItemNotFound)
+          new PizziError(`invalid receipt_id: ${receipt_id}`, ErrorCause.ReceiptItemNotFound)
         )
       )
   }

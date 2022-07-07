@@ -24,7 +24,7 @@ export class ReceiptsService {
     )
       .andThen(
         okIfNotNullElse(
-          new PizziError(`Receipt not found: invalid receipt_id: ${receipt_id}`, ErrorCause.ReceiptNotFound)
+          new PizziError(`invalid receipt_id: ${receipt_id}`, ErrorCause.ReceiptNotFound)
         )
       )
       .map((receipt) => {

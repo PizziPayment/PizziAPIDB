@@ -29,7 +29,7 @@ export class TransactionTokensService {
     ).andThen(
       okIfNotNullElse(
         new PizziError(
-          `Transaction not found: invalid transaction_id: ${transaction_id}`,
+          `invalid transaction_id: ${transaction_id}`,
           ErrorCause.TransactionTokenNotFound
         )
       )
@@ -45,7 +45,7 @@ export class TransactionTokensService {
     ).andThen(
       okIfNotNullElse(
         new PizziError(
-          `Transaction not found: invalid transaction_id: ${transaction_id}`,
+          `invalid transaction_id: ${transaction_id}`,
           ErrorCause.TransactionTokenNotFound
         )
       )
