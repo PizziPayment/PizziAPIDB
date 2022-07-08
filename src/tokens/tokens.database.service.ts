@@ -43,15 +43,13 @@ export class TokensService {
   static getTokenFromValue(token: string, transaction: Transaction | null = null): TokensServiceResult<TokenModel> {
     return ResultAsync.fromPromise(Token.findOne({ where: { access_token: token }, transaction }), () =>
       PizziError.internalError()
-    ).andThen(okIfNotNullElse(new PizziError(`invalid token: ${token}`, ErrorCause.TokenNotFound)))
+    ).andThen(okIfNotNullElse(new PizziError(ErrorCause.TokenNotFound, `invalid token: ${token}`)))
   }
 
   static getTokenFromId(token_id: number, transaction: Transaction | null = null): TokensServiceResult<TokenModel> {
     return ResultAsync.fromPromise(Token.findOne({ where: { id: token_id }, transaction }), () =>
       PizziError.internalError()
-    ).andThen(
-      okIfNotNullElse(new PizziError(`invalid token_id ${token_id}`, ErrorCause.TokenNotFound))
-    )
+    ).andThen(okIfNotNullElse(new PizziError(ErrorCause.TokenNotFound, `invalid token_id ${token_id}`)))
   }
 
   static deleteUserToken(token: TokenModel, transaction: Transaction | null = null): TokensServiceResult<null> {

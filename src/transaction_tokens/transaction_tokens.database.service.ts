@@ -27,12 +27,7 @@ export class TransactionTokensService {
       TransactionToken.findOne({ where: { transaction_id: transaction_id, token: token }, transaction }),
       () => PizziError.internalError()
     ).andThen(
-      okIfNotNullElse(
-        new PizziError(
-          `invalid transaction_id: ${transaction_id}`,
-          ErrorCause.TransactionTokenNotFound
-        )
-      )
+      okIfNotNullElse(new PizziError(ErrorCause.TransactionTokenNotFound, `invalid transaction_id: ${transaction_id}`))
     )
   }
 
@@ -43,12 +38,7 @@ export class TransactionTokensService {
     return ResultAsync.fromPromise(TransactionToken.findOne({ where: { id: transaction_id }, transaction }), () =>
       PizziError.internalError()
     ).andThen(
-      okIfNotNullElse(
-        new PizziError(
-          `invalid transaction_id: ${transaction_id}`,
-          ErrorCause.TransactionTokenNotFound
-        )
-      )
+      okIfNotNullElse(new PizziError(ErrorCause.TransactionTokenNotFound, `invalid transaction_id: ${transaction_id}`))
     )
   }
 

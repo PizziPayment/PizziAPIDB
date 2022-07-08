@@ -22,11 +22,7 @@ export class ReceiptsService {
       }),
       () => PizziError.internalError()
     )
-      .andThen(
-        okIfNotNullElse(
-          new PizziError(`invalid receipt_id: ${receipt_id}`, ErrorCause.ReceiptNotFound)
-        )
-      )
+      .andThen(okIfNotNullElse(new PizziError(ErrorCause.ReceiptNotFound, `invalid receipt_id: ${receipt_id}`)))
       .map((receipt) => {
         return {
           id: receipt.id,

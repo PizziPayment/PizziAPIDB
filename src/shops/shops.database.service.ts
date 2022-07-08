@@ -11,14 +11,14 @@ export type ShopsServiceResult<T> = ResultAsync<T, IPizziError>
 export class ShopsServices {
   static deleteShopById(id: number, transaction: Transaction | null = null): ShopsServiceResult<null> {
     return ResultAsync.fromPromise(Shop.destroy({ where: { id }, transaction }), () => PizziError.internalError())
-      .andThen(okIfNotNullElse(new PizziError(`invalid id: ${id}`, ErrorCause.ShopNotFound)))
+      .andThen(okIfNotNullElse(new PizziError(ErrorCause.ShopNotFound, `invalid id: ${id}`)))
       .map(() => null)
   }
 
   static getShopFromId(id: number, transaction: Transaction | null = null): ShopsServiceResult<ShopModel> {
     return ResultAsync.fromPromise(Shop.findOne({ where: { id }, transaction }), () =>
       PizziError.internalError()
-    ).andThen(okIfNotNullElse(new PizziError(`invalid id: ${id}`, ErrorCause.ShopNotFound)))
+    ).andThen(okIfNotNullElse(new PizziError(ErrorCause.ShopNotFound, `invalid id: ${id}`)))
   }
 
   static createShop(
@@ -64,6 +64,6 @@ export class ShopsServices {
         transaction,
       }),
       () => PizziError.internalError()
-    ).andThen(okIfOneElse(new PizziError(`invalid id: ${id}`, ErrorCause.ShopNotFound)))
+    ).andThen(okIfOneElse(new PizziError(ErrorCause.ShopNotFound, `invalid id: ${id}`)))
   }
 }

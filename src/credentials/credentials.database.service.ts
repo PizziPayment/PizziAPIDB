@@ -32,11 +32,7 @@ export class CredentialsService {
   ): CredentialsServiceResult<CredentialModel> {
     return ResultAsync.fromPromise(Credential.findOne({ where: { id: credential_id }, transaction }), () =>
       PizziError.internalError()
-    ).andThen(
-      okIfNotNullElse(
-        new PizziError(`invalid credential_id: ${credential_id}`, ErrorCause.CredentialNotFound)
-      )
-    )
+    ).andThen(okIfNotNullElse(new PizziError(ErrorCause.CredentialNotFound, `invalid credential_id: ${credential_id}`)))
   }
 
   static getCredentialFromMailAndPassword(
@@ -52,10 +48,7 @@ export class CredentialsService {
       () => PizziError.internalError()
     ).andThen(
       okIfNotNullElse(
-        new PizziError(
-          `invalid email: ${email} or password: ${hashed_password}`,
-          ErrorCause.CredentialNotFound
-        )
+        new PizziError(ErrorCause.CredentialNotFound, `invalid email: ${email} or password: ${hashed_password}`)
       )
     )
   }
@@ -69,9 +62,7 @@ export class CredentialsService {
       PizziError.internalError()
     )
       .andThen(
-        okIfNotNullElse(
-          new PizziError(`invalid credential_id: ${credential_id}`, ErrorCause.CredentialNotFound)
-        )
+        okIfNotNullElse(new PizziError(ErrorCause.CredentialNotFound, `invalid credential_id: ${credential_id}`))
       )
       .andThen((credential) =>
         ResultAsync.fromPromise(credential.set('password', hashed_password).save({ transaction }), () =>
@@ -91,9 +82,7 @@ export class CredentialsService {
       PizziError.internalError()
     )
       .andThen(
-        okIfNotNullElse(
-          new PizziError(`invalid credential_id: ${credential_id}`, ErrorCause.CredentialNotFound)
-        )
+        okIfNotNullElse(new PizziError(ErrorCause.CredentialNotFound, `invalid credential_id: ${credential_id}`))
       )
       .andThen((credential) =>
         ResultAsync.fromPromise(credential.set('email', email).save({ transaction }), () => PizziError.internalError())
@@ -126,7 +115,7 @@ export class CredentialsService {
       PizziError.internalError()
     )
       .map((t) => !t) // Reverse null and not null to match `okIfNotNullElse` function.
-      .andThen(okIfNotNullElse(new PizziError(email, ErrorCause.DuplicatedEmail)))
+      .andThen(okIfNotNullElse(new PizziError(ErrorCause.DuplicatedEmail, email)))
       .map(() => null)
   }
 }

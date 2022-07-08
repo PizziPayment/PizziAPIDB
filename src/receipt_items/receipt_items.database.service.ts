@@ -15,11 +15,7 @@ export class ReceiptItemsService {
   ): ReceiptItemsServiceResult<Array<ReceiptItemModel>> {
     return ResultAsync.fromPromise(ReceiptItem.findAll({ where: { receipt_id: receipt_id }, transaction }), () =>
       PizziError.internalError()
-    ).andThen(
-      okIfNotNullElse(
-        new PizziError(`invalid receipt_id: ${receipt_id}`, ErrorCause.ReceiptItemNotFound)
-      )
-    )
+    ).andThen(okIfNotNullElse(new PizziError(ErrorCause.ReceiptItemNotFound, `invalid receipt_id: ${receipt_id}`)))
   }
 
   static getDetailedReceiptItems(
@@ -45,11 +41,7 @@ export class ReceiptItemsService {
           }
         })
       })
-      .andThen(
-        okIfNotNullElse(
-          new PizziError(`invalid receipt_id: ${receipt_id}`, ErrorCause.ReceiptItemNotFound)
-        )
-      )
+      .andThen(okIfNotNullElse(new PizziError(ErrorCause.ReceiptItemNotFound, `invalid receipt_id: ${receipt_id}`)))
   }
 
   static createReceiptItems(

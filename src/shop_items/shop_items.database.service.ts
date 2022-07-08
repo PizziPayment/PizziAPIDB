@@ -58,7 +58,7 @@ export class ShopItemsService {
     transaction: Transaction | null = null
   ): ShopItemsServiceResult<ShopItemModel> {
     return ResultAsync.fromPromise(ShopItem.findOne({ where: { id }, transaction }), () => PizziError.internalError())
-      .andThen(okIfNotNullElse(new PizziError(`invalid id: ${id}`, ErrorCause.ShopItemNotFound)))
+      .andThen(okIfNotNullElse(new PizziError(ErrorCause.ShopItemNotFound, `invalid id: ${id}`)))
       .map(intoShopItemModel)
   }
 
@@ -70,7 +70,7 @@ export class ShopItemsService {
     return ResultAsync.fromPromise(ShopItem.findOne({ where: { id, enabled }, transaction }), () =>
       PizziError.internalError()
     )
-      .andThen(okIfNotNullElse(new PizziError(`invalid id: ${id}`, ErrorCause.ShopItemNotFound)))
+      .andThen(okIfNotNullElse(new PizziError(ErrorCause.ShopItemNotFound, `invalid id: ${id}`)))
       .map(intoShopItemModel)
   }
 
@@ -120,7 +120,7 @@ export class ShopItemsService {
       ShopItem.update({ enabled: false }, { where: { id, enabled: true }, transaction, returning: true }),
       () => PizziError.internalError()
     )
-      .andThen(okIfNotNullElse(new PizziError(`invalid id: ${id}`, ErrorCause.ShopItemNotFound)))
+      .andThen(okIfNotNullElse(new PizziError(ErrorCause.ShopItemNotFound, `invalid id: ${id}`)))
       .map((updated_shop_items) => intoShopItemModel(updated_shop_items[1][0]))
   }
 }

@@ -80,9 +80,7 @@ export class TransactionsService {
     return ResultAsync.fromPromise(Transaction.findOne({ where: { id: id }, transaction }), () =>
       PizziError.internalError()
     )
-      .andThen(
-        okIfNotNullElse(new PizziError(`invalid id: ${id}`, ErrorCause.TransactionNotFound))
-      )
+      .andThen(okIfNotNullElse(new PizziError(ErrorCause.TransactionNotFound, `invalid id: ${id}`)))
       .map(intoTransactionModel)
   }
 
@@ -116,9 +114,7 @@ export class TransactionsService {
     return ResultAsync.fromPromise(Transaction.findOne({ where: { receipt_id: receipt_id }, transaction }), () =>
       PizziError.internalError()
     )
-      .andThen(
-        okIfNotNullElse(new PizziError(`invalid id: ${receipt_id}`, ErrorCause.ReceiptNotFound))
-      )
+      .andThen(okIfNotNullElse(new PizziError(ErrorCause.ReceiptNotFound, `invalid id: ${receipt_id}`)))
       .map(intoTransactionModel)
   }
 
@@ -131,11 +127,7 @@ export class TransactionsService {
       Transaction.update({ user_id: user_id, updated_at: new Date() }, { where: { id: transaction_id }, transaction }),
       () => PizziError.internalError()
     )
-      .andThen(
-        okIfNotNullElse(
-          new PizziError(`invalid id: ${transaction_id}`, ErrorCause.TransactionNotFound)
-        )
-      )
+      .andThen(okIfNotNullElse(new PizziError(ErrorCause.TransactionNotFound, `invalid id: ${transaction_id}`)))
       .map(() => null)
   }
 
@@ -157,11 +149,7 @@ export class TransactionsService {
       ),
       () => PizziError.internalError()
     )
-      .andThen(
-        okIfNotNullElse(
-          new PizziError(`invalid id: ${transaction_id}`, ErrorCause.TransactionNotFound)
-        )
-      )
+      .andThen(okIfNotNullElse(new PizziError(ErrorCause.TransactionNotFound, `invalid id: ${transaction_id}`)))
       .map(() => null)
   }
 
@@ -174,11 +162,7 @@ export class TransactionsService {
       Transaction.update({ state: state, updated_at: new Date() }, { where: { id: transaction_id }, transaction }),
       () => PizziError.internalError()
     )
-      .andThen(
-        okIfNotNullElse(
-          new PizziError(`invalid id: ${transaction_id}`, ErrorCause.TransactionNotFound)
-        )
-      )
+      .andThen(okIfNotNullElse(new PizziError(ErrorCause.TransactionNotFound, `invalid id: ${transaction_id}`)))
       .map(() => null)
   }
 }

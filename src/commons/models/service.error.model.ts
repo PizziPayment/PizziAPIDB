@@ -24,7 +24,7 @@ export class PizziError implements IPizziError {
   message: string
   code: ErrorCause
 
-  constructor(message: string, code: ErrorCause) {
+  constructor(code: ErrorCause, message: string) {
     this.source = PizziError.getCallersName(3)
     this.message = `${PizziError.getErrorCauseMessage(code)}: ${message}`
     this.code = code
