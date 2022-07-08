@@ -120,7 +120,7 @@ export class ShopItemsService {
       ShopItem.update({ enabled: false }, { where: { id, enabled: true }, transaction, returning: true }),
       () => PizziError.internalError()
     )
-      .andThen(okIfNotNullElse(new PizziError(`Shop item not found: invalid id: ${id}`, ErrorCause.ShopItemNotFound)))
+      .andThen(okIfNotNullElse(new PizziError(`invalid id: ${id}`, ErrorCause.ShopItemNotFound)))
       .map((updated_shop_items) => intoShopItemModel(updated_shop_items[1][0]))
   }
 }
