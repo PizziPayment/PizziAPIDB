@@ -5,13 +5,9 @@ import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import { createAccessTokenLifetime, createRefreshTokenLifetime } from '../commons/services/date.service'
 import Token, { TokenCreation } from '../commons/services/orm/models/tokens.database.model'
 import { TokenModel } from './models/token.model'
+import { ErrorCause, IPizziError, PizziError } from '../commons/models/service.error.model'
 
-export type TokensServiceResult<T> = ResultAsync<T, TokensServiceError>
-
-export enum TokensServiceError {
-  TokenNotFound,
-  DatabaseError,
-}
+export type TokensServiceResult<T> = ResultAsync<T, IPizziError>
 
 export class TokensService {
   static generateTokenBetweenClientAndCredential(
@@ -25,7 +21,7 @@ export class TokensService {
       Token.create(TokensService.generateToken(client_id, credential_id, access_expires_at, refresh_expires_at), {
         transaction,
       }),
-      () => TokensServiceError.DatabaseError
+      () => PizziError.internalError()
     )
   }
 
@@ -43,7 +39,7 @@ export class TokensService {
         },
         { where: { id: token.id }, transaction, returning: true }
       ),
-      () => TokensServiceError.DatabaseError
+      () => PizziError.internalError()
     ).map((refreshed_tokens) => refreshed_tokens[1][0])
   }
 
@@ -53,8 +49,8 @@ export class TokensService {
   ): TokensServiceResult<TokenModel> {
     return ResultAsync.fromPromise(
       Token.findOne({ where: { access_token: token }, transaction }),
-      () => TokensServiceError.DatabaseError
-    ).andThen(okIfNotNullElse(TokensServiceError.TokenNotFound))
+      () => PizziError.internalError()
+    ).andThen(okIfNotNullElse(new PizziError(ErrorCause.TokenNotFound, `invalid token value ${token}`)))
   }
 
   static getTokenFromRefreshValue(
@@ -63,21 +59,20 @@ export class TokensService {
   ): TokensServiceResult<TokenModel> {
     return ResultAsync.fromPromise(
       Token.findOne({ where: { refresh_token: token }, transaction }),
-      () => TokensServiceError.DatabaseError
-    ).andThen(okIfNotNullElse(TokensServiceError.TokenNotFound))
+      () => PizziError.internalError()
+    ).andThen(okIfNotNullElse(new PizziError(ErrorCause.TokenNotFound, `invalid refresh token value ${token}`)))
   }
 
   static getTokenFromId(token_id: number, transaction: Transaction | null = null): TokensServiceResult<TokenModel> {
-    return ResultAsync.fromPromise(
-      Token.findOne({ where: { id: token_id }, transaction }),
-      () => TokensServiceError.DatabaseError
-    ).andThen(okIfNotNullElse(TokensServiceError.TokenNotFound))
+    return ResultAsync.fromPromise(Token.findOne({ where: { id: token_id }, transaction }), () =>
+      PizziError.internalError()
+    ).andThen(okIfNotNullElse(new PizziError(ErrorCause.TokenNotFound, `invalid token_id ${token_id}`)))
   }
 
   static deleteToken(token: TokenModel, transaction: Transaction | null = null): TokensServiceResult<null> {
     return ResultAsync.fromPromise(
       Token.destroy({ where: { id: token.id }, transaction }),
-      () => TokensServiceError.DatabaseError
+      () => PizziError.internalError()
     ).map(() => null)
   }
 
@@ -85,9 +80,8 @@ export class TokensService {
     credential_id: number,
     transaction: Transaction | null = null
   ): TokensServiceResult<null> {
-    return ResultAsync.fromPromise(
-      Token.destroy({ where: { credential_id: credential_id }, transaction }),
-      () => TokensServiceError.DatabaseError
+    return ResultAsync.fromPromise(Token.destroy({ where: { credential_id: credential_id }, transaction }), () =>
+      PizziError.internalError()
     ).map(() => null)
   }
 

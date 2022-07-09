@@ -8,11 +8,11 @@ import {
   initOrm,
   TokenModel,
   TokensService,
-  TokensServiceError,
   UserModel,
   UsersServices,
   createAccessTokenLifetime,
   createRefreshTokenLifetime,
+  ErrorCause,
 } from '../../src'
 import { config } from '../common/config'
 import { credential, user } from '../common/models'
@@ -140,7 +140,7 @@ describe('Token domain', () => {
       expect(res.isErr()).toBeTruthy()
       const error = res._unsafeUnwrapErr()
 
-      expect(error).toBe(TokensServiceError.TokenNotFound)
+      expect(error.code).toBe(ErrorCause.TokenNotFound)
     })
 
     it('tokens from credential', async () => {
@@ -152,7 +152,7 @@ describe('Token domain', () => {
       expect(res.isErr()).toBeTruthy()
       const error = res._unsafeUnwrapErr()
 
-      expect(error).toBe(TokensServiceError.TokenNotFound)
+      expect(error.code).toBe(ErrorCause.TokenNotFound)
     })
   })
 

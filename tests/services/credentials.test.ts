@@ -2,13 +2,12 @@ import { Sequelize, Transaction } from 'sequelize'
 import {
   CredentialModel,
   CredentialsService,
-  CredentialsServiceError,
   EncryptionService,
+  ErrorCause,
   initOrm,
   ShopModel,
   ShopsServices,
   TokensService,
-  TokensServiceError,
   UserModel,
   UsersServices,
 } from '../../src'
@@ -117,7 +116,7 @@ describe('Credential domain', () => {
     expect(res.isErr()).toBeTruthy()
     const error = res._unsafeUnwrapErr()
 
-    expect(error).toBe(TokensServiceError.TokenNotFound)
+    expect(error.code).toBe(ErrorCause.TokenNotFound)
   })
 
   describe('should be able to change', () => {
@@ -173,7 +172,7 @@ describe('Credential domain', () => {
       const res = await CredentialsService.isEmailUnique(created_cred.email, transaction)
 
       expect(res.isErr()).toBeTruthy()
-      expect(res._unsafeUnwrapErr()).toBe(CredentialsServiceError.DuplicatedEmail)
+      expect(res._unsafeUnwrapErr().code).toBe(ErrorCause.DuplicatedEmail)
     })
   })
 

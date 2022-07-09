@@ -5,13 +5,9 @@ import { Order } from '../commons/services/sequelize/model'
 import ShopItem from '../commons/services/orm/models/shop_items.database.model'
 import { intoShopItemModel, ShopItemCreationModel, ShopItemModel, ShopItemSortBy } from './models/shop_items.model'
 import { assignNonNullValues } from '../commons/services/util.service'
+import { ErrorCause, IPizziError, PizziError } from '../commons/models/service.error.model'
 
-export enum ShopItemsServiceError {
-  NotFound,
-  DatabaseError,
-}
-
-export type ShopItemsServiceResult<T> = ResultAsync<T, ShopItemsServiceError>
+export type ShopItemsServiceResult<T> = ResultAsync<T, IPizziError>
 
 export class ShopItemsService {
   static createShopItem(
@@ -31,7 +27,7 @@ export class ShopItemsService {
         },
         { transaction }
       ),
-      () => ShopItemsServiceError.DatabaseError
+      () => PizziError.internalError()
     ).map(intoShopItemModel)
   }
 
@@ -53,7 +49,7 @@ export class ShopItemsService {
         }),
         { validate: true, transaction }
       ),
-      () => ShopItemsServiceError.DatabaseError
+      () => PizziError.internalError()
     ).map((items) => items.map(intoShopItemModel))
   }
 
@@ -61,11 +57,8 @@ export class ShopItemsService {
     id: number,
     transaction: Transaction | null = null
   ): ShopItemsServiceResult<ShopItemModel> {
-    return ResultAsync.fromPromise(
-      ShopItem.findOne({ where: { id }, transaction }),
-      () => ShopItemsServiceError.DatabaseError
-    )
-      .andThen(okIfNotNullElse(ShopItemsServiceError.NotFound))
+    return ResultAsync.fromPromise(ShopItem.findOne({ where: { id }, transaction }), () => PizziError.internalError())
+      .andThen(okIfNotNullElse(new PizziError(ErrorCause.ShopItemNotFound, `invalid id: ${id}`)))
       .map(intoShopItemModel)
   }
 
@@ -74,11 +67,10 @@ export class ShopItemsService {
     enabled: boolean,
     transaction: Transaction | null = null
   ): ShopItemsServiceResult<ShopItemModel> {
-    return ResultAsync.fromPromise(
-      ShopItem.findOne({ where: { id, enabled }, transaction }),
-      () => ShopItemsServiceError.DatabaseError
+    return ResultAsync.fromPromise(ShopItem.findOne({ where: { id, enabled }, transaction }), () =>
+      PizziError.internalError()
     )
-      .andThen(okIfNotNullElse(ShopItemsServiceError.NotFound))
+      .andThen(okIfNotNullElse(new PizziError(ErrorCause.ShopItemNotFound, `invalid id: ${id}`)))
       .map(intoShopItemModel)
   }
 
@@ -101,7 +93,7 @@ export class ShopItemsService {
         raw: true,
         transaction,
       }),
-      () => ShopItemsServiceError.DatabaseError
+      () => PizziError.internalError()
     ).map((result) => result.rows.map(intoShopItemModel))
   }
 
@@ -126,9 +118,9 @@ export class ShopItemsService {
   static deleteShopItemById(id: number, transaction: Transaction | null = null): ShopItemsServiceResult<ShopItemModel> {
     return ResultAsync.fromPromise(
       ShopItem.update({ enabled: false }, { where: { id, enabled: true }, transaction, returning: true }),
-      () => ShopItemsServiceError.NotFound
+      () => PizziError.internalError()
     )
-      .andThen(okIfNotNullElse(ShopItemsServiceError.NotFound))
+      .andThen(okIfNotNullElse(new PizziError(ErrorCause.ShopItemNotFound, `invalid id: ${id}`)))
       .map((updated_shop_items) => intoShopItemModel(updated_shop_items[1][0]))
   }
 }

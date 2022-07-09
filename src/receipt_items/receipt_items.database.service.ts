@@ -4,23 +4,18 @@ import ReceiptItem from '../commons/services/orm/models/receipt_items.database.m
 import ReceiptItemModel, { DetailedReceiptItemModel } from './models/receipt_items.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import ShopItem from '../commons/services/orm/models/shop_items.database.model'
+import { ErrorCause, IPizziError, PizziError } from '../commons/models/service.error.model'
 
-export enum ReceiptItemsServiceError {
-  ReceiptNotFound,
-  DatabaseError,
-}
-
-export type ReceiptItemsServiceResult<T> = ResultAsync<T, ReceiptItemsServiceError>
+export type ReceiptItemsServiceResult<T> = ResultAsync<T, IPizziError>
 
 export class ReceiptItemsService {
   static getReceiptItems(
     receipt_id: number,
     transaction: Transaction | null = null
   ): ReceiptItemsServiceResult<Array<ReceiptItemModel>> {
-    return ResultAsync.fromPromise(
-      ReceiptItem.findAll({ where: { receipt_id: receipt_id }, transaction }),
-      () => ReceiptItemsServiceError.DatabaseError
-    ).andThen(okIfNotNullElse(ReceiptItemsServiceError.ReceiptNotFound))
+    return ResultAsync.fromPromise(ReceiptItem.findAll({ where: { receipt_id: receipt_id }, transaction }), () =>
+      PizziError.internalError()
+    ).andThen(okIfNotNullElse(new PizziError(ErrorCause.ReceiptItemNotFound, `invalid receipt_id: ${receipt_id}`)))
   }
 
   static getDetailedReceiptItems(
@@ -29,7 +24,7 @@ export class ReceiptItemsService {
   ): ReceiptItemsServiceResult<Array<DetailedReceiptItemModel>> {
     return ResultAsync.fromPromise(
       ReceiptItem.findAll({ where: { receipt_id: receipt_id }, include: [{ model: ShopItem }], transaction }),
-      () => ReceiptItemsServiceError.DatabaseError
+      () => PizziError.internalError()
     )
       .map((receipt_items) => {
         return receipt_items.map((receipt_item) => {
@@ -46,20 +41,28 @@ export class ReceiptItemsService {
           }
         })
       })
-      .andThen(okIfNotNullElse(ReceiptItemsServiceError.ReceiptNotFound))
+      .andThen(okIfNotNullElse(new PizziError(ErrorCause.ReceiptItemNotFound, `invalid receipt_id: ${receipt_id}`)))
   }
 
   static createReceiptItems(
     receipt_id: number,
-    receipt_items: Array<{ shop_item_id: number, discount: number, eco_tax: number, quantity: number, warranty: string }>,
+    receipt_items: Array<{
+      shop_item_id: number
+      discount: number
+      eco_tax: number
+      quantity: number
+      warranty: string
+    }>,
     transaction: Transaction | null = null
   ): ReceiptItemsServiceResult<Array<ReceiptItemModel>> {
     return ResultAsync.fromPromise(
       ReceiptItem.bulkCreate(
-        receipt_items.map(item => {return {...item, receipt_id}}),
+        receipt_items.map((item) => {
+          return { ...item, receipt_id }
+        }),
         { validate: true, transaction }
       ),
-      () => ReceiptItemsServiceError.DatabaseError
+      () => PizziError.internalError()
     )
   }
 
@@ -84,7 +87,7 @@ export class ReceiptItemsService {
         },
         { transaction }
       ),
-      () => ReceiptItemsServiceError.DatabaseError
+      () => PizziError.internalError()
     )
   }
 }

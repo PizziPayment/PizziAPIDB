@@ -11,6 +11,7 @@ export * from './receipt_items/models/receipt_items.model'
 export * from './transaction_tokens/models/transaction_token.model'
 
 export * from './commons/services/sequelize/model'
+export { ErrorCause, IPizziError } from './commons/models/service.error.model'
 
 // Services
 export * from './credentials/credentials.database.service'

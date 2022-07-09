@@ -1,16 +1,17 @@
 import { Sequelize, Transaction } from 'sequelize'
 import {
   initOrm,
+  PaymentMethod,
   ReceiptModel,
   ReceiptsService,
   ShopModel,
   ShopsServices,
   TransactionModel,
   TransactionsService,
+  TransactionState,
   UserModel,
   UsersServices,
 } from '../../src/'
-import { PaymentMethod, TransactionState } from '../../src/commons/services/orm/models/transactions.database.model'
 // @ts-ignore
 import { config } from '../common/config'
 
