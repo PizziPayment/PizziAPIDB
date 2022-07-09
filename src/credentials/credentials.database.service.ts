@@ -9,20 +9,15 @@ import { ErrorCause, IPizziError, PizziError } from '../commons/models/service.e
 
 export type CredentialsServiceResult<T> = ResultAsync<T, IPizziError>
 
-export enum CredentialsServiceError {
-  DuplicatedEmail,
-  OwnerNotFound,
-  DatabaseError,
-}
-
 export class CredentialsService {
   static deleteCredentialFromId(
     credential_id: number,
     transaction: Transaction | null = null
   ): CredentialsServiceResult<null> {
-    return this.getCredentialFromId(credential_id, transaction)
-      .andThen(onTransaction(transaction, destroyOwnersTokens))
-      .andThen(onTransaction(transaction, destroyCredential))
+    return ResultAsync.fromPromise(
+      Credential.destroy({ where: { id: credential_id }, transaction }),
+      () => PizziError.internalError()
+    )
       .map(() => null)
   }
 
@@ -35,7 +30,7 @@ export class CredentialsService {
     ).andThen(okIfNotNullElse(new PizziError(ErrorCause.CredentialNotFound, `invalid credential_id: ${credential_id}`)))
   }
 
-  static getCredentialFromMailAndPassword(
+  static getCredentialFromEmailAndPassword(
     email: string,
     hashed_password: string,
     transaction: Transaction | null = null
@@ -94,14 +89,14 @@ export class CredentialsService {
     id_type: 'user' | 'shop' | 'admin',
     id: number,
     email: string,
-    password: string,
+    hashed_password: string,
     transaction: Transaction | null = null
   ): CredentialsServiceResult<CredentialModel> {
     return ResultAsync.fromPromise(
       Credential.create(
         {
           email: email,
-          password: password,
+          password: hashed_password,
           [`${id_type}_id`]: id,
         },
         { transaction }
@@ -127,15 +122,6 @@ function destroyOwnersTokens(
   transaction: Transaction | null
 ): CredentialsServiceResult<CredentialModel> {
   return ResultAsync.fromPromise(Token.destroy({ where: { credential_id: credential.id }, transaction }), () =>
-    PizziError.internalError()
-  ).map(() => credential)
-}
-
-function destroyCredential(
-  credential: CredentialModel,
-  transaction: Transaction | null
-): CredentialsServiceResult<CredentialModel> {
-  return ResultAsync.fromPromise(Credential.destroy({ where: { id: credential.id }, transaction }), () =>
     PizziError.internalError()
   ).map(() => credential)
 }

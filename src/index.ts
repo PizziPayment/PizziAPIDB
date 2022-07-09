@@ -25,5 +25,6 @@ export * from './receipts/receipts.database.service'
 export * from './receipt_items/receipt_items.database.service'
 export * from './transaction_tokens/transaction_tokens.database.service'
 
+export * from './commons/services/date.service'
 export * from './commons/services/encryption/encryption.service'
 export * from './init'
