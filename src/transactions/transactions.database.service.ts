@@ -1,9 +1,10 @@
 import { ResultAsync } from 'neverthrow'
 import Transaction, {
   PaymentMethod,
+  TransactionAttributes,
   TransactionState,
 } from '../commons/services/orm/models/transactions.database.model'
-import { Transaction as SequelizeTransaction } from 'sequelize'
+import { Transaction as SequelizeTransaction, FindOptions, Op, Includeable, literal, OrderItem } from 'sequelize'
 import { ExpandedTransactionModel, intoTransactionModel, TransactionModel } from './models/transaction.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import Shop from '../commons/services/orm/models/shops.database.model'
@@ -38,14 +39,11 @@ export class TransactionsService {
     owner_type: 'user' | 'shop',
     owner_id: number,
     state: TransactionState,
+    params: ReceiptsQueryParameters,
     transaction: SequelizeTransaction | null = null
   ): TransactionsServiceResult<Array<ExpandedTransactionModel>> {
     return ResultAsync.fromPromise(
-      Transaction.findAll({
-        where: { state: state, [`${owner_type}_id`]: owner_id },
-        include: [{ model: Shop }, { model: Receipt }],
-        transaction,
-      }),
+      Transaction.findAll(createShortenedQuery(owner_type, owner_id, state, params, transaction)),
       () => PizziError.internalError()
     ).map((pizzi_transactions) =>
       pizzi_transactions.map((transaction) => {
@@ -167,4 +165,60 @@ export class TransactionsService {
   }
 }
 
-// Pipeline
+export enum Filter {
+  Latest,
+  Oldest,
+  PriceAscending,
+  PriceDescending,
+}
+
+const filter_order: Array<OrderItem> = [
+  ['created_at', 'DESC'],
+  ['created_at', 'ASC'],
+  [literal('receipt.total_price'), 'ASC'],
+  [literal('receipt.total_price'), 'DESC'],
+]
+
+export interface ReceiptsQueryParameters {
+  filter?: Filter
+  query?: string
+  from?: Date
+  to?: Date
+}
+
+function createShortenedQuery(
+  owner_type: 'user' | 'shop',
+  owner_id: number,
+  state: TransactionState,
+  params: ReceiptsQueryParameters,
+  transaction: SequelizeTransaction | null = null
+): FindOptions {
+  const query: FindOptions<TransactionAttributes> = {
+    where: { state, [`${owner_type}_id`]: owner_id },
+    transaction,
+  }
+  const include: Array<Includeable> = [{ model: Receipt, as: 'receipt' }]
+  const shop_include: Includeable = { model: Shop, as: 'shop' }
+
+  if (params.filter !== undefined) {
+    query.order = [filter_order[params.filter]]
+  }
+
+  if (params.query) {
+    shop_include.where = { name: { [Op.iLike]: `%${params.query}%` } }
+  }
+  include.push(shop_include)
+  query.include = include
+
+  if (params.from && params.to) {
+    query.where = { ...query.where, created_at: { [Op.and]: { [Op.gte]: params.from, [Op.lte]: params.to } } }
+  } else if (params.from) {
+    query.where = { ...query.where, created_at: { [Op.gte]: params.from } }
+  } else if (params.to) {
+    query.where = { ...query.where, created_at: { [Op.lte]: params.to } }
+  }
+
+  return query
+}
+
+// (Beware the) Pipeline

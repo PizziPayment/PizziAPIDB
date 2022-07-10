@@ -1,13 +1,13 @@
 export interface ReceiptModel {
   id: number
   tva_percentage: number
-  total_price: string
+  total_price: number
 }
 
 interface DetailedReceiptItems {
   id: number
   name: string
-  price: string
+  price: number
   quantity: number
   warranty: string
   eco_tax: number

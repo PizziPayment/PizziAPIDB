@@ -8,8 +8,6 @@ import ShopItem from '../../src/commons/services/orm/models/shop_items.database.
 
 // @ts-ignore
 import { shop } from '../common/models'
-// @ts-ignore
-import { addPadding } from '../common/service'
 
 // @ts-ignore
 let sequelize: Sequelize = undefined
@@ -25,15 +23,15 @@ afterAll(() => {
 const shop_items: Array<ShopItemCreationModel> = [
   {
     name: 'kidney',
-    price: '3',
+    price: 300,
   },
   {
     name: 'lung',
-    price: '39.99',
+    price: 3999,
   },
   {
     name: 'leg',
-    price: '450',
+    price: 45000,
   },
 ]
 
@@ -55,7 +53,7 @@ describe('Shop item domain', () => {
       expect(retrieve_si).not.toBeNull()
       if (retrieve_si != null) {
         expect(retrieve_si.name).toBe(shop_item_sample.name)
-        expect(retrieve_si.price).toBe(addPadding(shop_item_sample.price))
+        expect(retrieve_si.price).toBe(shop_item_sample.price)
         expect(retrieve_si.shop_id).toBe(shop_id)
         expect(retrieve_si.id).toBe(created_si_id)
       }
@@ -78,7 +76,7 @@ describe('Shop item domain', () => {
       for (let i = 0; i < shop_items.length; i++) {
         expect(created_items[i].shop_id).toBe(shop_id)
         expect(created_items[i].name).toBe(shop_items[i].name)
-        expect(created_items[i].price).toBe(addPadding(shop_items[i].price))
+        expect(created_items[i].price).toBe(shop_items[i].price)
       }
     } finally {
       await t.rollback()
@@ -196,7 +194,7 @@ describe('Shop item domain', () => {
   })
 
   it('should be able to update a shop item info', async () => {
-    const new_price = '45'
+    const new_price = 45
     const new_name = 'eyebrow'
 
     const t = await sequelize.transaction()
@@ -216,7 +214,7 @@ describe('Shop item domain', () => {
 
       expect(new_shop_item.id).not.toBe(shop_item.id)
       expect(new_shop_item.name).toBe(new_name)
-      expect(new_shop_item.price).toBe(addPadding(new_price))
+      expect(new_shop_item.price).toBe(new_price)
       expect(new_shop_item.enabled).toBe(true)
       expect(new_shop_item.shop_id).toBe(shop_id)
 

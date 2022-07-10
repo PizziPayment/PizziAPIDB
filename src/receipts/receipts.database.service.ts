@@ -54,7 +54,7 @@ export class ReceiptsService {
 
   static createReceipt(
     tva_percentage: number,
-    total_price: string,
+    total_price: number,
     transaction: Transaction | null = null
   ): ReceiptsServiceResult<ReceiptModel> {
     return ResultAsync.fromPromise(

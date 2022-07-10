@@ -13,7 +13,7 @@ export class ShopItemsService {
   static createShopItem(
     shop_id: number,
     name: string,
-    price: string,
+    price: number,
     transaction: Transaction | null = null
   ): ShopItemsServiceResult<ShopItemModel> {
     return ResultAsync.fromPromise(
@@ -100,7 +100,7 @@ export class ShopItemsService {
   static updateShopItemFromId(
     id: number,
     name: string | null,
-    price: string | null,
+    price: number | null,
     transaction: Transaction | null = null
   ): ShopItemsServiceResult<ShopItemModel> {
     return ShopItemsService.deleteShopItemById(id, transaction).andThen((shop_item) => {

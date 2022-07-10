@@ -25,12 +25,12 @@ describe('Receipt items domain', () => {
   it('should be able to create receipt item', async () => {
     const receipt_sample: Omit<ReceiptModel, 'id'> = {
       tva_percentage: 10,
-      total_price: '4',
+      total_price: 400,
     }
     const shop_items_sample: Array<ShopItemCreationModel> = [
       {
         name: 'kidney',
-        price: '4',
+        price: 400,
       },
     ]
     const transaction = await sequelize.transaction()
@@ -79,16 +79,16 @@ describe('Receipt items domain', () => {
   it('should be able to bulk create receipt items', async () => {
     const receipt_sample: Omit<ReceiptModel, 'id'> = {
       tva_percentage: 10,
-      total_price: '4',
+      total_price: 4000,
     }
     const shop_items_sample: Array<ShopItemCreationModel> = [
       {
         name: 'liver',
-        price: '10',
+        price: 1000,
       },
       {
         name: 'kidney',
-        price: '4',
+        price: 400,
       },
     ]
     const transaction = await sequelize.transaction()

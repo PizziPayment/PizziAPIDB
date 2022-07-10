@@ -11,6 +11,7 @@ export enum ErrorCause {
   CredentialNotFound,
   DuplicatedEmail,
   ClientNotFound,
+  InvalidPrice,
 }
 
 export interface IPizziError {
