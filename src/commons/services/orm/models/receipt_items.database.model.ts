@@ -1,6 +1,7 @@
-import { AutoIncrement, BelongsTo, Column, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, BelongsTo, Column, ForeignKey, HasOne, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import Receipt from './receipts.database.model'
 import ShopItem from './shop_items.database.model'
+import { ProductReturnCertificates } from './product_return_certificates.database.model'
 
 interface ReceiptItemsAttributes {
   id: number
@@ -46,4 +47,7 @@ export default class ReceiptItem extends Model<ReceiptItemsAttributes, ReceiptIt
 
   @BelongsTo(() => ShopItem)
   shop_item!: ShopItem
+
+  @HasOne(() => ProductReturnCertificates)
+  product_return_certificate?: ProductReturnCertificates
 }
