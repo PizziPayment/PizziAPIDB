@@ -4,7 +4,7 @@ import Transaction, {
   TransactionAttributes,
   TransactionState,
 } from '../commons/services/orm/models/transactions.database.model'
-import { Transaction as SequelizeTransaction, FindOptions, Op, Includeable, literal, OrderItem } from 'sequelize'
+import { FindOptions, Includeable, literal, Op, OrderItem, Transaction as SequelizeTransaction } from 'sequelize'
 import { ExpandedTransactionModel, intoTransactionModel, TransactionModel } from './models/transaction.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import Shop from '../commons/services/orm/models/shops.database.model'

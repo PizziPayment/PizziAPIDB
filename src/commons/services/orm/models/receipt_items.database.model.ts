@@ -1,7 +1,7 @@
 import { AutoIncrement, BelongsTo, Column, ForeignKey, HasOne, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import Receipt from './receipts.database.model'
 import ShopItem from './shop_items.database.model'
-import { ProductReturnCertificates } from './product_return_certificates.database.model'
+import ProductReturnCertificates from './product_return_certificates.database.model'
 
 interface ReceiptItemsAttributes {
   id: number

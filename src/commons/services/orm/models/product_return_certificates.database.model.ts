@@ -11,7 +11,7 @@ interface ProductReturnCertificatesAttributes {
 export type ProductReturnCertificatesCreation = Omit<ProductReturnCertificatesAttributes, 'id'>
 
 @Table({ tableName: 'product_return_certificates', timestamps: false })
-export class ProductReturnCertificates extends Model<
+export default class ProductReturnCertificates extends Model<
   ProductReturnCertificatesAttributes,
   ProductReturnCertificatesCreation
 > {
