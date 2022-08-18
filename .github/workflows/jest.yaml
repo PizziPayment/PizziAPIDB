@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: PizziPayment/DeployDB
-          ref: main
+          ref: master
           path: deploy
           ssh-key: ${{ secrets.PIZZI_SSH_KEY }}
 
