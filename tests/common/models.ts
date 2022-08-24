@@ -1,4 +1,4 @@
-import { UserModel, ShopModel, CredentialModel } from '../../src/index'
+import { UserModel, ShopModel, CredentialModel } from '../../src'
 
 export const credential: Omit<CredentialModel, 'id'> = {
   email: 'email@example.com',

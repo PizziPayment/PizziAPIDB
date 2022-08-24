@@ -12,6 +12,7 @@ export enum ErrorCause {
   DuplicatedEmail,
   ClientNotFound,
   InvalidPrice,
+  ProductReturnCertificateNotFound,
 }
 
 export interface IPizziError {
@@ -45,6 +46,8 @@ export class PizziError implements IPizziError {
       'Credential not found',
       'Duplicated email',
       'Client not found',
+      'InvalidPrice',
+      'Product Return Certificate not found',
     ][cause]
   }
 
