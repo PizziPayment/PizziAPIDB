@@ -18,7 +18,7 @@ export class CredentialsService {
       Credential.destroy({ where: { id: credential_id }, transaction }),
       () => PizziError.internalError()
     )
-      .map(() => null)
+      .map((_) => null)
   }
 
   static getCredentialFromId(
