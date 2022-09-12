@@ -14,11 +14,9 @@ export class CredentialsService {
     credential_id: number,
     transaction: Transaction | null = null
   ): CredentialsServiceResult<null> {
-    return ResultAsync.fromPromise(
-      Credential.destroy({ where: { id: credential_id }, transaction }),
-      () => PizziError.internalError()
-    )
-      .map((_) => null)
+    return ResultAsync.fromPromise(Credential.destroy({ where: { id: credential_id }, transaction }), () =>
+      PizziError.internalError()
+    ).map((_) => null)
   }
 
   static getCredentialFromId(

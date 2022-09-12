@@ -13,6 +13,7 @@
   "scripts": {
     "build": "tsc",
     "prepack": "yarn build",
+    "format": "prettier -w ./src",
     "test": "jest --runInBand --verbose",
     "test-coverage": "jest --runInBand --verbose --coverage"
   },
