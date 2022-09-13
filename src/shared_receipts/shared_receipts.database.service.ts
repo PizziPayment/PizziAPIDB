@@ -1,4 +1,4 @@
-import { SharedReceipt } from '../commons/services/orm/models/shared_receipts.model'
+import SharedReceipt from '../commons/services/orm/models/shared_receipts.model'
 import { ResultAsync } from 'neverthrow'
 import { IPizziError, PizziError } from '../commons/models/service.error.model'
 import { SharedReceiptModel } from './models/shared_receipts.model'

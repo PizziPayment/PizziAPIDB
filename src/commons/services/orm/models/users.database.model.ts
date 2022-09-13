@@ -2,6 +2,7 @@ import { AutoIncrement, Column, ForeignKey, HasMany, HasOne, Model, PrimaryKey, 
 import Credential from './credentials.database.model'
 import Picture from './pictures.database.model'
 import Transaction from './transactions.database.model'
+import SharedReceipt from './shared_receipts.model'
 
 interface UserAttributes {
   id: number
@@ -39,6 +40,9 @@ export default class User extends Model<UserAttributes, UserCreation> {
 
   @HasMany(() => Transaction)
   transactions!: Array<Transaction>
+
+  @HasMany(() => SharedReceipt)
+  shared_receipts!: Array<SharedReceipt>
 
   @HasOne(() => Credential)
   credential!: Credential
