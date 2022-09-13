@@ -6,6 +6,7 @@ import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
 import { onTransaction } from '../commons/extensions/generators.extension'
 import { ErrorCause, IPizziError, PizziError } from '../commons/models/service.error.model'
+import User from '../commons/services/orm/models/users.database.model'
 
 export type CredentialsServiceResult<T> = ResultAsync<T, IPizziError>
 
