@@ -4,18 +4,16 @@ import Shop from '../commons/services/orm/models/shops.database.model'
 import { okIfNotNullElse, okIfOneElse } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
 import { assignNonNullValues } from '../commons/services/util.service'
-import { ErrorCause, IPizziError, PizziError } from '../commons/models/service.error.model'
-
-export type ShopsServiceResult<T> = ResultAsync<T, IPizziError>
+import { ErrorCause, PizziError, PizziResult } from '../commons/models/service.error.model'
 
 export class ShopsServices {
-  static deleteShopById(id: number, transaction: Transaction | null = null): ShopsServiceResult<null> {
+  static deleteShopById(id: number, transaction: Transaction | null = null): PizziResult<null> {
     return ResultAsync.fromPromise(Shop.destroy({ where: { id }, transaction }), () => PizziError.internalError())
       .andThen(okIfNotNullElse(new PizziError(ErrorCause.ShopNotFound, `invalid id: ${id}`)))
       .map(() => null)
   }
 
-  static getShopFromId(id: number, transaction: Transaction | null = null): ShopsServiceResult<ShopModel> {
+  static getShopFromId(id: number, transaction: Transaction | null = null): PizziResult<ShopModel> {
     return ResultAsync.fromPromise(Shop.findOne({ where: { id }, transaction }), () =>
       PizziError.internalError()
     ).andThen(okIfNotNullElse(new PizziError(ErrorCause.ShopNotFound, `invalid id: ${id}`)))
@@ -29,7 +27,7 @@ export class ShopsServices {
     city: string,
     zipcode: number,
     transaction: Transaction | null = null
-  ): ShopsServiceResult<ShopModel> {
+  ): PizziResult<ShopModel> {
     return ResultAsync.fromPromise(
       Shop.create(
         {
@@ -56,7 +54,7 @@ export class ShopsServices {
     id: number,
     model: ShopUpdateModel,
     transaction: Transaction | null = null
-  ): ShopsServiceResult<ShopModel> {
+  ): PizziResult<ShopModel> {
     return ResultAsync.fromPromise(
       Shop.update(assignNonNullValues(model), {
         where: { id },

@@ -4,15 +4,13 @@ import { Transaction } from 'sequelize'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import TransactionToken from '../commons/services/orm/models/transaction_token.database.model'
 import { TransactionTokenModel } from './models/transaction_token.model'
-import { ErrorCause, IPizziError, PizziError } from '../commons/models/service.error.model'
-
-export type TransactionTokensServiceResult<T> = ResultAsync<T, IPizziError>
+import { ErrorCause, PizziError, PizziResult } from '../commons/models/service.error.model'
 
 export class TransactionTokensService {
   static deleteTransactionTokenById(
     transaction_token_id: number,
     transaction: Transaction | null = null
-  ): TransactionTokensServiceResult<null> {
+  ): PizziResult<null> {
     return ResultAsync.fromPromise(TransactionToken.destroy({ where: { id: transaction_token_id }, transaction }), () =>
       PizziError.internalError()
     ).map(() => null)
@@ -22,7 +20,7 @@ export class TransactionTokensService {
     transaction_id: number,
     token: string,
     transaction: Transaction | null = null
-  ): TransactionTokensServiceResult<TransactionTokenModel> {
+  ): PizziResult<TransactionTokenModel> {
     return ResultAsync.fromPromise(
       TransactionToken.findOne({ where: { transaction_id: transaction_id, token: token }, transaction }),
       () => PizziError.internalError()
@@ -34,7 +32,7 @@ export class TransactionTokensService {
   static getTransactionTokenById(
     transaction_id: number,
     transaction: Transaction | null = null
-  ): TransactionTokensServiceResult<TransactionTokenModel> {
+  ): PizziResult<TransactionTokenModel> {
     return ResultAsync.fromPromise(TransactionToken.findOne({ where: { id: transaction_id }, transaction }), () =>
       PizziError.internalError()
     ).andThen(
@@ -45,7 +43,7 @@ export class TransactionTokensService {
   static createTemporaryToken(
     transaction_id: number,
     transaction: Transaction | null = null
-  ): TransactionTokensServiceResult<TransactionTokenModel> {
+  ): PizziResult<TransactionTokenModel> {
     return ResultAsync.fromPromise(
       TransactionToken.create(
         {

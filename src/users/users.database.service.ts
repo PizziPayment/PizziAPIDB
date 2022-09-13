@@ -5,21 +5,23 @@ import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
 import { onTransaction } from '../commons/extensions/generators.extension'
 import { assignNonNullValues } from '../commons/services/util.service'
-import { ErrorCause, IPizziError, PizziError } from '../commons/models/service.error.model'
+import { ErrorCause, PizziError, PizziResult } from '../commons/models/service.error.model'
 
-export type UsersServiceResult<T> = ResultAsync<T, IPizziError>
+function userNotFoundErrorFilter<T>(user_id: number) {
+  return okIfNotNullElse<T, PizziError>(new PizziError(ErrorCause.UserNotFound, `invalid user_id: ${user_id}`))
+}
 
 export class UsersServices {
-  static deleteUserById(user_id: number, transaction: Transaction | null = null): UsersServiceResult<null> {
+  static deleteUserById(user_id: number, transaction: Transaction | null = null): PizziResult<null> {
     return this.getUserFromId(user_id, transaction)
       .andThen(onTransaction(transaction, destroyUser))
       .map(() => null)
   }
 
-  static getUserFromId(user_id: number, transaction: Transaction | null = null): UsersServiceResult<UserModel> {
+  static getUserFromId(user_id: number, transaction: Transaction | null = null): PizziResult<UserModel> {
     return ResultAsync.fromPromise(User.findOne({ where: { id: user_id }, transaction }), () =>
       PizziError.internalError()
-    ).andThen(okIfNotNullElse(new PizziError(ErrorCause.UserNotFound, `invalid user_id: ${user_id}`)))
+    ).andThen(userNotFoundErrorFilter(user_id))
   }
 
   static createUser(
@@ -28,7 +30,7 @@ export class UsersServices {
     address: string,
     zipcode: number,
     transaction: Transaction | null = null
-  ): UsersServiceResult<UserModel> {
+  ): PizziResult<UserModel> {
     return ResultAsync.fromPromise(
       User.create(
         {
@@ -51,7 +53,7 @@ export class UsersServices {
     address: string | null,
     zipcode: number | null,
     transaction: Transaction | null = null
-  ): UsersServiceResult<UserModel> {
+  ): PizziResult<UserModel> {
     return ResultAsync.fromPromise(
       User.findOne({
         where: {
@@ -61,7 +63,7 @@ export class UsersServices {
       }),
       () => PizziError.internalError()
     )
-      .andThen(okIfNotNullElse(new PizziError(ErrorCause.UserNotFound, `invalid user_id: ${user_id}`)))
+      .andThen(userNotFoundErrorFilter(user_id))
       .andThen((user) =>
         ResultAsync.fromPromise(
           Object.assign(user, assignNonNullValues({ firstname: name, surname, address, zipcode })).save({
@@ -75,7 +77,7 @@ export class UsersServices {
 
 // Pipeline
 
-function destroyUser(user: UserModel, transaction: Transaction | null): UsersServiceResult<UserModel> {
+function destroyUser(user: UserModel, transaction: Transaction | null): PizziResult<UserModel> {
   return ResultAsync.fromPromise(User.destroy({ where: { id: user.id }, transaction }), () =>
     PizziError.internalError()
   ).map(() => user)

@@ -1,4 +1,4 @@
-import { ErrorCause, IPizziError, PizziError } from '../commons/models/service.error.model'
+import { ErrorCause, PizziError, PizziResult } from '../commons/models/service.error.model'
 import { ResultAsync } from 'neverthrow'
 import {
   ProductReturnCertificateModel,
@@ -9,13 +9,11 @@ import { Transaction } from 'sequelize'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import ReceiptItem from '../commons/services/orm/models/receipt_items.database.model'
 
-export type ProductReturnCertificatesServiceResult<T> = ResultAsync<T, IPizziError>
-
 export class ProductReturnCertificatesService {
   static getProductReturnCertificatesFromReceiptId(
     receipt_id: number,
     transaction: Transaction | null = null
-  ): ProductReturnCertificatesServiceResult<Array<ProductReturnCertificateModel>> {
+  ): PizziResult<Array<ProductReturnCertificateModel>> {
     return ResultAsync.fromPromise(
       ProductReturnCertificates.findAll({
         include: [{ model: ReceiptItem, attributes: ['receipt_id'], where: { receipt_id: receipt_id } }],
@@ -28,7 +26,7 @@ export class ProductReturnCertificatesService {
   static getProductReturnCertificateFromId(
     id: number,
     transaction: Transaction | null = null
-  ): ProductReturnCertificatesServiceResult<ProductReturnCertificateModel> {
+  ): PizziResult<ProductReturnCertificateModel> {
     return ResultAsync.fromPromise(ProductReturnCertificates.findOne({ where: { id: id }, transaction }), () =>
       PizziError.internalError()
     ).andThen(
@@ -41,7 +39,7 @@ export class ProductReturnCertificatesService {
   static getProductReturnCertificateFromReceiptItemId(
     receipt_item_id: number,
     transaction: Transaction | null = null
-  ): ProductReturnCertificatesServiceResult<ProductReturnCertificateModel | null> {
+  ): PizziResult<ProductReturnCertificateModel | null> {
     return ResultAsync.fromPromise(
       ProductReturnCertificates.findOne({ where: { receipt_item_id: receipt_item_id }, transaction }),
       () => PizziError.internalError()
@@ -51,7 +49,7 @@ export class ProductReturnCertificatesService {
   static getProductReturnDetailedCertificateFromReceiptItemId(
     receipt_item_id: number,
     transaction: Transaction | null = null
-  ): ProductReturnCertificatesServiceResult<ProductReturnDetailedCertificateModel> {
+  ): PizziResult<ProductReturnDetailedCertificateModel> {
     return ResultAsync.fromPromise(
       ProductReturnCertificates.findOne({
         where: { receipt_item_id: receipt_item_id },
@@ -68,7 +66,7 @@ export class ProductReturnCertificatesService {
     receipt_item_id: number,
     returned_quantity: number,
     transaction: Transaction | null = null
-  ): ProductReturnCertificatesServiceResult<ProductReturnCertificateModel> {
+  ): PizziResult<ProductReturnCertificateModel> {
     return ResultAsync.fromPromise(
       ProductReturnCertificates.create(
         { receipt_item_id: receipt_item_id, quantity: returned_quantity, return_date: new Date() },
@@ -82,7 +80,7 @@ export class ProductReturnCertificatesService {
     receipt_item_id: number,
     new_returned_quantity: number,
     transaction: Transaction | null = null
-  ): ProductReturnCertificatesServiceResult<null> {
+  ): PizziResult<null> {
     return ResultAsync.fromPromise(
       ProductReturnCertificates.update(
         { quantity: new_returned_quantity, return_date: new Date() },

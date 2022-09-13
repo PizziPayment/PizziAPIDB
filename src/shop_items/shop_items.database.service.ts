@@ -5,9 +5,7 @@ import { Order } from '../commons/services/sequelize/model'
 import ShopItem from '../commons/services/orm/models/shop_items.database.model'
 import { intoShopItemModel, ShopItemCreationModel, ShopItemModel, ShopItemSortBy } from './models/shop_items.model'
 import { assignNonNullValues } from '../commons/services/util.service'
-import { ErrorCause, IPizziError, PizziError } from '../commons/models/service.error.model'
-
-export type ShopItemsServiceResult<T> = ResultAsync<T, IPizziError>
+import { ErrorCause, PizziError, PizziResult } from '../commons/models/service.error.model'
 
 export class ShopItemsService {
   static createShopItem(
@@ -15,7 +13,7 @@ export class ShopItemsService {
     name: string,
     price: number,
     transaction: Transaction | null = null
-  ): ShopItemsServiceResult<ShopItemModel> {
+  ): PizziResult<ShopItemModel> {
     return ResultAsync.fromPromise(
       ShopItem.create(
         {
@@ -35,7 +33,7 @@ export class ShopItemsService {
     shop_id: number,
     items: Array<ShopItemCreationModel>,
     transaction: Transaction | null = null
-  ): ShopItemsServiceResult<Array<ShopItemModel>> {
+  ): PizziResult<Array<ShopItemModel>> {
     return ResultAsync.fromPromise(
       ShopItem.bulkCreate(
         items.map(({ name, price }) => {
@@ -53,10 +51,7 @@ export class ShopItemsService {
     ).map((items) => items.map(intoShopItemModel))
   }
 
-  static retrieveShopItemFromId(
-    id: number,
-    transaction: Transaction | null = null
-  ): ShopItemsServiceResult<ShopItemModel> {
+  static retrieveShopItemFromId(id: number, transaction: Transaction | null = null): PizziResult<ShopItemModel> {
     return ResultAsync.fromPromise(ShopItem.findOne({ where: { id }, transaction }), () => PizziError.internalError())
       .andThen(okIfNotNullElse(new PizziError(ErrorCause.ShopItemNotFound, `invalid id: ${id}`)))
       .map(intoShopItemModel)
@@ -66,7 +61,7 @@ export class ShopItemsService {
     id: number,
     enabled: boolean,
     transaction: Transaction | null = null
-  ): ShopItemsServiceResult<ShopItemModel> {
+  ): PizziResult<ShopItemModel> {
     return ResultAsync.fromPromise(ShopItem.findOne({ where: { id, enabled }, transaction }), () =>
       PizziError.internalError()
     )
@@ -83,7 +78,7 @@ export class ShopItemsService {
     query: string = '',
     enabled: boolean = true,
     transaction: Transaction | null = null
-  ): ShopItemsServiceResult<Array<ShopItemModel>> {
+  ): PizziResult<Array<ShopItemModel>> {
     return ResultAsync.fromPromise(
       ShopItem.findAndCountAll({
         where: { name: { [Op.like]: `%${query}%` }, shop_id, enabled },
@@ -102,7 +97,7 @@ export class ShopItemsService {
     name: string | null,
     price: number | null,
     transaction: Transaction | null = null
-  ): ShopItemsServiceResult<ShopItemModel> {
+  ): PizziResult<ShopItemModel> {
     return ShopItemsService.deleteShopItemById(id, transaction).andThen((shop_item) => {
       const new_shop_item = Object.assign(shop_item, assignNonNullValues({ name, price }))
 
@@ -115,7 +110,7 @@ export class ShopItemsService {
     })
   }
 
-  static deleteShopItemById(id: number, transaction: Transaction | null = null): ShopItemsServiceResult<ShopItemModel> {
+  static deleteShopItemById(id: number, transaction: Transaction | null = null): PizziResult<ShopItemModel> {
     return ResultAsync.fromPromise(
       ShopItem.update({ enabled: false }, { where: { id, enabled: true }, transaction, returning: true }),
       () => PizziError.internalError()

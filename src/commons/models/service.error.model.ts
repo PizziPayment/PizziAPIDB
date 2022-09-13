@@ -1,3 +1,5 @@
+import { ResultAsync } from 'neverthrow'
+
 export enum ErrorCause {
   DatabaseError = 0,
   TransactionNotFound,
@@ -72,3 +74,5 @@ export class PizziError implements IPizziError {
     return 'Unknown'
   }
 }
+
+export type PizziResult<T> = ResultAsync<T, IPizziError>
