@@ -10,6 +10,7 @@ import {
   DataType,
 } from 'sequelize-typescript'
 import Credential from './credentials.database.model'
+import Image from './images.database.model'
 import Picture from './pictures.database.model'
 import Transaction from './transactions.database.model'
 
@@ -80,4 +81,8 @@ export default class Shop extends Model<ShopAttributes, ShopCreation> {
 
   @HasMany(() => Transaction)
   transactions!: Array<Transaction>
+
+  @ForeignKey(() => Image)
+  @Column
+  avatar_id!: number
 }

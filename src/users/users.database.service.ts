@@ -1,15 +1,12 @@
 import { ResultAsync } from 'neverthrow'
 import { UserModel } from './models/user.model'
 import User from '../commons/services/orm/models/users.database.model'
-import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
 import { onTransaction } from '../commons/extensions/generators.extension'
 import { assignNonNullValues } from '../commons/services/util.service'
-import { ErrorCause, PizziError, PizziResult } from '../commons/models/service.error.model'
+import { ErrorCause, fieldNotFoundErrorFilter, PizziError, PizziResult } from '../commons/models/service.error.model'
 
-function userNotFoundErrorFilter<T>(user_id: number) {
-  return okIfNotNullElse<T, PizziError>(new PizziError(ErrorCause.UserNotFound, `invalid user_id: ${user_id}`))
-}
+const userNotFoundErrorFilter = fieldNotFoundErrorFilter<User>('user', ErrorCause.UserNotFound)
 
 export class UsersServices {
   static deleteUserById(user_id: number, transaction: Transaction | null = null): PizziResult<null> {
@@ -72,6 +69,28 @@ export class UsersServices {
           () => PizziError.internalError()
         )
       )
+  }
+
+  // Returns the id of the previous avatar, if there was one
+  static updateAvatarFromImageId(
+    user_id: number,
+    image_id: number,
+    transaction: Transaction | null = null
+  ): PizziResult<number | undefined> {
+    return ResultAsync.fromPromise(User.findOne({ where: { id: user_id } }), () => PizziError.internalError())
+      .andThen(userNotFoundErrorFilter(user_id))
+      .andThen((user) => {
+        let old_image: number | undefined = undefined
+
+        if (user.avatar_id != null) {
+          old_image = user.avatar_id
+        }
+
+        return ResultAsync.fromPromise(
+          Object.assign(user, assignNonNullValues({ image: image_id })).save({ transaction }),
+          () => PizziError.internalError()
+        ).map(() => old_image)
+      })
   }
 }
 

@@ -1,5 +1,6 @@
 import { AutoIncrement, Column, ForeignKey, HasMany, HasOne, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import Credential from './credentials.database.model'
+import Image from './images.database.model'
 import Picture from './pictures.database.model'
 import Transaction from './transactions.database.model'
 
@@ -42,4 +43,8 @@ export default class User extends Model<UserAttributes, UserCreation> {
 
   @HasOne(() => Credential)
   credential!: Credential
+
+  @ForeignKey(() => Image)
+  @Column
+  avatar_id!: number
 }

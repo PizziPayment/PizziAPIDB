@@ -1,4 +1,5 @@
 import { ResultAsync } from 'neverthrow'
+import { okIfNotNullElse } from '../../commons/extensions/neverthrow.extension'
 
 export enum ErrorCause {
   DatabaseError = 0,
@@ -15,6 +16,7 @@ export enum ErrorCause {
   ClientNotFound,
   InvalidPrice,
   ProductReturnCertificateNotFound,
+  ImageNotFound,
 }
 
 export interface IPizziError {
@@ -50,6 +52,7 @@ export class PizziError implements IPizziError {
       'Client not found',
       'InvalidPrice',
       'Product Return Certificate not found',
+      'Image not found',
     ][cause]
   }
 
@@ -76,3 +79,8 @@ export class PizziError implements IPizziError {
 }
 
 export type PizziResult<T> = ResultAsync<T, IPizziError>
+
+export function fieldNotFoundErrorFilter<T>(field_name: string, error: ErrorCause) {
+  return (field_id: number) =>
+    okIfNotNullElse<T, PizziError>(new PizziError(error, `invalid ${field_name}_id: ${field_id}`))
+}
