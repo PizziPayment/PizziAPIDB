@@ -11,6 +11,7 @@ interface UserAttributes {
   picture_id?: number
   address: string
   zipcode: number
+  avatar_id?: number
 }
 
 export type UserCreation = Omit<UserAttributes, 'id'>
@@ -46,5 +47,5 @@ export default class User extends Model<UserAttributes, UserCreation> {
 
   @ForeignKey(() => Image)
   @Column
-  avatar_id!: number
+  avatar_id?: number
 }

@@ -5,6 +5,8 @@ import { Transaction } from 'sequelize'
 import { onTransaction } from '../commons/extensions/generators.extension'
 import { assignNonNullValues } from '../commons/services/util.service'
 import { ErrorCause, fieldNotFoundErrorFilter, PizziError, PizziResult } from '../commons/models/service.error.model'
+import { ImagesService } from '../images/images.database.service'
+import Image from '../commons/services/orm/models/images.database.model'
 
 const userNotFoundErrorFilter = fieldNotFoundErrorFilter<User>('user', ErrorCause.UserNotFound)
 
@@ -71,25 +73,30 @@ export class UsersServices {
       )
   }
 
-  // Returns the id of the previous avatar, if there was one
   static updateAvatarFromImageId(
     user_id: number,
-    image_id: number,
+    image: Buffer,
     transaction: Transaction | null = null
-  ): PizziResult<number | undefined> {
-    return ResultAsync.fromPromise(User.findOne({ where: { id: user_id } }), () => PizziError.internalError())
+  ): PizziResult<void> {
+    return ResultAsync.fromPromise(User.findOne({ where: { id: user_id }, transaction }), () =>
+      PizziError.internalError()
+    )
       .andThen(userNotFoundErrorFilter(user_id))
       .andThen((user) => {
-        let old_image: number | undefined = undefined
-
-        if (user.avatar_id != null) {
-          old_image = user.avatar_id
+        if (user.avatar_id) {
+          return ResultAsync.fromPromise(
+            Image.update({ buffer: image }, { where: { id: user.avatar_id }, transaction }),
+            () => PizziError.internalError()
+          ).map(() => undefined)
+        } else {
+          return ImagesService.createImage(image, transaction)
+            .andThen((image_id) =>
+              ResultAsync.fromPromise(user.update({ avatar_id: image_id }, { transaction }), () =>
+                PizziError.internalError()
+              )
+            )
+            .map(() => undefined)
         }
-
-        return ResultAsync.fromPromise(
-          Object.assign(user, assignNonNullValues({ image: image_id })).save({ transaction }),
-          () => PizziError.internalError()
-        ).map(() => old_image)
       })
   }
 }

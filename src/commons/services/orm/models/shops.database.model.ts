@@ -28,6 +28,7 @@ interface ShopAttributes {
   instagram?: string
   twitter?: string
   facebook?: string
+  avatar_id?: number
 }
 
 export type ShopCreation = Omit<ShopAttributes, 'id'>
@@ -84,5 +85,5 @@ export default class Shop extends Model<ShopAttributes, ShopCreation> {
 
   @ForeignKey(() => Image)
   @Column
-  avatar_id!: number
+  avatar_id?: number
 }

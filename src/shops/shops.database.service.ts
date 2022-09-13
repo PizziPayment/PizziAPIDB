@@ -5,6 +5,8 @@ import { okIfNotNullElse, okIfOneElse } from '../commons/extensions/neverthrow.e
 import { Transaction } from 'sequelize'
 import { assignNonNullValues } from '../commons/services/util.service'
 import { ErrorCause, fieldNotFoundErrorFilter, PizziError, PizziResult } from '../commons/models/service.error.model'
+import Image from '../commons/services/orm/models/images.database.model'
+import { ImagesService } from '../images/images.database.service'
 
 const shopNotFoundErrorFilter = fieldNotFoundErrorFilter<Shop>('shop', ErrorCause.ShopNotFound)
 
@@ -67,25 +69,30 @@ export class ShopsServices {
     ).andThen(okIfOneElse(new PizziError(ErrorCause.ShopNotFound, `invalid id: ${id}`)))
   }
 
-  // Returns the id of the previous avatar, if there was one
   static updateAvatarFromImageId(
     shop_id: number,
-    image_id: number,
+    image: Buffer,
     transaction: Transaction | null = null
-  ): PizziResult<number | undefined> {
-    return ResultAsync.fromPromise(Shop.findOne({ where: { id: shop_id } }), () => PizziError.internalError())
+  ): PizziResult<void> {
+    return ResultAsync.fromPromise(Shop.findOne({ where: { id: shop_id }, transaction }), () =>
+      PizziError.internalError()
+    )
       .andThen(shopNotFoundErrorFilter(shop_id))
       .andThen((shop) => {
-        let old_image: number | undefined = undefined
-
-        if (shop.avatar_id != null) {
-          old_image = shop.avatar_id
+        if (shop.avatar_id) {
+          return ResultAsync.fromPromise(
+            Image.update({ buffer: image }, { where: { id: shop.avatar_id }, transaction }),
+            () => PizziError.internalError()
+          ).map(() => undefined)
+        } else {
+          return ImagesService.createImage(image, transaction)
+            .andThen((image_id) =>
+              ResultAsync.fromPromise(shop.update({ avatar_id: image_id }, { transaction }), () =>
+                PizziError.internalError()
+              )
+            )
+            .map(() => undefined)
         }
-
-        return ResultAsync.fromPromise(
-          Object.assign(shop, assignNonNullValues({ image: image_id })).save({ transaction }),
-          () => PizziError.internalError()
-        ).map(() => old_image)
       })
   }
 }
