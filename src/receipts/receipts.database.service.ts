@@ -5,15 +5,13 @@ import { DetailedReceiptModel, ReceiptModel } from './models/receipts.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import ReceiptItem from '../commons/services/orm/models/receipt_items.database.model'
 import ShopItem from '../commons/services/orm/models/shop_items.database.model'
-import { ErrorCause, IPizziError, PizziError } from '../commons/models/service.error.model'
-
-export type ReceiptsServiceResult<T> = ResultAsync<T, IPizziError>
+import { ErrorCause, PizziError, PizziResult } from '../commons/models/service.error.model'
 
 export class ReceiptsService {
   static getDetailedReceiptById(
     receipt_id: number,
     transaction: Transaction | null = null
-  ): ReceiptsServiceResult<DetailedReceiptModel> {
+  ): PizziResult<DetailedReceiptModel> {
     return ResultAsync.fromPromise(
       Receipt.findOne({
         where: { id: receipt_id },
@@ -46,7 +44,7 @@ export class ReceiptsService {
   static getShortenedReceipts(
     receipt_ids: Array<number>,
     transaction: Transaction | null = null
-  ): ReceiptsServiceResult<Array<ReceiptModel>> {
+  ): PizziResult<Array<ReceiptModel>> {
     return ResultAsync.fromPromise(Receipt.findAll({ where: { id: receipt_ids }, transaction }), () =>
       PizziError.internalError()
     )
@@ -56,7 +54,7 @@ export class ReceiptsService {
     tva_percentage: number,
     total_price: number,
     transaction: Transaction | null = null
-  ): ReceiptsServiceResult<ReceiptModel> {
+  ): PizziResult<ReceiptModel> {
     return ResultAsync.fromPromise(
       Receipt.create({ tva_percentage: tva_percentage, total_price: total_price }, { transaction }),
       () => PizziError.internalError()

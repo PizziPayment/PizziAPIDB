@@ -3,9 +3,7 @@ import Client from '../commons/services/orm/models/clients.database.model'
 import { ClientModel } from './models/client.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
-import { ErrorCause, IPizziError, PizziError } from '../commons/models/service.error.model'
-
-export type ClientsServiceResult<T> = ResultAsync<T, IPizziError>
+import { ErrorCause, PizziError, PizziResult } from '../commons/models/service.error.model'
 
 export class ClientsService {
   static createClientFromIdAndSecret(client_id: string, client_secret: string, transaction: Transaction | null = null) {
@@ -18,7 +16,7 @@ export class ClientsService {
     client_id: string,
     client_secret: string,
     transaction: Transaction | null = null
-  ): ClientsServiceResult<ClientModel> {
+  ): PizziResult<ClientModel> {
     return ResultAsync.fromPromise(
       Client.findOne({ where: { client_id: client_id, client_secret: client_secret }, transaction }),
       () => PizziError.internalError()

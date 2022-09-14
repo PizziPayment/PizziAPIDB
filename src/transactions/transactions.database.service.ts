@@ -9,15 +9,13 @@ import { ExpandedTransactionModel, intoTransactionModel, TransactionModel } from
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import Shop from '../commons/services/orm/models/shops.database.model'
 import Receipt from '../commons/services/orm/models/receipts.database.model'
-import { ErrorCause, IPizziError, PizziError } from '../commons/models/service.error.model'
-
-export type TransactionsServiceResult<T> = ResultAsync<T, IPizziError>
+import { ErrorCause, PizziError, PizziResult } from '../commons/models/service.error.model'
 
 export class TransactionsService {
   static getTransactionsByState(
     state: TransactionState,
     transaction: SequelizeTransaction | null = null
-  ): TransactionsServiceResult<Array<TransactionModel>> {
+  ): PizziResult<Array<TransactionModel>> {
     return ResultAsync.fromPromise(Transaction.findAll({ where: { state: state }, transaction }), () =>
       PizziError.internalError()
     ).map((pizzi_transactions) => pizzi_transactions.map(intoTransactionModel))
@@ -28,7 +26,7 @@ export class TransactionsService {
     owner_id: number,
     state: TransactionState,
     transaction: SequelizeTransaction | null = null
-  ): TransactionsServiceResult<Array<TransactionModel>> {
+  ): PizziResult<Array<TransactionModel>> {
     return ResultAsync.fromPromise(
       Transaction.findAll({ where: { state: state, [`${owner_type}_id`]: owner_id }, transaction }),
       () => PizziError.internalError()
@@ -41,7 +39,7 @@ export class TransactionsService {
     state: TransactionState,
     params: ReceiptsQueryParameters,
     transaction: SequelizeTransaction | null = null
-  ): TransactionsServiceResult<Array<ExpandedTransactionModel>> {
+  ): PizziResult<Array<ExpandedTransactionModel>> {
     return ResultAsync.fromPromise(
       Transaction.findAll(createShortenedQuery(owner_type, owner_id, state, params, transaction)),
       () => PizziError.internalError()
@@ -74,7 +72,7 @@ export class TransactionsService {
   static getTransactionById(
     id: number,
     transaction: SequelizeTransaction | null = null
-  ): TransactionsServiceResult<TransactionModel> {
+  ): PizziResult<TransactionModel> {
     return ResultAsync.fromPromise(Transaction.findOne({ where: { id: id }, transaction }), () =>
       PizziError.internalError()
     )
@@ -88,7 +86,7 @@ export class TransactionsService {
     shop_id: number,
     payment_method: PaymentMethod,
     transaction: SequelizeTransaction | null = null
-  ): TransactionsServiceResult<TransactionModel> {
+  ): PizziResult<TransactionModel> {
     return ResultAsync.fromPromise(
       Transaction.create(
         {
@@ -108,7 +106,7 @@ export class TransactionsService {
   static getTransactionByReceiptId(
     receipt_id: number,
     transaction: SequelizeTransaction | null = null
-  ): TransactionsServiceResult<TransactionModel> {
+  ): PizziResult<TransactionModel> {
     return ResultAsync.fromPromise(Transaction.findOne({ where: { receipt_id: receipt_id }, transaction }), () =>
       PizziError.internalError()
     )
@@ -120,7 +118,7 @@ export class TransactionsService {
     transaction_id: number,
     user_id: number,
     transaction: SequelizeTransaction | null = null
-  ): TransactionsServiceResult<null> {
+  ): PizziResult<null> {
     return ResultAsync.fromPromise(
       Transaction.update({ user_id: user_id, updated_at: new Date() }, { where: { id: transaction_id }, transaction }),
       () => PizziError.internalError()
@@ -133,7 +131,7 @@ export class TransactionsService {
     transaction_id: number,
     payment_method: PaymentMethod,
     transaction: SequelizeTransaction | null = null
-  ): TransactionsServiceResult<null> {
+  ): PizziResult<null> {
     return ResultAsync.fromPromise(
       Transaction.update(
         {
@@ -155,7 +153,7 @@ export class TransactionsService {
     transaction_id: number,
     state: TransactionState,
     transaction: SequelizeTransaction | null = null
-  ): TransactionsServiceResult<null> {
+  ): PizziResult<null> {
     return ResultAsync.fromPromise(
       Transaction.update({ state: state, updated_at: new Date() }, { where: { id: transaction_id }, transaction }),
       () => PizziError.internalError()
