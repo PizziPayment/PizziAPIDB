@@ -28,6 +28,7 @@ export * from './receipt_items/receipt_items.database.service'
 export * from './transaction_tokens/transaction_tokens.database.service'
 export * from './product_return_certificates/product_return_certificates.database.service'
 export * from './shared_receipts/shared_receipts.database.service'
+export * from './images/images.database.service'
 
 export * from './commons/services/date.service'
 export * from './commons/services/encryption/encryption.service'

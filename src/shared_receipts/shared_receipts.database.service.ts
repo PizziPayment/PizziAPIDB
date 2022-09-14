@@ -34,7 +34,7 @@ export class SharedReceiptsService {
     transaction: Transaction | null = null
   ): SharedReceiptsServiceResult<null> {
     return ResultAsync.fromPromise(
-      SharedReceipt.update({ completed: true }, { where: { id: shared_receipt_id } }),
+      SharedReceipt.update({ completed: true }, { where: { id: shared_receipt_id } , transaction}),
       () => PizziError.internalError()
     ).map(() => null)
   }

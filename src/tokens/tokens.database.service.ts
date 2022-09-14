@@ -47,8 +47,9 @@ export class TokensService {
     token: string,
     transaction: Transaction | null = null
   ): TokensServiceResult<TokenModel> {
-    return ResultAsync.fromPromise(Token.findOne({ where: { access_token: token }, transaction }), () =>
-      PizziError.internalError()
+    return ResultAsync.fromPromise(
+      Token.findOne({ where: { access_token: token }, transaction }),
+      () => PizziError.internalError()
     ).andThen(okIfNotNullElse(new PizziError(ErrorCause.TokenNotFound, `invalid token value ${token}`)))
   }
 
@@ -56,8 +57,9 @@ export class TokensService {
     token: string,
     transaction: Transaction | null = null
   ): TokensServiceResult<TokenModel> {
-    return ResultAsync.fromPromise(Token.findOne({ where: { refresh_token: token }, transaction }), () =>
-      PizziError.internalError()
+    return ResultAsync.fromPromise(
+      Token.findOne({ where: { refresh_token: token }, transaction }),
+      () => PizziError.internalError()
     ).andThen(okIfNotNullElse(new PizziError(ErrorCause.TokenNotFound, `invalid refresh token value ${token}`)))
   }
 
@@ -68,8 +70,9 @@ export class TokensService {
   }
 
   static deleteToken(token: TokenModel, transaction: Transaction | null = null): TokensServiceResult<null> {
-    return ResultAsync.fromPromise(Token.destroy({ where: { id: token.id }, transaction }), () =>
-      PizziError.internalError()
+    return ResultAsync.fromPromise(
+      Token.destroy({ where: { id: token.id }, transaction }),
+      () => PizziError.internalError()
     ).map(() => null)
   }
 
