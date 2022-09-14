@@ -4,7 +4,6 @@ import {
   Column,
   DataType,
   ForeignKey,
-  HasOne,
   Model,
   PrimaryKey,
   Table,
@@ -15,9 +14,8 @@ import User from './users.database.model'
 export interface SharedReceiptAttribute {
   id: number
   receipt_id: number
-  recipient_id: number
+  recipient_id?: number
   shared_at: Date
-  completed: boolean
 }
 
 export type SharedReceiptCreation = Omit<SharedReceiptAttribute, 'id'>
@@ -34,14 +32,11 @@ export default class SharedReceipt extends Model<SharedReceiptAttribute, SharedR
   receipt_id!: number
 
   @ForeignKey(() => User)
-  @Column({ allowNull: false })
-  recipient_id!: number
+  @Column({ allowNull: true })
+  recipient_id?: number
 
   @Column({ type: DataType.DATE, allowNull: false })
   shared_at!: Date
-
-  @Column({ allowNull: false })
-  completed!: boolean
 
   @BelongsTo(() => User)
   recipient!: User
