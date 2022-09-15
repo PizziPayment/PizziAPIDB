@@ -80,7 +80,6 @@ describe('Shared Receipt domain', () => {
 
       expect(retrieved_receipt).not.toBeNull()
       expect(retrieved_receipt[0].id).toBe(shared_receipt.id)
-      expect(retrieved_receipt[0].completed).toBe(shared_receipt.completed)
       expect(retrieved_receipt[0].shared_at).toStrictEqual(shared_receipt.shared_at)
       expect(retrieved_receipt[0].receipt_id).toBe(shared_receipt.receipt_id)
       expect(retrieved_receipt[0].recipient_id).toBe(shared_receipt.recipient_id)
