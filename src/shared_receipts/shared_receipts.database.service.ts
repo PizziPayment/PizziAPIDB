@@ -26,7 +26,11 @@ export class SharedReceiptsService {
     )
   }
 
-  static validateSharing(shared_receipt_id: number, recipient_id: number, transaction: Transaction | null = null): PizziResult<null> {
+  static validateSharing(
+    shared_receipt_id: number,
+    recipient_id: number,
+    transaction: Transaction | null = null
+  ): PizziResult<null> {
     return ResultAsync.fromPromise(
       SharedReceipt.update({ recipient_id }, { where: { id: shared_receipt_id }, transaction }),
       () => PizziError.internalError()

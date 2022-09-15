@@ -47,7 +47,6 @@ describe('Images domain', () => {
     try {
       const id = (await ImagesService.createImage(Buffer.from(data), transaction))._unsafeUnwrap()
       ;(await ImagesService.deleteImageById(id, transaction))._unsafeUnwrap()
-
       ;(await ImagesService.getImageById(id, transaction))._unsafeUnwrapErr()
     } finally {
       await transaction.rollback()
