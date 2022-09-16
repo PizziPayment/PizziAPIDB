@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, ForeignKey, HasMany, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, BelongsTo, Column, ForeignKey, HasMany, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import Admin from './admins.database.model'
 import Shop from './shops.database.model'
 import Token from './tokens.database.model'
@@ -42,4 +42,7 @@ export default class Credential extends Model<CredentialAttributes, CredentialCr
 
   @HasMany(() => Token, { onDelete: 'CASCADE' })
   tokens!: Array<Token>
+
+  @BelongsTo(() => User)
+  user!: User
 }

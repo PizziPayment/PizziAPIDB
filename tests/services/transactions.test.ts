@@ -51,12 +51,20 @@ async function setupMultipleReceiptsTransactionsUserAndShop(
       await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction)
     )._unsafeUnwrap()
 
-      ; (await TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction))._unsafeUnwrap()
+    ;(await TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction))._unsafeUnwrap()
 
     return [receipt, trans]
   }
 
-  return [[await makeTransactionAndReceipt(20, 3000), await makeTransactionAndReceipt(20, 1000), await makeTransactionAndReceipt(20, 2000)], user, shop]
+  return [
+    [
+      await makeTransactionAndReceipt(20, 3000),
+      await makeTransactionAndReceipt(20, 1000),
+      await makeTransactionAndReceipt(20, 2000),
+    ],
+    user,
+    shop,
+  ]
 }
 
 describe('Transaction domain', () => {
@@ -197,11 +205,11 @@ describe('Transaction domain', () => {
         await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction)
       )._unsafeUnwrap()
 
-        ; (
-          await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction).map(
-            (trans) => TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction)
-          )
-        )._unsafeUnwrap()
+      ;(
+        await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction).map(
+          (trans) => TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction)
+        )
+      )._unsafeUnwrap()
 
       const user_transactions = (
         await TransactionsService.getOwnerTransactionsByState('user', user.id, 'pending', transaction)
@@ -228,11 +236,11 @@ describe('Transaction domain', () => {
         await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction)
       )._unsafeUnwrap()
 
-        ; (
-          await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction).map(
-            (trans) => TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction)
-          )
-        )._unsafeUnwrap()
+      ;(
+        await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction).map(
+          (trans) => TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction)
+        )
+      )._unsafeUnwrap()
 
       const user_transactions = (
         await TransactionsService.getOwnerTransactionsByState('user', user.id, 'pending', transaction)
@@ -334,12 +342,19 @@ describe('Transaction domain', () => {
 
     try {
       const [transactions, user, shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
-      const results = (await TransactionsService.getOwnerExpandedTransactionsByState('user', user.id, 'validated', { filter: Filter.PriceAscending }, transaction))._unsafeUnwrap()
+      const results = (
+        await TransactionsService.getOwnerExpandedTransactionsByState(
+          'user',
+          user.id,
+          'validated',
+          { filter: Filter.PriceAscending },
+          transaction
+        )
+      )._unsafeUnwrap()
 
       for (let i = 1; i < results.length; i++) {
         expect(results[i].receipt.total_ht).toBeGreaterThanOrEqual(results[i - 1].receipt.total_ht)
       }
-
     } finally {
       await transaction.rollback()
     }
@@ -349,12 +364,19 @@ describe('Transaction domain', () => {
 
     try {
       const [transactions, user, shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
-      const results = (await TransactionsService.getOwnerExpandedTransactionsByState('user', user.id, 'validated', { filter: Filter.PriceDescending }, transaction))._unsafeUnwrap()
+      const results = (
+        await TransactionsService.getOwnerExpandedTransactionsByState(
+          'user',
+          user.id,
+          'validated',
+          { filter: Filter.PriceDescending },
+          transaction
+        )
+      )._unsafeUnwrap()
 
       for (let i = 1; i < results.length; i++) {
         expect(results[i].receipt.total_ht).toBeLessThanOrEqual(results[i - 1].receipt.total_ht)
       }
-
     } finally {
       await transaction.rollback()
     }
@@ -364,12 +386,19 @@ describe('Transaction domain', () => {
 
     try {
       const [transactions, user, shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
-      const results = (await TransactionsService.getOwnerExpandedTransactionsByState('user', user.id, 'validated', { filter: Filter.Oldest }, transaction))._unsafeUnwrap()
+      const results = (
+        await TransactionsService.getOwnerExpandedTransactionsByState(
+          'user',
+          user.id,
+          'validated',
+          { filter: Filter.Oldest },
+          transaction
+        )
+      )._unsafeUnwrap()
 
       for (let i = 1; i < results.length; i++) {
         expect(results[i].created_at.getTime()).toBeGreaterThanOrEqual(results[i - 1].created_at.getTime())
       }
-
     } finally {
       await transaction.rollback()
     }
@@ -379,12 +408,19 @@ describe('Transaction domain', () => {
 
     try {
       const [transactions, user, shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
-      const results = (await TransactionsService.getOwnerExpandedTransactionsByState('user', user.id, 'validated', { filter: Filter.Latest }, transaction))._unsafeUnwrap()
+      const results = (
+        await TransactionsService.getOwnerExpandedTransactionsByState(
+          'user',
+          user.id,
+          'validated',
+          { filter: Filter.Latest },
+          transaction
+        )
+      )._unsafeUnwrap()
 
       for (let i = 1; i < results.length; i++) {
         expect(results[i].created_at.getTime()).toBeLessThanOrEqual(results[i - 1].created_at.getTime())
       }
-
     } finally {
       await transaction.rollback()
     }
@@ -395,14 +431,21 @@ describe('Transaction domain', () => {
     try {
       const [transactions, user, shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
       const from = transactions[1][1].created_at
-      const results = (await TransactionsService.getOwnerExpandedTransactionsByState('user', user.id, 'validated', { from }, transaction))._unsafeUnwrap()
+      const results = (
+        await TransactionsService.getOwnerExpandedTransactionsByState(
+          'user',
+          user.id,
+          'validated',
+          { from },
+          transaction
+        )
+      )._unsafeUnwrap()
 
       expect(results.length).toEqual(2)
 
       for (let i = 1; i < results.length; i++) {
         expect(results[i].created_at.getTime()).toBeGreaterThanOrEqual(from.getTime())
       }
-
     } finally {
       await transaction.rollback()
     }
@@ -413,31 +456,39 @@ describe('Transaction domain', () => {
     try {
       const [transactions, user, shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
       const to = transactions[1][1].created_at
-      const results = (await TransactionsService.getOwnerExpandedTransactionsByState('user', user.id, 'validated', { to }, transaction))._unsafeUnwrap()
+      const results = (
+        await TransactionsService.getOwnerExpandedTransactionsByState('user', user.id, 'validated', { to }, transaction)
+      )._unsafeUnwrap()
 
       expect(results.length).toEqual(2)
 
       for (let i = 1; i < results.length; i++) {
         expect(results[i].created_at.getTime()).toBeLessThanOrEqual(to.getTime())
       }
-
     } finally {
       await transaction.rollback()
     }
   })
-  it('should be able to retreive transactions by the shop\'s name', async () => {
+  it("should be able to retreive transactions by the shop's name", async () => {
     const transaction = await sequelize.transaction()
 
     try {
       const [transactions, user, shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
-      const results = (await TransactionsService.getOwnerExpandedTransactionsByState('user', user.id, 'validated', { query: 'sho' }, transaction))._unsafeUnwrap()
+      const results = (
+        await TransactionsService.getOwnerExpandedTransactionsByState(
+          'user',
+          user.id,
+          'validated',
+          { query: 'sho' },
+          transaction
+        )
+      )._unsafeUnwrap()
 
       expect(results.length).toEqual(3)
 
       for (let i = 0; i < results.length; i++) {
         expect(results[i].shop.name).toBe('Shop')
       }
-
     } finally {
       await transaction.rollback()
     }

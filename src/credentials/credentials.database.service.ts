@@ -5,7 +5,7 @@ import { CredentialModel } from './models/credential.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
 import { onTransaction } from '../commons/extensions/generators.extension'
-import { ErrorCause, PizziError, PizziResult } from '../commons/models/service.error.model'
+import { ErrorCause, PizziResult, PizziError } from '../commons/models/service.error.model'
 
 export class CredentialsService {
   static deleteCredentialFromId(credential_id: number, transaction: Transaction | null = null): PizziResult<null> {
