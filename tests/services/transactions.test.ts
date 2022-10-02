@@ -258,7 +258,7 @@ describe('Transaction domain', () => {
     }
   })
 
-  it("should be able to retrieve an users' expanded transaction by state", async () => {
+  it("should be able to retrieve a users' expanded transaction by state", async () => {
     const transaction = await sequelize.transaction()
 
     try {

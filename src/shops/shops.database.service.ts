@@ -42,7 +42,6 @@ export class ShopsServices {
           phone: phone,
           description: undefined,
           zipcode: zipcode,
-          logo: undefined,
           facebook: undefined,
           instagram: undefined,
           twitter: undefined,
