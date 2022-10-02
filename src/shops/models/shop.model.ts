@@ -7,7 +7,7 @@ export interface ShopModel {
   address: string
   city: string
   zipcode: number
-  logo?: number
+  avatar_id?: number
   website?: string
   instagram?: string
   twitter?: string

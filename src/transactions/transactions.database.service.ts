@@ -57,7 +57,7 @@ export class TransactionsService {
           shop: {
             id: transaction.shop_id,
             name: transaction.shop.name,
-            logo: transaction.shop.logo,
+            avatar_id: transaction.shop.avatar_id,
           },
           receipt: {
             id: transaction.receipt_id,
