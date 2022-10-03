@@ -66,12 +66,14 @@ describe('Product Return Certificates Domain', () => {
       const product_return_certificate = (
         await ProductReturnCertificatesService.createProductReturnCertificateFromReceiptItemId(
           receipt_items[0].id,
+          "reason",
           1,
           transaction
         )
       )._unsafeUnwrap()
       expect(product_return_certificate.receipt_item_id).toBe(receipt_items[0].id)
       expect(new Date(product_return_certificate.return_date).getDay()).toBe(new Date().getDay())
+      expect(product_return_certificate.reason).toBe("reason")
       expect(product_return_certificate.quantity).toBe(1)
       expect(product_return_certificate.id).not.toBeNull()
     } finally {
@@ -85,6 +87,7 @@ describe('Product Return Certificates Domain', () => {
       const product_return_certificate = (
         await ProductReturnCertificatesService.createProductReturnCertificateFromReceiptItemId(
           receipt_items[0].id,
+          "reason",
           1,
           transaction
         )
@@ -98,6 +101,7 @@ describe('Product Return Certificates Domain', () => {
 
       expect(product_return_certificate.receipt_item_id).toBe(retrieved_certificate.receipt_item_id)
       expect(product_return_certificate.return_date).toStrictEqual(retrieved_certificate.return_date)
+      expect(product_return_certificate.reason).toBe(retrieved_certificate.reason)
       expect(product_return_certificate.quantity).toBe(retrieved_certificate.quantity)
       expect(product_return_certificate.id).toBe(retrieved_certificate.id)
     } finally {
@@ -111,6 +115,7 @@ describe('Product Return Certificates Domain', () => {
       const product_return_certificate = (
         await ProductReturnCertificatesService.createProductReturnCertificateFromReceiptItemId(
           receipt_items[0].id,
+          "reason",
           1,
           transaction
         )
@@ -127,6 +132,7 @@ describe('Product Return Certificates Domain', () => {
       if (retrieved_certificate !== null) {
         expect(product_return_certificate.receipt_item_id).toBe(retrieved_certificate.receipt_item_id)
         expect(product_return_certificate.return_date).toStrictEqual(retrieved_certificate.return_date)
+        expect(product_return_certificate.reason).toBe(retrieved_certificate.reason)
         expect(product_return_certificate.quantity).toBe(retrieved_certificate.quantity)
         expect(product_return_certificate.id).toBe(retrieved_certificate.id)
       }
@@ -141,6 +147,7 @@ describe('Product Return Certificates Domain', () => {
       const product_return_certificate = (
         await ProductReturnCertificatesService.createProductReturnCertificateFromReceiptItemId(
           receipt_items[0].id,
+          "reason",
           1,
           transaction
         )
@@ -152,6 +159,7 @@ describe('Product Return Certificates Domain', () => {
       expect(retrieved_certificates).toHaveLength(1)
       expect(product_return_certificate.receipt_item_id).toBe(retrieved_certificates[0].receipt_item_id)
       expect(product_return_certificate.return_date).toStrictEqual(retrieved_certificates[0].return_date)
+      expect(product_return_certificate.reason).toBe(retrieved_certificates[0].reason)
       expect(product_return_certificate.quantity).toBe(retrieved_certificates[0].quantity)
       expect(product_return_certificate.id).toBe(retrieved_certificates[0].id)
     } finally {
