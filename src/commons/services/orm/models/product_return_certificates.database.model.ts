@@ -4,6 +4,7 @@ import ReceiptItem from './receipt_items.database.model'
 interface ProductReturnCertificatesAttributes {
   id: number
   receipt_item_id: number
+  reason: string
   quantity: number
   return_date: Date
 }
@@ -25,6 +26,9 @@ export default class ProductReturnCertificates extends Model<
   @Column({ allowNull: false })
   receipt_item_id!: number
 
+  @Column({ allowNull: true })
+  reason!: string
+  
   @Column({ allowNull: false })
   quantity!: number
 
