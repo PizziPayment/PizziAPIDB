@@ -21,7 +21,7 @@ export interface ExpandedTransactionModel extends Omit<TransactionModel, 'shop_i
   shop: {
     id: number
     name: string
-    logo?: number
+    avatar_id?: number
   }
   receipt: {
     id: number

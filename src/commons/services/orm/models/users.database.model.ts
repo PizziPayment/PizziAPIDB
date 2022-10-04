@@ -1,7 +1,6 @@
 import { AutoIncrement, Column, ForeignKey, HasMany, HasOne, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import Credential from './credentials.database.model'
 import Image from './images.database.model'
-import Picture from './pictures.database.model'
 import Transaction from './transactions.database.model'
 import SharedReceipt from './shared_receipts.model'
 
@@ -29,10 +28,6 @@ export default class User extends Model<UserAttributes, UserCreation> {
 
   @Column({ allowNull: false })
   surname!: string
-
-  @ForeignKey(() => Picture)
-  @Column
-  picture_id?: number
 
   @Column({ allowNull: false })
   address!: string

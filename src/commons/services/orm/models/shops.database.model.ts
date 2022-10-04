@@ -11,7 +11,6 @@ import {
 } from 'sequelize-typescript'
 import Credential from './credentials.database.model'
 import Image from './images.database.model'
-import Picture from './pictures.database.model'
 import Transaction from './transactions.database.model'
 
 interface ShopAttributes {
@@ -23,7 +22,6 @@ interface ShopAttributes {
   address: string
   city: string
   zipcode: number
-  logo?: number
   website?: string
   instagram?: string
   twitter?: string
@@ -60,10 +58,6 @@ export default class Shop extends Model<ShopAttributes, ShopCreation> {
 
   @Column({ allowNull: false })
   zipcode!: number
-
-  @Column
-  @ForeignKey(() => Picture)
-  logo?: number
 
   @Column
   website?: string
