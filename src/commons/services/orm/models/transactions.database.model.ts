@@ -24,7 +24,7 @@ export interface TransactionAttributes {
   updated_at?: Date
 }
 
-export type PaymentMethod = 'card' | 'cash' | 'unassigned'
+export type PaymentMethod = 'card' | 'cash' | 'cheque' | 'unassigned'
 export type TransactionState = 'failed' | 'pending' | 'validated'
 
 export type TransactionCreation = Omit<TransactionAttributes, 'id'>
@@ -40,7 +40,7 @@ export default class Transaction extends Model<TransactionAttributes, Transactio
   @Column({ allowNull: false })
   state!: TransactionState
 
-  @IsIn([['card', 'cash', 'unassigned']])
+  @IsIn([['card', 'cash', 'cheque', 'unassigned']])
   @Column({ allowNull: false })
   payment_method!: PaymentMethod
 
