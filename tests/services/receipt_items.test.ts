@@ -111,7 +111,7 @@ describe('Receipt items domain', () => {
                       eco_tax: 0,
                       discount: 0,
                       quantity: 1,
-                      tva: 10,
+                      tva_percentage: 10,
                       warranty: 'fdsfsf',
                       shop_item_id: shop_item.id,
                     }

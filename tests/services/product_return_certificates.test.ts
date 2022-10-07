@@ -44,7 +44,7 @@ async function setupReceiptUserShopAndTransaction(
           discount: 0,
           shop_item_id: shop_item.id,
           eco_tax: 0,
-          tva: 10,
+          tva_percentage: 10,
           quantity: 10,
           warranty: 'TOTO',
         },
