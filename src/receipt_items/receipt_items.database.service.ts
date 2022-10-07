@@ -34,6 +34,7 @@ export class ReceiptItemsService {
             eco_tax: receipt_item.eco_tax,
             quantity: receipt_item.quantity,
             warranty: receipt_item.warranty,
+            tva: receipt_item.tva,
             name: receipt_item.shop_item.name,
             price: receipt_item.shop_item.price,
           }
@@ -48,6 +49,7 @@ export class ReceiptItemsService {
       shop_item_id: number
       discount: number
       eco_tax: number
+      tva: number
       quantity: number
       warranty: string
     }>,
@@ -69,6 +71,7 @@ export class ReceiptItemsService {
     shop_item_id: number,
     discount: number,
     eco_tax: number,
+    tva: number,
     quantity: number,
     warranty: string,
     transaction: Transaction | null = null
@@ -80,6 +83,7 @@ export class ReceiptItemsService {
           shop_item_id: shop_item_id,
           discount: discount,
           eco_tax: eco_tax,
+          tva: tva,
           quantity: quantity,
           warranty: warranty,
         },

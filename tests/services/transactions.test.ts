@@ -51,7 +51,7 @@ async function setupMultipleReceiptsTransactionsUserAndShop(
       await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction)
     )._unsafeUnwrap()
 
-    ;(await TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction))._unsafeUnwrap()
+      ; (await TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction))._unsafeUnwrap()
 
     return [receipt, trans]
   }
@@ -205,11 +205,11 @@ describe('Transaction domain', () => {
         await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction)
       )._unsafeUnwrap()
 
-      ;(
-        await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction).map(
-          (trans) => TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction)
-        )
-      )._unsafeUnwrap()
+        ; (
+          await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction).map(
+            (trans) => TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction)
+          )
+        )._unsafeUnwrap()
 
       const user_transactions = (
         await TransactionsService.getOwnerTransactionsByState('user', user.id, 'pending', transaction)
@@ -236,11 +236,11 @@ describe('Transaction domain', () => {
         await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction)
       )._unsafeUnwrap()
 
-      ;(
-        await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction).map(
-          (trans) => TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction)
-        )
-      )._unsafeUnwrap()
+        ; (
+          await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction).map(
+            (trans) => TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction)
+          )
+        )._unsafeUnwrap()
 
       const user_transactions = (
         await TransactionsService.getOwnerTransactionsByState('user', user.id, 'pending', transaction)
@@ -454,7 +454,7 @@ describe('Transaction domain', () => {
     const transaction = await sequelize.transaction()
 
     try {
-      const [transactions, user, shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
+      const [transactions, user,] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
       const to = transactions[1][1].created_at
       const results = (
         await TransactionsService.getOwnerExpandedTransactionsByState('user', user.id, 'validated', { to }, transaction)
@@ -473,7 +473,7 @@ describe('Transaction domain', () => {
     const transaction = await sequelize.transaction()
 
     try {
-      const [transactions, user, shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
+      const [, user,] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
       const results = (
         await TransactionsService.getOwnerExpandedTransactionsByState(
           'user',

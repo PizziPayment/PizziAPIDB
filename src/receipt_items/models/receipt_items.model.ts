@@ -4,6 +4,7 @@ export default interface ReceiptItemModel {
   shop_item_id: number
   discount: number
   eco_tax: number
+  tva: number
   quantity: number
   warranty: string
 }
