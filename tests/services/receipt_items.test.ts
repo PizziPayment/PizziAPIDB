@@ -24,7 +24,6 @@ afterAll(() => {
 describe('Receipt items domain', () => {
   it('should be able to create receipt item', async () => {
     const receipt_sample: Omit<ReceiptModel, 'id'> = {
-      tva_percentage: 10,
       total_price: 400,
     }
     const shop_items_sample: Array<ShopItemCreationModel> = [
@@ -37,7 +36,7 @@ describe('Receipt items domain', () => {
 
     try {
       const created_receipt = (
-        await ReceiptsService.createReceipt(receipt_sample.tva_percentage, receipt_sample.total_price, transaction)
+        await ReceiptsService.createReceipt(receipt_sample.total_price, transaction)
       )._unsafeUnwrap()
 
       expect(
@@ -71,7 +70,7 @@ describe('Receipt items domain', () => {
       expect(retrieved_items).toHaveLength(1)
       expect(retrieved_items[0].discount).toBe(0)
       expect(retrieved_items[0].eco_tax).toBe(0)
-      expect(retrieved_items[0].quantity).toBe(1)
+      expect(retrieved_items[0].quantity).toBe(10)
       expect(retrieved_items[0].warranty).toBe('tototot')
     } finally {
       await transaction.rollback()
@@ -79,7 +78,6 @@ describe('Receipt items domain', () => {
   })
   it('should be able to bulk create receipt items', async () => {
     const receipt_sample: Omit<ReceiptModel, 'id'> = {
-      tva_percentage: 10,
       total_price: 4000,
     }
     const shop_items_sample: Array<ShopItemCreationModel> = [
@@ -96,7 +94,7 @@ describe('Receipt items domain', () => {
 
     try {
       const created_receipt = (
-        await ReceiptsService.createReceipt(receipt_sample.tva_percentage, receipt_sample.total_price, transaction)
+        await ReceiptsService.createReceipt(receipt_sample.total_price, transaction)
       )._unsafeUnwrap()
 
       expect(

@@ -34,7 +34,7 @@ async function setupReceiptUserShopAndTransaction(
 ): Promise<
   [ReceiptModel, UserModel, UserModel, CredentialModel, ShopModel, TransactionModel, Array<ReceiptItemModel>]
 > {
-  const receipt = (await ReceiptsService.createReceipt(10, 2000, transaction))._unsafeUnwrap()
+  const receipt = (await ReceiptsService.createReceipt(10, transaction))._unsafeUnwrap()
   const user = (await UsersServices.createUser('test', 'test', 'test', 3000, transaction))._unsafeUnwrap()
   const user2 = (await UsersServices.createUser('test', 'test', 'test', 3000, transaction))._unsafeUnwrap()
   const credential2 = (

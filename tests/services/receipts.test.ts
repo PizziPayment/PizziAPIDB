@@ -27,15 +27,13 @@ describe('Receipts domain', () => {
 
     try {
       const receipt_sample: Omit<ReceiptModel, 'id'> = {
-        tva_percentage: 10,
         total_price: 9999,
       }
 
       const created_receipt = (
-        await ReceiptsService.createReceipt(receipt_sample.tva_percentage, receipt_sample.total_price, transaction)
+        await ReceiptsService.createReceipt(receipt_sample.total_price, transaction)
       )._unsafeUnwrap()
 
-      expect(created_receipt.tva_percentage).toBe(receipt_sample.tva_percentage)
       expect(created_receipt.total_price).toBe(receipt_sample.total_price)
     } finally {
       await transaction.rollback()
@@ -47,19 +45,17 @@ describe('Receipts domain', () => {
 
     try {
       const receipt_sample: Omit<ReceiptModel, 'id'> = {
-        tva_percentage: 10,
         total_price: 9999,
       }
 
       const created_receipt = (
-        await ReceiptsService.createReceipt(receipt_sample.tva_percentage, receipt_sample.total_price, transaction)
+        await ReceiptsService.createReceipt(receipt_sample.total_price, transaction)
       )._unsafeUnwrap()
       const retrieved_receipt = (
         await ReceiptsService.getShortenedReceipts([created_receipt.id], transaction)
       )._unsafeUnwrap()
 
       expect(retrieved_receipt).toHaveLength(1)
-      expect(retrieved_receipt[0].tva_percentage).toBe(created_receipt.tva_percentage)
       expect(retrieved_receipt[0].total_price).toBe(created_receipt.total_price)
     } finally {
       await transaction.rollback()
@@ -71,18 +67,16 @@ describe('Receipts domain', () => {
 
     try {
       const receipt_sample: Omit<ReceiptModel, 'id'> = {
-        tva_percentage: 10,
         total_price: 9999,
       }
 
       const created_receipt = (
-        await ReceiptsService.createReceipt(receipt_sample.tva_percentage, receipt_sample.total_price, transaction)
+        await ReceiptsService.createReceipt(receipt_sample.total_price, transaction)
       )._unsafeUnwrap()
       const retrieved_receipt = (
         await ReceiptsService.getDetailedReceiptById(created_receipt.id, transaction)
       )._unsafeUnwrap()
 
-      expect(retrieved_receipt.tva_percentage).toBe(created_receipt.tva_percentage)
       expect(retrieved_receipt.total_price).toBe(created_receipt.total_price)
     } finally {
       await transaction.rollback()
@@ -108,11 +102,10 @@ describe('Receipts domain', () => {
 
     try {
       const receipt_sample: Omit<ReceiptModel, 'id'> = {
-        tva_percentage: 10,
         total_price: 140,
       }
       const created_receipt = (
-        await ReceiptsService.createReceipt(receipt_sample.tva_percentage, receipt_sample.total_price, transaction)
+        await ReceiptsService.createReceipt(receipt_sample.total_price, transaction)
       )._unsafeUnwrap()
 
         ; (
@@ -143,7 +136,6 @@ describe('Receipts domain', () => {
       )._unsafeUnwrap()
 
       expect(retrieved_receipt.items).toHaveLength(3)
-      expect(retrieved_receipt.tva_percentage).toBe(created_receipt.tva_percentage)
       expect(retrieved_receipt.total_price).toBe(created_receipt.total_price)
     } finally {
       await transaction.rollback()
