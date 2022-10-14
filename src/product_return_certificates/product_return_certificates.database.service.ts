@@ -5,7 +5,7 @@ import {
   ProductReturnDetailedCertificateModel,
 } from './models/product_return_certificates.model'
 import ProductReturnCertificates from '../commons/services/orm/models/product_return_certificates.database.model'
-import { Transaction } from 'sequelize'
+import { Error, Transaction } from 'sequelize'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import ReceiptItem from '../commons/services/orm/models/receipt_items.database.model'
 import ShopItem from '../commons/services/orm/models/shop_items.database.model'
@@ -51,19 +51,20 @@ export class ProductReturnCertificatesService {
   static getProductReturnCertificatesFromShopId(
     shop_id: number,
     transaction: Transaction | null = null
-  ): PizziResult<Array<ProductReturnCertificates>> {
+  ): PizziResult<Array<ProductReturnCertificateModel>> {
     return ResultAsync.fromPromise(
       ProductReturnCertificates.findAll({
         include: [
           {
             model: ReceiptItem,
-            include: [{ model: ShopItem, include: [{ model: Shop, where: { shop_id: shop_id } }] }],
+            include: [{ model: ShopItem, include: [{ model: Shop, where: { id: shop_id } }], required: true }],
+            required: true,
           },
         ],
         transaction,
       }),
       () => PizziError.internalError()
-    )
+    ).andThen(okIfNotNullElse(new PizziError(ErrorCause.ShopNotFound, `invalid shop_id: ${shop_id}`)))
   }
 
   static getProductReturnDetailedCertificateFromReceiptItemId(
