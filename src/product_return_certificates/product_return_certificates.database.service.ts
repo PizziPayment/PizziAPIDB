@@ -5,7 +5,7 @@ import {
   ProductReturnDetailedCertificateModel,
 } from './models/product_return_certificates.model'
 import ProductReturnCertificates from '../commons/services/orm/models/product_return_certificates.database.model'
-import { Error, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import ReceiptItem from '../commons/services/orm/models/receipt_items.database.model'
 import ShopItem from '../commons/services/orm/models/shop_items.database.model'
