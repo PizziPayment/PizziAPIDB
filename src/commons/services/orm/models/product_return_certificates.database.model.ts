@@ -28,7 +28,7 @@ export default class ProductReturnCertificates extends Model<
 
   @Column({ allowNull: true })
   reason!: string
-  
+
   @Column({ allowNull: false })
   quantity!: number
 
