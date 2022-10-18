@@ -45,13 +45,13 @@ async function setupMultipleReceiptsTransactionsUserAndShop(
     await ShopsServices.createShop('Shop', '0202020202', 2131313213, 'address', 'city', 20000, transaction)
   )._unsafeUnwrap()
 
-  const makeTransactionAndReceipt = async (tva: number): Promise<[ReceiptModel, TransactionModel]> => {
-    const receipt = (await ReceiptsService.createReceipt(tva, transaction))._unsafeUnwrap()
+  const makeTransactionAndReceipt = async (price: number): Promise<[ReceiptModel, TransactionModel]> => {
+    const receipt = (await ReceiptsService.createReceipt(price, transaction))._unsafeUnwrap()
     const trans = (
       await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction)
     )._unsafeUnwrap()
 
-    ;(await TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction))._unsafeUnwrap()
+      ; (await TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction))._unsafeUnwrap()
 
     return [receipt, trans]
   }
@@ -201,11 +201,11 @@ describe('Transaction domain', () => {
         await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction)
       )._unsafeUnwrap()
 
-      ;(
-        await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction).map(
-          (trans) => TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction)
-        )
-      )._unsafeUnwrap()
+        ; (
+          await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction).map(
+            (trans) => TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction)
+          )
+        )._unsafeUnwrap()
 
       const user_transactions = (
         await TransactionsService.getOwnerTransactionsByState('user', user.id, 'pending', transaction)
@@ -232,11 +232,11 @@ describe('Transaction domain', () => {
         await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction)
       )._unsafeUnwrap()
 
-      ;(
-        await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction).map(
-          (trans) => TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction)
-        )
-      )._unsafeUnwrap()
+        ; (
+          await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction).map(
+            (trans) => TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction)
+          )
+        )._unsafeUnwrap()
 
       const user_transactions = (
         await TransactionsService.getOwnerTransactionsByState('user', user.id, 'pending', transaction)

@@ -70,6 +70,7 @@ describe('Receipt items domain', () => {
       expect(retrieved_items).toHaveLength(1)
       expect(retrieved_items[0].discount).toBe(0)
       expect(retrieved_items[0].eco_tax).toBe(0)
+      expect(retrieved_items[0].tva_percentage).toBe(1)
       expect(retrieved_items[0].quantity).toBe(10)
       expect(retrieved_items[0].warranty).toBe('tototot')
     } finally {
