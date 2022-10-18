@@ -24,10 +24,12 @@ const shop_items: Array<ShopItemCreationModel> = [
   {
     name: 'kidney',
     price: 300,
+    category: 'category',
   },
   {
     name: 'lung',
     price: 3999,
+    category: 'category',
   },
   {
     name: 'leg',
@@ -45,7 +47,13 @@ describe('Shop item domain', () => {
       )._unsafeUnwrap().id
       const shop_item_sample = shop_items[0]
 
-      const res = await ShopItemsService.createShopItem(shop_id, shop_item_sample.name, shop_item_sample.price, t)
+      const res = await ShopItemsService.createShopItem(
+        shop_id,
+        shop_item_sample.name,
+        shop_item_sample.price,
+        shop_item_sample.category,
+        t
+      )
       expect(res.isOk()).toBeTruthy()
       const created_si_id = res._unsafeUnwrap().id
       const retrieve_si = await ShopItem.findOne({ where: { id: created_si_id }, transaction: t })
@@ -56,6 +64,7 @@ describe('Shop item domain', () => {
         expect(retrieve_si.price).toBe(shop_item_sample.price)
         expect(retrieve_si.shop_id).toBe(shop_id)
         expect(retrieve_si.id).toBe(created_si_id)
+        expect(retrieve_si.category).toBe(shop_item_sample.category)
       }
     } finally {
       await t.rollback()
@@ -77,6 +86,7 @@ describe('Shop item domain', () => {
         expect(created_items[i].shop_id).toBe(shop_id)
         expect(created_items[i].name).toBe(shop_items[i].name)
         expect(created_items[i].price).toBe(shop_items[i].price)
+        expect(created_items[i].category).toBe(shop_items[i].category || null)
       }
     } finally {
       await t.rollback()
@@ -90,8 +100,15 @@ describe('Shop item domain', () => {
       const shop_id = (
         await ShopsServices.createShop(shop.name, shop.phone, shop.siret, shop.address, shop.city, shop.zipcode, t)
       )._unsafeUnwrap().id
+      const shop_item_sample = shop_items[0]
 
-      let res = await ShopItemsService.createShopItem(shop_id, shop_items[0].name, shop_items[0].price, t)
+      let res = await ShopItemsService.createShopItem(
+        shop_id,
+        shop_item_sample.name,
+        shop_item_sample.price,
+        shop_item_sample.category,
+        t
+      )
       expect(res.isOk()).toBeTruthy()
       const created_item = res._unsafeUnwrap()
       res = await ShopItemsService.retrieveShopItemFromId(created_item.id, t)
@@ -196,6 +213,7 @@ describe('Shop item domain', () => {
   it('should be able to update a shop item info', async () => {
     const new_price = 45
     const new_name = 'eyebrow'
+    const new_category = 'oui'
 
     const t = await sequelize.transaction()
 
@@ -203,12 +221,19 @@ describe('Shop item domain', () => {
       const shop_id = (
         await ShopsServices.createShop(shop.name, shop.phone, shop.siret, shop.address, shop.city, shop.zipcode, t)
       )._unsafeUnwrap().id
+      const shop_item_sample = shop_items[2]
 
-      let res = await ShopItemsService.createShopItem(shop_id, shop_items[1].name, shop_items[1].price, t)
+      let res = await ShopItemsService.createShopItem(
+        shop_id,
+        shop_item_sample.name,
+        shop_item_sample.price,
+        shop_item_sample.category,
+        t
+      )
       expect(res.isOk()).toBeTruthy()
       const shop_item = res._unsafeUnwrap()
 
-      res = await ShopItemsService.updateShopItemFromId(shop_item.id, new_name, new_price, t)
+      res = await ShopItemsService.updateShopItemFromId(shop_item.id, new_name, new_price, new_category, t)
       expect(res.isOk()).toBeTruthy()
       const new_shop_item = res._unsafeUnwrap()
 
@@ -231,8 +256,15 @@ describe('Shop item domain', () => {
       const shop_id = (
         await ShopsServices.createShop(shop.name, shop.phone, shop.siret, shop.address, shop.city, shop.zipcode, t)
       )._unsafeUnwrap().id
+      const shop_item_sample = shop_items[1]
 
-      let res = await ShopItemsService.createShopItem(shop_id, shop_items[1].name, shop_items[1].price, t)
+      let res = await ShopItemsService.createShopItem(
+        shop_id,
+        shop_item_sample.name,
+        shop_item_sample.price,
+        shop_item_sample.category,
+        t
+      )
       expect(res.isOk()).toBeTruthy()
       const item = res._unsafeUnwrap()
 

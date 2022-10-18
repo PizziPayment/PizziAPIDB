@@ -12,6 +12,7 @@ export class ShopItemsService {
     shop_id: number,
     name: string,
     price: number,
+    category?: string,
     transaction: Transaction | null = null
   ): PizziResult<ShopItemModel> {
     return ResultAsync.fromPromise(
@@ -22,6 +23,7 @@ export class ShopItemsService {
           shop_id: shop_id,
           created_at: new Date(),
           enabled: true,
+          category: category,
         },
         { transaction }
       ),
@@ -36,13 +38,14 @@ export class ShopItemsService {
   ): PizziResult<Array<ShopItemModel>> {
     return ResultAsync.fromPromise(
       ShopItem.bulkCreate(
-        items.map(({ name, price }) => {
+        items.map(({ name, price, category }) => {
           return {
             shop_id: shop_id,
             name,
             price,
             created_at: new Date(),
             enabled: true,
+            category: category,
           }
         }),
         { validate: true, transaction }
@@ -94,17 +97,22 @@ export class ShopItemsService {
 
   static updateShopItemFromId(
     id: number,
-    name: string | null,
-    price: number | null,
+    name?: string | null,
+    price?: number | null,
+    category?: string,
     transaction: Transaction | null = null
   ): PizziResult<ShopItemModel> {
     return ShopItemsService.deleteShopItemById(id, transaction).andThen((shop_item) => {
-      const new_shop_item = Object.assign(shop_item, assignNonNullValues({ name, price }))
+      const new_shop_item = Object.assign(shop_item, assignNonNullValues({ name, price, category }))
+      if (category !== undefined) {
+        new_shop_item.category = category
+      }
 
       return ShopItemsService.createShopItem(
         new_shop_item.shop_id,
         new_shop_item.name,
         new_shop_item.price,
+        new_shop_item.category,
         transaction
       )
     })

@@ -9,6 +9,7 @@ export enum ShopItemSortBy {
 export interface ShopItemCreationModel {
   name: string
   price: number
+  category?: string
 }
 
 export interface ShopItemModel {
@@ -18,6 +19,7 @@ export interface ShopItemModel {
   price: number
   created_at: Date
   enabled: boolean
+  category?: string
 }
 
 export function intoShopItemModel(model: ShopItemsAttributes): ShopItemModel {
@@ -28,5 +30,6 @@ export function intoShopItemModel(model: ShopItemsAttributes): ShopItemModel {
     price: model.price,
     created_at: model.created_at,
     enabled: model.enabled,
+    category: model.category,
   }
 }

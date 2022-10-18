@@ -43,7 +43,9 @@ async function setupReceiptUserShopAndTransaction(
   const shop = (
     await ShopsServices.createShop('test', '0202020202', 2131313213, 'address', 'city', 20000, transaction)
   )._unsafeUnwrap()
-  const shop_item = (await ShopItemsService.createShopItem(shop.id, 'Toto', 1000, transaction))._unsafeUnwrap()
+  const shop_item = (
+    await ShopItemsService.createShopItem(shop.id, 'Toto', 1000, undefined, transaction)
+  )._unsafeUnwrap()
   const receipt_items = (
     await ReceiptItemsService.createReceiptItems(
       receipt.id,
