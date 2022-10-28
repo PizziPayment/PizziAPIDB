@@ -73,25 +73,25 @@ export class ShopsServices {
     shop_id: number,
     image: Buffer,
     transaction: Transaction | null = null
-  ): PizziResult<void> {
+  ): PizziResult<number> {
     return ResultAsync.fromPromise(Shop.findOne({ where: { id: shop_id }, transaction }), () =>
       PizziError.internalError()
     )
       .andThen(shopNotFoundErrorFilter(shop_id))
       .andThen((shop) => {
-        if (shop.avatar_id) {
+        const avatar_id = shop.avatar_id
+
+        if (avatar_id) {
           return ResultAsync.fromPromise(
-            Image.update({ buffer: image }, { where: { id: shop.avatar_id }, transaction }),
+            Image.update({ buffer: image }, { where: { id: avatar_id }, transaction }),
             () => PizziError.internalError()
-          ).map(() => undefined)
+          ).map(() => avatar_id)
         } else {
-          return ImagesService.createImage(image, transaction)
-            .andThen((image_id) =>
-              ResultAsync.fromPromise(shop.update({ avatar_id: image_id }, { transaction }), () =>
-                PizziError.internalError()
-              )
-            )
-            .map(() => undefined)
+          return ImagesService.createImage(image, transaction).andThen((image_id) =>
+            ResultAsync.fromPromise(shop.update({ avatar_id: image_id }, { transaction }), () =>
+              PizziError.internalError()
+            ).map(() => image_id)
+          )
         }
       })
   }
