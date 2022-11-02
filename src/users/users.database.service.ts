@@ -77,25 +77,25 @@ export class UsersServices {
     user_id: number,
     image: Buffer,
     transaction: Transaction | null = null
-  ): PizziResult<void> {
+  ): PizziResult<number> {
     return ResultAsync.fromPromise(User.findOne({ where: { id: user_id }, transaction }), () =>
       PizziError.internalError()
     )
       .andThen(userNotFoundErrorFilter(user_id))
       .andThen((user) => {
-        if (user.avatar_id) {
+        const avatar_id = user.avatar_id
+
+        if (avatar_id) {
           return ResultAsync.fromPromise(
-            Image.update({ buffer: image }, { where: { id: user.avatar_id }, transaction }),
+            Image.update({ buffer: image }, { where: { id: avatar_id }, transaction }),
             () => PizziError.internalError()
-          ).map(() => undefined)
+          ).map(() => avatar_id)
         } else {
-          return ImagesService.createImage(image, transaction)
-            .andThen((image_id) =>
-              ResultAsync.fromPromise(user.update({ avatar_id: image_id }, { transaction }), () =>
-                PizziError.internalError()
-              )
-            )
-            .map(() => undefined)
+          return ImagesService.createImage(image, transaction).andThen((image_id) =>
+            ResultAsync.fromPromise(user.update({ avatar_id: image_id }, { transaction }), () =>
+              PizziError.internalError()
+            ).map(() => image_id)
+          )
         }
       })
   }
