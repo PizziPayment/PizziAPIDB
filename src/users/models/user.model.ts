@@ -4,4 +4,5 @@ export interface UserModel {
   surname: string
   address: string
   zipcode: number
+  avatar_id?: number
 }
