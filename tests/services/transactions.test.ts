@@ -29,7 +29,7 @@ afterAll(() => {
 
 async function setupReceiptUserAndShop(transaction: Transaction): Promise<[ReceiptModel, UserModel, ShopModel]> {
   return [
-    (await ReceiptsService.createReceipt(10, 2000, transaction))._unsafeUnwrap(),
+    (await ReceiptsService.createReceipt(10, transaction))._unsafeUnwrap(),
     (await UsersServices.createUser('test', 'test', 'test', 3000, transaction))._unsafeUnwrap(),
     (
       await ShopsServices.createShop('test', '0202020202', 2131313213, 'address', 'city', 20000, transaction)
@@ -45,23 +45,19 @@ async function setupMultipleReceiptsTransactionsUserAndShop(
     await ShopsServices.createShop('Shop', '0202020202', 2131313213, 'address', 'city', 20000, transaction)
   )._unsafeUnwrap()
 
-  const makeTransactionAndReceipt = async (tva: number, price: number): Promise<[ReceiptModel, TransactionModel]> => {
-    const receipt = (await ReceiptsService.createReceipt(tva, price, transaction))._unsafeUnwrap()
+  const makeTransactionAndReceipt = async (price: number): Promise<[ReceiptModel, TransactionModel]> => {
+    const receipt = (await ReceiptsService.createReceipt(price, transaction))._unsafeUnwrap()
     const trans = (
       await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction)
     )._unsafeUnwrap()
 
-    ;(await TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction))._unsafeUnwrap()
+      ; (await TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction))._unsafeUnwrap()
 
     return [receipt, trans]
   }
 
   return [
-    [
-      await makeTransactionAndReceipt(20, 3000),
-      await makeTransactionAndReceipt(20, 1000),
-      await makeTransactionAndReceipt(20, 2000),
-    ],
+    [await makeTransactionAndReceipt(20), await makeTransactionAndReceipt(20), await makeTransactionAndReceipt(20)],
     user,
     shop,
   ]
@@ -205,11 +201,11 @@ describe('Transaction domain', () => {
         await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction)
       )._unsafeUnwrap()
 
-      ;(
-        await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction).map(
-          (trans) => TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction)
-        )
-      )._unsafeUnwrap()
+        ; (
+          await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction).map(
+            (trans) => TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction)
+          )
+        )._unsafeUnwrap()
 
       const user_transactions = (
         await TransactionsService.getOwnerTransactionsByState('user', user.id, 'pending', transaction)
@@ -236,11 +232,11 @@ describe('Transaction domain', () => {
         await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction)
       )._unsafeUnwrap()
 
-      ;(
-        await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction).map(
-          (trans) => TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction)
-        )
-      )._unsafeUnwrap()
+        ; (
+          await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction).map(
+            (trans) => TransactionsService.updateTransactionStateFromId(trans.id, 'validated', transaction)
+          )
+        )._unsafeUnwrap()
 
       const user_transactions = (
         await TransactionsService.getOwnerTransactionsByState('user', user.id, 'pending', transaction)
@@ -281,7 +277,6 @@ describe('Transaction domain', () => {
       expect(expanded_transactions[0].state).toBe(created_transaction.state)
       expect(expanded_transactions[0].receipt.id).toBe(receipt.id)
       expect(expanded_transactions[0].receipt.total_ht).toBe(receipt.total_price)
-      expect(expanded_transactions[0].receipt.tva_percentage).toBe(receipt.tva_percentage)
       expect(expanded_transactions[0].created_at.toString()).toBe(created_transaction.created_at.toString())
       expect(expanded_transactions[0].updated_at?.toString()).toBe(created_transaction.updated_at?.toString())
     } finally {
@@ -311,7 +306,6 @@ describe('Transaction domain', () => {
       expect(expanded_transactions[0].state).toBe(created_transaction.state)
       expect(expanded_transactions[0].receipt.id).toBe(receipt.id)
       expect(expanded_transactions[0].receipt.total_ht).toBe(receipt.total_price)
-      expect(expanded_transactions[0].receipt.tva_percentage).toBe(receipt.tva_percentage)
       expect(expanded_transactions[0].created_at.toString()).toBe(created_transaction.created_at.toString())
       expect(expanded_transactions[0].updated_at?.toString()).toBe(created_transaction.updated_at?.toString())
     } finally {
@@ -323,9 +317,7 @@ describe('Transaction domain', () => {
 
     try {
       const [receipt, user, shop] = await setupReceiptUserAndShop(transaction)
-      const created_transaction = (
-        await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction)
-      )._unsafeUnwrap()
+      await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'card', transaction)
 
       const expanded_transactions = (
         await TransactionsService.getOwnerExpandedTransactionsByState('shop', shop.id, 'validated', {}, transaction)
@@ -341,7 +333,7 @@ describe('Transaction domain', () => {
     const transaction = await sequelize.transaction()
 
     try {
-      const [transactions, user, shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
+      const [_transactions, user, _shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
       const results = (
         await TransactionsService.getOwnerExpandedTransactionsByState(
           'user',
@@ -363,7 +355,7 @@ describe('Transaction domain', () => {
     const transaction = await sequelize.transaction()
 
     try {
-      const [transactions, user, shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
+      const [_transactions, user, _shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
       const results = (
         await TransactionsService.getOwnerExpandedTransactionsByState(
           'user',
@@ -385,7 +377,7 @@ describe('Transaction domain', () => {
     const transaction = await sequelize.transaction()
 
     try {
-      const [transactions, user, shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
+      const [_transactions, user, _shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
       const results = (
         await TransactionsService.getOwnerExpandedTransactionsByState(
           'user',
@@ -407,7 +399,7 @@ describe('Transaction domain', () => {
     const transaction = await sequelize.transaction()
 
     try {
-      const [transactions, user, shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
+      const [_transactions, user, _shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
       const results = (
         await TransactionsService.getOwnerExpandedTransactionsByState(
           'user',
@@ -429,7 +421,7 @@ describe('Transaction domain', () => {
     const transaction = await sequelize.transaction()
 
     try {
-      const [transactions, user, shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
+      const [transactions, user, _shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
       const from = transactions[1][1].created_at
       const results = (
         await TransactionsService.getOwnerExpandedTransactionsByState(
@@ -454,7 +446,7 @@ describe('Transaction domain', () => {
     const transaction = await sequelize.transaction()
 
     try {
-      const [transactions, user, shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
+      const [transactions, user] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
       const to = transactions[1][1].created_at
       const results = (
         await TransactionsService.getOwnerExpandedTransactionsByState('user', user.id, 'validated', { to }, transaction)
@@ -473,7 +465,7 @@ describe('Transaction domain', () => {
     const transaction = await sequelize.transaction()
 
     try {
-      const [transactions, user, shop] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
+      const [, user] = await setupMultipleReceiptsTransactionsUserAndShop(transaction)
       const results = (
         await TransactionsService.getOwnerExpandedTransactionsByState(
           'user',

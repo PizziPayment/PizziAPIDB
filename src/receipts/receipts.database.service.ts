@@ -24,7 +24,6 @@ export class ReceiptsService {
       .map((receipt) => {
         return {
           id: receipt.id,
-          tva_percentage: receipt.tva_percentage,
           total_price: receipt.total_price,
           items: (receipt.items || []).map((item) => {
             return {
@@ -32,6 +31,7 @@ export class ReceiptsService {
               name: item.shop_item.name,
               price: item.shop_item.price,
               quantity: item.quantity,
+              tva_percentage: item.tva_percentage,
               warranty: item.warranty,
               eco_tax: item.eco_tax,
               discount: item.discount,
@@ -51,12 +51,11 @@ export class ReceiptsService {
   }
 
   static createReceipt(
-    tva_percentage: number,
     total_price: number,
     transaction: Transaction | null = null
   ): PizziResult<ReceiptModel> {
     return ResultAsync.fromPromise(
-      Receipt.create({ tva_percentage: tva_percentage, total_price: total_price }, { transaction }),
+      Receipt.create({ total_price: total_price }, { transaction }),
       () => PizziError.internalError()
     )
   }

@@ -34,7 +34,7 @@ async function setupReceiptUserShopAndTransaction(
 ): Promise<
   [ReceiptModel, UserModel, UserModel, CredentialModel, ShopModel, TransactionModel, Array<ReceiptItemModel>]
 > {
-  const receipt = (await ReceiptsService.createReceipt(10, 2000, transaction))._unsafeUnwrap()
+  const receipt = (await ReceiptsService.createReceipt(10, transaction))._unsafeUnwrap()
   const user = (await UsersServices.createUser('test', 'test', 'test', 3000, transaction))._unsafeUnwrap()
   const user2 = (await UsersServices.createUser('test', 'test', 'test', 3000, transaction))._unsafeUnwrap()
   const credential2 = (
@@ -54,6 +54,7 @@ async function setupReceiptUserShopAndTransaction(
           discount: 0,
           shop_item_id: shop_item.id,
           eco_tax: 0,
+          tva_percentage: 10,
           quantity: 10,
           warranty: 'TOTO',
         },

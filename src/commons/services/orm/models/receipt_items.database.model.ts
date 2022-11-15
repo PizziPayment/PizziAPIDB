@@ -10,6 +10,7 @@ interface ReceiptItemsAttributes {
   quantity: number
   warranty: string
   eco_tax: number
+  tva_percentage: number
   discount: number
 }
 
@@ -38,6 +39,9 @@ export default class ReceiptItem extends Model<ReceiptItemsAttributes, ReceiptIt
 
   @Column({ allowNull: false })
   eco_tax!: number
+
+  @Column({ allowNull: false })
+  tva_percentage!: number
 
   @Column({ allowNull: false })
   discount!: number

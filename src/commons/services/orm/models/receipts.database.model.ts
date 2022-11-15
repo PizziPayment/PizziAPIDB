@@ -4,7 +4,6 @@ import Transaction from './transactions.database.model'
 
 export interface ReceiptAttributes {
   id: number
-  tva_percentage: number
   total_price: number
 }
 
@@ -16,9 +15,6 @@ export default class Receipt extends Model<ReceiptAttributes, ReceiptCreation> {
   @AutoIncrement
   @Column
   declare id: number
-
-  @Column({ allowNull: false, type: DataType.FLOAT })
-  tva_percentage!: number
 
   @Column({ allowNull: false, type: DataType.INTEGER })
   total_price!: number
