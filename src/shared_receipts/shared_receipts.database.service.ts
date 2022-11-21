@@ -56,7 +56,7 @@ export class SharedReceiptsService {
     )
   }
 
-  static getDetailedSharedReceiptByUserId(
+  static getDetailedSharedReceiptsByUserId(
     user_id: number,
     transaction: Transaction | null = null
   ): PizziResult<Array<DetailedSharedReceiptModel>> {
