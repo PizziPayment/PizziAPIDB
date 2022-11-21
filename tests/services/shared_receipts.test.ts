@@ -7,6 +7,7 @@ import {
   ReceiptModel,
   ReceiptsService,
   SharedReceiptsService,
+  ShopItemModel,
   ShopItemsService,
   ShopModel,
   ShopsServices,
@@ -32,7 +33,16 @@ afterAll(() => {
 async function setupReceiptUserShopAndTransaction(
   transaction: Transaction
 ): Promise<
-  [ReceiptModel, UserModel, UserModel, CredentialModel, ShopModel, TransactionModel, Array<ReceiptItemModel>]
+  [
+    ReceiptModel,
+    UserModel,
+    UserModel,
+    CredentialModel,
+    ShopModel,
+    TransactionModel,
+    Array<ReceiptItemModel>,
+    ShopItemModel
+  ]
 > {
   const receipt = (await ReceiptsService.createReceipt(10, transaction))._unsafeUnwrap()
   const user = (await UsersServices.createUser('test', 'test', 'test', 3000, transaction))._unsafeUnwrap()
@@ -66,7 +76,7 @@ async function setupReceiptUserShopAndTransaction(
     await TransactionsService.createPendingTransaction(receipt.id, user.id, shop.id, 'unassigned', transaction)
   )._unsafeUnwrap()
 
-  return [receipt, user, user2, credential2, shop, ptransaction, receipt_items]
+  return [receipt, user, user2, credential2, shop, ptransaction, receipt_items, shop_item]
 }
 
 describe('Shared Receipt domain', () => {
@@ -90,11 +100,41 @@ describe('Shared Receipt domain', () => {
       await transaction.rollback()
     }
   })
+  it('should be able to get all detailed receipt', async () => {
+    const transaction = await sequelize.transaction()
+    try {
+      const [receipt, user, , credential, , , items, shop_item] = await setupReceiptUserShopAndTransaction(transaction)
+      const shared_receipt = (
+        await SharedReceiptsService.shareReceiptByEmail(receipt.id, credential.email, transaction)
+      )._unsafeUnwrap()
+      const retrieved_receipt = (
+        await SharedReceiptsService.getDetailedSharedReceiptByUserId(credential.user_id as number, transaction)
+      )._unsafeUnwrap()
+
+      expect(retrieved_receipt).not.toBeNull()
+      expect(retrieved_receipt[0].id).toBe(shared_receipt.id)
+      expect(retrieved_receipt[0].shared_at).toStrictEqual(shared_receipt.shared_at)
+      expect(retrieved_receipt[0].receipt.id).toBe(receipt.id)
+      expect(retrieved_receipt[0].receipt.total_price).toBe(receipt.total_price)
+      expect(retrieved_receipt[0].receipt.items[0].id).toBe(items[0].id)
+      expect(retrieved_receipt[0].receipt.items[0].name).toBe(shop_item.name)
+      expect(retrieved_receipt[0].receipt.items[0].eco_tax).toBe(items[0].eco_tax)
+      expect(retrieved_receipt[0].receipt.items[0].discount).toBe(items[0].discount)
+      expect(retrieved_receipt[0].receipt.items[0].warranty).toBe(items[0].warranty)
+      expect(retrieved_receipt[0].receipt.items[0].tva_percentage).toBe(items[0].tva_percentage)
+      expect(retrieved_receipt[0].receipt.items[0].quantity).toBe(items[0].quantity)
+      expect(retrieved_receipt[0].user.firstname).toBe(user.firstname)
+      expect(retrieved_receipt[0].user.surname).toBe(user.surname)
+      expect(retrieved_receipt[0].user.avatar_id).toBe(user.avatar_id)
+    } finally {
+      await transaction.rollback()
+    }
+  })
 
   it('should be able to share a receipt', async () => {
     const transaction = await sequelize.transaction()
     try {
-      const [receipt, , , credential, , ,] = await setupReceiptUserShopAndTransaction(transaction)
+      const [receipt, , , credential, , , ,] = await setupReceiptUserShopAndTransaction(transaction)
 
       const shared_receipt = (
         await SharedReceiptsService.shareReceiptByEmail(receipt.id, credential.email, transaction)
