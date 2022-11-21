@@ -100,7 +100,8 @@ describe('Shared Receipt domain', () => {
       await transaction.rollback()
     }
   })
-  it('should be able to get all detailed receipt', async () => {
+
+  it('should be able to get all detailed receipts', async () => {
     const transaction = await sequelize.transaction()
     try {
       const [receipt, user, , credential, , , items, shop_item] = await setupReceiptUserShopAndTransaction(transaction)
