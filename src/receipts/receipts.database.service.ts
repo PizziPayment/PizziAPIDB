@@ -50,13 +50,9 @@ export class ReceiptsService {
     )
   }
 
-  static createReceipt(
-    total_price: number,
-    transaction: Transaction | null = null
-  ): PizziResult<ReceiptModel> {
-    return ResultAsync.fromPromise(
-      Receipt.create({ total_price: total_price }, { transaction }),
-      () => PizziError.internalError()
+  static createReceipt(total_price: number, transaction: Transaction | null = null): PizziResult<ReceiptModel> {
+    return ResultAsync.fromPromise(Receipt.create({ total_price: total_price }, { transaction }), () =>
+      PizziError.internalError()
     )
   }
 }
