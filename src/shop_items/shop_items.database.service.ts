@@ -13,6 +13,7 @@ export class ShopItemsService {
     name: string,
     price: number,
     category?: string,
+    color?: string,
     transaction: Transaction | null = null
   ): PizziResult<ShopItemModel> {
     return ResultAsync.fromPromise(
@@ -24,6 +25,7 @@ export class ShopItemsService {
           created_at: new Date(),
           enabled: true,
           category: category,
+          color: color,
         },
         { transaction }
       ),
@@ -38,7 +40,7 @@ export class ShopItemsService {
   ): PizziResult<Array<ShopItemModel>> {
     return ResultAsync.fromPromise(
       ShopItem.bulkCreate(
-        items.map(({ name, price, category }) => {
+        items.map(({ name, price, category, color }) => {
           return {
             shop_id: shop_id,
             name,
@@ -46,6 +48,7 @@ export class ShopItemsService {
             created_at: new Date(),
             enabled: true,
             category: category,
+            color: color,
           }
         }),
         { validate: true, transaction }
@@ -113,6 +116,7 @@ export class ShopItemsService {
         new_shop_item.name,
         new_shop_item.price,
         new_shop_item.category,
+        new_shop_item.color,
         transaction
       )
     })

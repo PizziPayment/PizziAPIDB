@@ -20,6 +20,7 @@ export interface ShopItemsAttributes {
   created_at: Date
   enabled: boolean
   category?: string
+  color?: string
 }
 
 export type ShopItemsCreation = Omit<ShopItemsAttributes, 'id'>
@@ -49,6 +50,9 @@ export default class ShopItem extends Model<ShopItemsAttributes, ShopItemsCreati
 
   @Column({ allowNull: true })
   category!: string
+
+  @Column({ allowNull: true })
+  color!: string
 
   @BelongsTo(() => Shop)
   shop!: Shop

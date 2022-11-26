@@ -10,6 +10,7 @@ export interface ShopItemCreationModel {
   name: string
   price: number
   category?: string
+  color?: string
 }
 
 export interface ShopItemModel {
@@ -20,6 +21,7 @@ export interface ShopItemModel {
   created_at: Date
   enabled: boolean
   category?: string
+  color?: string
 }
 
 export function intoShopItemModel(model: ShopItemsAttributes): ShopItemModel {
@@ -31,5 +33,6 @@ export function intoShopItemModel(model: ShopItemsAttributes): ShopItemModel {
     created_at: model.created_at,
     enabled: model.enabled,
     category: model.category,
+    color: model.color,
   }
 }

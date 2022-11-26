@@ -52,6 +52,7 @@ describe('Shop item domain', () => {
         shop_item_sample.name,
         shop_item_sample.price,
         shop_item_sample.category,
+        undefined,
         t
       )
       expect(res.isOk()).toBeTruthy()
@@ -107,6 +108,7 @@ describe('Shop item domain', () => {
         shop_item_sample.name,
         shop_item_sample.price,
         shop_item_sample.category,
+        undefined,
         t
       )
       expect(res.isOk()).toBeTruthy()
@@ -228,6 +230,7 @@ describe('Shop item domain', () => {
         shop_item_sample.name,
         shop_item_sample.price,
         shop_item_sample.category,
+        undefined,
         t
       )
       expect(res.isOk()).toBeTruthy()
@@ -263,6 +266,7 @@ describe('Shop item domain', () => {
         shop_item_sample.name,
         shop_item_sample.price,
         shop_item_sample.category,
+        undefined,
         t
       )
       expect(res.isOk()).toBeTruthy()
