@@ -26,4 +26,11 @@ export class ClientsService {
       )
     )
   }
+
+  static getClients(transaction: Transaction | null = null): PizziResult<ClientModel[]> {
+    return ResultAsync.fromPromise(
+      Client.findAll({ transaction }),
+      () => PizziError.internalError()
+    )
+  }
 }
