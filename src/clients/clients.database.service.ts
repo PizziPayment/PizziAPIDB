@@ -28,9 +28,12 @@ export class ClientsService {
   }
 
   static getClients(transaction: Transaction | null = null): PizziResult<ClientModel[]> {
-    return ResultAsync.fromPromise(
-      Client.findAll({ transaction }),
-      () => PizziError.internalError()
-    )
+    return ResultAsync.fromPromise(Client.findAll({ transaction }), () => PizziError.internalError())
+  }
+
+  static deleteClientById(id: number, transaction: Transaction | null = null): PizziResult<void> {
+    return ResultAsync.fromPromise(Client.destroy({ where: { id }, transaction }), () =>
+      PizziError.internalError()
+    ).map(() => { })
   }
 }
