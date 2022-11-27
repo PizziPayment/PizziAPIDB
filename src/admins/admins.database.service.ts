@@ -1,6 +1,6 @@
-import { ResultAsync } from 'neverthrow'
+import { errAsync, okAsync, ResultAsync } from 'neverthrow'
 import { Transaction } from 'sequelize/types'
-import { PizziError, PizziResult } from '../commons/models/service.error.model'
+import { ErrorCause, PizziError, PizziResult } from '../commons/models/service.error.model'
 import Admin from '../commons/services/orm/models/admins.database.model'
 import Credential from '../commons/services/orm/models/credentials.database.model'
 
@@ -18,9 +18,15 @@ export class AdminsService {
   }
 
   static deleteAdminById(id: number, transaction?: Transaction): PizziResult<void> {
-    return ResultAsync.fromPromise(Admin.destroy({ where: { id }, transaction }), () => PizziError.internalError()).map(
-      () => {}
-    )
+    return ResultAsync.fromPromise(Admin.destroy({ where: { id }, transaction }), () =>
+      PizziError.internalError()
+    ).andThen((n) => {
+      if (n > 0) {
+        return okAsync(undefined)
+      } else {
+        return errAsync(new PizziError(ErrorCause.InvalidAdmin, `invalid id: ${id}`))
+      }
+    })
   }
 
   static getAdminsPage(page: number, nb_items: number, transaction?: Transaction): PizziResult<AdminModel[]> {
