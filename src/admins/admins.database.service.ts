@@ -2,6 +2,7 @@ import { ResultAsync } from 'neverthrow'
 import { Transaction } from 'sequelize/types'
 import { PizziError, PizziResult } from '../commons/models/service.error.model'
 import Admin from '../commons/services/orm/models/admins.database.model'
+import Credential from '../commons/services/orm/models/credentials.database.model'
 
 export interface AdminModel {
   id: number
@@ -21,8 +22,9 @@ export class AdminsService {
   }
 
   static getAdminsPage(page: number, nb_items: number, transaction?: Transaction): PizziResult<AdminModel[]> {
-    return ResultAsync.fromPromise(Admin.findAll({ limit: nb_items, offset: (page - 1) * nb_items, transaction }), () =>
-      PizziError.internalError()
+    return ResultAsync.fromPromise(
+      Admin.findAll({ limit: nb_items, offset: (page - 1) * nb_items, include: [{ model: Credential }], transaction }),
+      () => PizziError.internalError()
     ).map((arr) => arr.map(to_model))
   }
 }
