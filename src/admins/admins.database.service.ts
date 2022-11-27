@@ -8,9 +8,15 @@ export class AdminsService {
     return ResultAsync.fromPromise(Admin.create(undefined, { transaction }), () => PizziError.internalError())
   }
 
-  static deleteAdminById(id: number, transaction: Transaction): PizziResult<void> {
+  static deleteAdminById(id: number, transaction?: Transaction): PizziResult<void> {
     return ResultAsync.fromPromise(Admin.destroy({ where: { id }, transaction }), () => PizziError.internalError()).map(
       () => { }
+    )
+  }
+
+  static getAdminsPage(page: number, nb_items: number, transaction?: Transaction): PizziResult<Admin[]> {
+    return ResultAsync.fromPromise(Admin.findAll({ limit: nb_items, offset: (page - 1) * nb_items, transaction }), () =>
+      PizziError.internalError()
     )
   }
 }
