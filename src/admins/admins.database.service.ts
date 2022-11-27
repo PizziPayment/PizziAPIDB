@@ -6,18 +6,20 @@ import Credential from '../commons/services/orm/models/credentials.database.mode
 
 export interface AdminModel {
   id: number
+  credential_id: number
+  email: string
 }
 
 export class AdminsService {
-  static createAdmin(transaction?: Transaction): PizziResult<AdminModel> {
+  static createAdmin(transaction?: Transaction): PizziResult<number> {
     return ResultAsync.fromPromise(Admin.create(undefined, { transaction }), () => PizziError.internalError()).map(
-      to_model
+      (admin) => admin.id
     )
   }
 
   static deleteAdminById(id: number, transaction?: Transaction): PizziResult<void> {
     return ResultAsync.fromPromise(Admin.destroy({ where: { id }, transaction }), () => PizziError.internalError()).map(
-      () => { }
+      () => {}
     )
   }
 
@@ -30,5 +32,5 @@ export class AdminsService {
 }
 
 function to_model(admin: Admin): AdminModel {
-  return { id: admin.id }
+  return { id: admin.id, credential_id: admin.credential.id, email: admin.credential.email }
 }

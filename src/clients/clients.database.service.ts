@@ -27,17 +27,24 @@ export class ClientsService {
     )
   }
 
-  static getClientsPage(page: number, nb_items: number, transaction: Transaction | null = null): PizziResult<ClientModel[]> {
-    return ResultAsync.fromPromise(Client.findAll({
-      limit: nb_items,
-      offset: (page - 1) * nb_items,
-      transaction
-    }), () => PizziError.internalError())
+  static getClientsPage(
+    page: number,
+    nb_items: number,
+    transaction: Transaction | null = null
+  ): PizziResult<ClientModel[]> {
+    return ResultAsync.fromPromise(
+      Client.findAll({
+        limit: nb_items,
+        offset: (page - 1) * nb_items,
+        transaction,
+      }),
+      () => PizziError.internalError()
+    )
   }
 
   static deleteClientById(id: number, transaction: Transaction | null = null): PizziResult<void> {
     return ResultAsync.fromPromise(Client.destroy({ where: { id }, transaction }), () =>
       PizziError.internalError()
-    ).map(() => { })
+    ).map(() => {})
   }
 }
