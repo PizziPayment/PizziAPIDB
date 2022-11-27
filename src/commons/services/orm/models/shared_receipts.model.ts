@@ -1,4 +1,14 @@
-import { AutoIncrement, BelongsTo, Column, DataType, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import {
+  AutoIncrement,
+  BelongsTo,
+  Column,
+  DataType,
+  ForeignKey,
+  Model,
+  PrimaryKey,
+  Table,
+  Unique,
+} from 'sequelize-typescript'
 import Receipt from './receipts.database.model'
 import User from './users.database.model'
 
@@ -19,6 +29,7 @@ export default class SharedReceipt extends Model<SharedReceiptAttribute, SharedR
   declare id: number
 
   @ForeignKey(() => Receipt)
+  @Unique
   @Column({ allowNull: false })
   receipt_id!: number
 

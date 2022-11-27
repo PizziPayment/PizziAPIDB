@@ -101,6 +101,27 @@ describe('Shared Receipt domain', () => {
     }
   })
 
+  it('should be able to get a shared receipt by receipt_id', async () => {
+    const transaction = await sequelize.transaction()
+    try {
+      const [receipt, , , credential, , ,] = await setupReceiptUserShopAndTransaction(transaction)
+      const shared_receipt = (
+        await SharedReceiptsService.shareReceiptByEmail(receipt.id, credential.email, transaction)
+      )._unsafeUnwrap()
+      const retrieved_receipt = (
+        await SharedReceiptsService.getSharedReceiptByReceiptId(receipt.id, transaction)
+      )._unsafeUnwrap()
+
+      expect(retrieved_receipt).not.toBeNull()
+      expect(retrieved_receipt.id).toBe(shared_receipt.id)
+      expect(retrieved_receipt.shared_at).toStrictEqual(shared_receipt.shared_at)
+      expect(retrieved_receipt.receipt_id).toBe(shared_receipt.receipt_id)
+      expect(retrieved_receipt.recipient_id).toBe(shared_receipt.recipient_id)
+    } finally {
+      await transaction.rollback()
+    }
+  })
+
   it('should be able to get all detailed receipts', async () => {
     const transaction = await sequelize.transaction()
     try {
