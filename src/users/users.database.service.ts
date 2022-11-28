@@ -37,7 +37,6 @@ export class UsersServices {
           firstname: name,
           surname: surname,
           zipcode: zipcode,
-          picture_id: undefined,
         },
         { transaction }
       ),

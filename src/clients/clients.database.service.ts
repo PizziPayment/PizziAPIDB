@@ -27,11 +27,7 @@ export class ClientsService {
     )
   }
 
-  static getClientsPage(
-    page: number,
-    nb_items: number,
-    transaction: Transaction | null = null
-  ): PizziResult<ClientModel[]> {
+  static getClientsPage(page: number, nb_items: number, transaction?: Transaction): PizziResult<ClientModel[]> {
     return ResultAsync.fromPromise(
       Client.findAll({
         limit: nb_items,
