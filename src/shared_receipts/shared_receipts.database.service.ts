@@ -61,11 +61,9 @@ export class SharedReceiptsService {
     receipt_id: number,
     transaction: Transaction | null = null
   ): PizziResult<SharedReceiptModel> {
-    return ResultAsync.fromPromise(SharedReceipt.findAll({ where: { receipt_id: receipt_id }, transaction }), () =>
+    return ResultAsync.fromPromise(SharedReceipt.findOne({ where: { receipt_id: receipt_id }, transaction }), () =>
       PizziError.internalError()
-    )
-      .andThen(okIfNotNullElse(new PizziError(ErrorCause.SharedReceiptNotFound, `Invalid receipt_id: ${receipt_id}.`)))
-      .map((x) => x[0])
+    ).andThen(okIfNotNullElse(new PizziError(ErrorCause.SharedReceiptNotFound, `Invalid receipt_id: ${receipt_id}.`)))
   }
 
   static getDetailedSharedReceiptsByUserId(
