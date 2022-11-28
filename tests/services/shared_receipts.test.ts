@@ -125,7 +125,7 @@ describe('Shared Receipt domain', () => {
   it('should be able to get all detailed receipts', async () => {
     const transaction = await sequelize.transaction()
     try {
-      const [receipt, user, , credential, , , items, shop_item] = await setupReceiptUserShopAndTransaction(transaction)
+      const [receipt, user, , credential, shop, , shop_item] = await setupReceiptUserShopAndTransaction(transaction)
       const shared_receipt = (
         await SharedReceiptsService.shareReceiptByEmail(receipt.id, credential.email, transaction)
       )._unsafeUnwrap()
@@ -138,13 +138,9 @@ describe('Shared Receipt domain', () => {
       expect(retrieved_receipt[0].shared_at).toStrictEqual(shared_receipt.shared_at)
       expect(retrieved_receipt[0].receipt.id).toBe(receipt.id)
       expect(retrieved_receipt[0].receipt.total_price).toBe(receipt.total_price)
-      expect(retrieved_receipt[0].receipt.items[0].id).toBe(items[0].id)
-      expect(retrieved_receipt[0].receipt.items[0].name).toBe(shop_item.name)
-      expect(retrieved_receipt[0].receipt.items[0].eco_tax).toBe(items[0].eco_tax)
-      expect(retrieved_receipt[0].receipt.items[0].discount).toBe(items[0].discount)
-      expect(retrieved_receipt[0].receipt.items[0].warranty).toBe(items[0].warranty)
-      expect(retrieved_receipt[0].receipt.items[0].tva_percentage).toBe(items[0].tva_percentage)
-      expect(retrieved_receipt[0].receipt.items[0].quantity).toBe(items[0].quantity)
+      expect(retrieved_receipt[0].shop.id).toBe(shop.id)
+      expect(retrieved_receipt[0].shop.name).toBe(shop.name)
+      expect(retrieved_receipt[0].shop.avatar_id).toBe(shop.avatar_id)
       expect(retrieved_receipt[0].user.firstname).toBe(user.firstname)
       expect(retrieved_receipt[0].user.surname).toBe(user.surname)
       expect(retrieved_receipt[0].user.avatar_id).toBe(user.avatar_id)

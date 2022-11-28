@@ -10,6 +10,7 @@ import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import Receipt from '../commons/services/orm/models/receipts.database.model'
 import ReceiptItem from '../commons/services/orm/models/receipt_items.database.model'
 import ShopItem from '../commons/services/orm/models/shop_items.database.model'
+import Shop from '../commons/services/orm/models/shops.database.model'
 
 export class SharedReceiptsService {
   static initiateSharing(
@@ -82,7 +83,7 @@ export class SharedReceiptsService {
             include: [
               {
                 model: PizziTransaction,
-                include: [{ model: User }],
+                include: [{ model: User }, { model: Shop }],
               },
               {
                 model: ReceiptItem,
@@ -104,21 +105,14 @@ export class SharedReceiptsService {
             surname: shared_receipt.receipt.transaction.user.surname,
             avatar_id: shared_receipt.receipt.transaction.user.avatar_id,
           },
+          shop: {
+            id: shared_receipt.receipt.transaction.shop_id,
+            name: shared_receipt.receipt.transaction.shop.name,
+            avatar_id: shared_receipt.receipt.transaction.shop.avatar_id,
+          },
           receipt: {
             id: shared_receipt.receipt.id,
             total_price: shared_receipt.receipt.total_price,
-            items: shared_receipt.receipt.items.map((receipt_item) => {
-              return {
-                id: receipt_item.id,
-                name: receipt_item.shop_item.name,
-                price: receipt_item.shop_item.price,
-                tva_percentage: receipt_item.tva_percentage,
-                quantity: receipt_item.quantity,
-                warranty: receipt_item.warranty,
-                eco_tax: receipt_item.eco_tax,
-                discount: receipt_item.discount,
-              }
-            }),
           },
         }
       })

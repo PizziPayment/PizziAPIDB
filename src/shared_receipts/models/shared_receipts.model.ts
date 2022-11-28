@@ -1,4 +1,4 @@
-import { DetailedReceiptModel } from '../../receipts/models/receipts.model'
+import { ReceiptModel } from '../../receipts/models/receipts.model'
 
 export interface SharedReceiptModel {
   id: number
@@ -9,13 +9,12 @@ export interface SharedReceiptModel {
 
 export interface DetailedSharedReceiptModel {
   id: number
-  user: ConciseUserModel
-  receipt: DetailedReceiptModel
+  user: { firstname: string; surname: string; avatar_id?: number }
+  shop: {
+    id: number
+    name: string
+    avatar_id?: number
+  }
+  receipt: ReceiptModel
   shared_at: Date
-}
-
-interface ConciseUserModel {
-  firstname: string
-  surname: string
-  avatar_id?: number
 }
