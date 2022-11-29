@@ -1,4 +1,4 @@
-import { ResultAsync } from 'neverthrow'
+import { errAsync, okAsync, ResultAsync } from 'neverthrow'
 import Client from '../commons/services/orm/models/clients.database.model'
 import { ClientModel } from './models/client.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
@@ -41,7 +41,13 @@ export class ClientsService {
   static deleteClientById(id: number, transaction: Transaction | null = null): PizziResult<void> {
     return ResultAsync.fromPromise(Client.destroy({ where: { id }, transaction }), () =>
       PizziError.internalError()
-    ).map(() => {})
+    ).andThen((n) => {
+      if (n > 0) {
+        return okAsync(undefined)
+      } else {
+        return errAsync(new PizziError(ErrorCause.ClientNotFound, `invalid id: ${id}`))
+      }
+    })
   }
 
   static isClientIdUsed(client_id: string, transaction?: Transaction): PizziResult<boolean> {
