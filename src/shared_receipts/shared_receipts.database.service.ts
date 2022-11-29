@@ -157,15 +157,21 @@ function createShortenedQuery(
         {
           model: PizziTransaction,
           include: [
-            { model: User },
-            { model: Shop, where: params.query ? { name: { [Op.iLike]: `%${params.query}%` } } : undefined },
+            { model: User, required: true },
+            {
+              model: Shop,
+              where: params.query ? { name: { [Op.iLike]: `%${params.query}%` } } : undefined,
+              required: true,
+            },
           ],
+          required: true,
         },
         {
           model: ReceiptItem,
           include: [{ model: ShopItem }],
         },
       ],
+      required: true,
     },
   ]
 

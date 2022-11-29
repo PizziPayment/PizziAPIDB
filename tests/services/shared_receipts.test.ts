@@ -154,6 +154,58 @@ describe('Shared Receipt domain', () => {
     }
   })
 
+  it('should be able to get all detailed receipts with filter', async () => {
+    const transaction = await sequelize.transaction()
+    try {
+      const [receipt, user, , credential, shop, , shop_item] = await setupReceiptUserShopAndTransaction(transaction)
+      const shared_receipt = (
+        await SharedReceiptsService.shareReceiptByEmail(receipt.id, credential.email, transaction)
+      )._unsafeUnwrap()
+      const retrieved_receipt = (
+        await SharedReceiptsService.getDetailedSharedReceiptsByUserId(
+          credential.user_id as number,
+          { query: shop.name },
+          transaction
+        )
+      )._unsafeUnwrap()
+
+      expect(retrieved_receipt).not.toBeNull()
+      expect(retrieved_receipt[0].id).toBe(shared_receipt.id)
+      expect(retrieved_receipt[0].shared_at).toStrictEqual(shared_receipt.shared_at)
+      expect(retrieved_receipt[0].receipt.id).toBe(receipt.id)
+      expect(retrieved_receipt[0].receipt.total_price).toBe(receipt.total_price)
+      expect(retrieved_receipt[0].shop.id).toBe(shop.id)
+      expect(retrieved_receipt[0].shop.name).toBe(shop.name)
+      expect(retrieved_receipt[0].shop.avatar_id).toBe(shop.avatar_id)
+      expect(retrieved_receipt[0].user.firstname).toBe(user.firstname)
+      expect(retrieved_receipt[0].user.surname).toBe(user.surname)
+      expect(retrieved_receipt[0].user.avatar_id).toBe(user.avatar_id)
+    } finally {
+      await transaction.rollback()
+    }
+  })
+
+  it('should be able to get all detailed receipts with filter (not finding anything)', async () => {
+    const transaction = await sequelize.transaction()
+    try {
+      const [receipt, user, , credential, shop, , shop_item] = await setupReceiptUserShopAndTransaction(transaction)
+      const shared_receipt = (
+        await SharedReceiptsService.shareReceiptByEmail(receipt.id, credential.email, transaction)
+      )._unsafeUnwrap()
+      const retrieved_receipt = (
+        await SharedReceiptsService.getDetailedSharedReceiptsByUserId(
+          credential.user_id as number,
+          { query: 'GFLABOUBIOQUE' },
+          transaction
+        )
+      )._unsafeUnwrap()
+
+      expect(retrieved_receipt).toHaveLength(0)
+    } finally {
+      await transaction.rollback()
+    }
+  })
+
   it('should be able to share a receipt', async () => {
     const transaction = await sequelize.transaction()
     try {
