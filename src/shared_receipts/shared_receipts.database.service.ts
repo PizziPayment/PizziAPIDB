@@ -130,8 +130,8 @@ export enum SharedReceiptFilter {
 }
 
 const filter_order: Array<OrderItem> = [
-  ['created_at', 'DESC'],
-  ['created_at', 'ASC'],
+  ['shared_at', 'DESC'],
+  ['shared_at', 'ASC'],
 ]
 
 export interface SharedReceiptsQueryParameters {

@@ -6,6 +6,7 @@ import {
   ReceiptItemsService,
   ReceiptModel,
   ReceiptsService,
+  SharedReceiptFilter,
   SharedReceiptsService,
   ShopItemModel,
   ShopItemsService,
@@ -130,7 +131,11 @@ describe('Shared Receipt domain', () => {
         await SharedReceiptsService.shareReceiptByEmail(receipt.id, credential.email, transaction)
       )._unsafeUnwrap()
       const retrieved_receipt = (
-        await SharedReceiptsService.getDetailedSharedReceiptsByUserId(credential.user_id as number, {}, transaction)
+        await SharedReceiptsService.getDetailedSharedReceiptsByUserId(
+          credential.user_id as number,
+          { filter: SharedReceiptFilter.Latest },
+          transaction
+        )
       )._unsafeUnwrap()
 
       expect(retrieved_receipt).not.toBeNull()
