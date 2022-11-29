@@ -1,8 +1,8 @@
-import SharedReceipt from '../commons/services/orm/models/shared_receipts.model'
+import SharedReceipt, { SharedReceiptAttribute } from '../commons/services/orm/models/shared_receipts.model'
 import { ResultAsync } from 'neverthrow'
 import { ErrorCause, PizziError, PizziResult } from '../commons/models/service.error.model'
 import { DetailedSharedReceiptModel, SharedReceiptModel } from './models/shared_receipts.model'
-import { Transaction } from 'sequelize'
+import { FindOptions, Includeable, Op, OrderItem, Transaction } from 'sequelize'
 import PizziTransaction from '../commons/services/orm/models/transactions.database.model'
 import Credential from '../commons/services/orm/models/credentials.database.model'
 import User from '../commons/services/orm/models/users.database.model'
@@ -68,31 +68,11 @@ export class SharedReceiptsService {
 
   static getDetailedSharedReceiptsByUserId(
     user_id: number,
+    params: SharedReceiptsQueryParameters,
     transaction: Transaction | null = null
   ): PizziResult<Array<DetailedSharedReceiptModel>> {
-    return ResultAsync.fromPromise(
-      SharedReceipt.findAll({
-        where: {
-          recipient_id: user_id,
-        },
-        include: [
-          {
-            model: Receipt,
-            include: [
-              {
-                model: PizziTransaction,
-                include: [{ model: User }, { model: Shop }],
-              },
-              {
-                model: ReceiptItem,
-                include: [{ model: ShopItem }],
-              },
-            ],
-          },
-        ],
-        transaction,
-      }),
-      () => PizziError.internalError()
+    return ResultAsync.fromPromise(SharedReceipt.findAll(createShortenedQuery(user_id, params, transaction)), () =>
+      PizziError.internalError()
     ).map((shared_receipts) =>
       shared_receipts.map((shared_receipt) => {
         return {
@@ -142,4 +122,65 @@ export class SharedReceiptsService {
         )
       )
   }
+}
+
+export enum SharedReceiptFilter {
+  Latest,
+  Oldest,
+}
+
+const filter_order: Array<OrderItem> = [
+  ['created_at', 'DESC'],
+  ['created_at', 'ASC'],
+]
+
+export interface SharedReceiptsQueryParameters {
+  filter?: SharedReceiptFilter
+  query?: string
+  from?: Date
+  to?: Date
+}
+
+function createShortenedQuery(
+  user_id: number,
+  params: SharedReceiptsQueryParameters,
+  transaction: Transaction | null = null
+): FindOptions {
+  const query: FindOptions<SharedReceiptAttribute> = {
+    where: { recipient_id: user_id },
+    transaction,
+  }
+  const include: Array<Includeable> = [
+    {
+      model: Receipt,
+      include: [
+        {
+          model: PizziTransaction,
+          include: [
+            { model: User },
+            { model: Shop, where: params.query ? { name: { [Op.iLike]: `%${params.query}%` } } : undefined },
+          ],
+        },
+        {
+          model: ReceiptItem,
+          include: [{ model: ShopItem }],
+        },
+      ],
+    },
+  ]
+
+  if (params.filter !== undefined) {
+    query.order = [filter_order[params.filter]]
+  }
+  query.include = include
+
+  if (params.from && params.to) {
+    query.where = { ...query.where, shared_at: { [Op.and]: { [Op.gte]: params.from, [Op.lte]: params.to } } }
+  } else if (params.from) {
+    query.where = { ...query.where, shared_at: { [Op.gte]: params.from } }
+  } else if (params.to) {
+    query.where = { ...query.where, shared_at: { [Op.lte]: params.to } }
+  }
+
+  return query
 }
