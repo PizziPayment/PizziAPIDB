@@ -41,7 +41,7 @@ export class ClientsService {
   static deleteClientById(id: number, transaction: Transaction | null = null): PizziResult<void> {
     return ResultAsync.fromPromise(Client.destroy({ where: { id }, transaction }), () =>
       PizziError.internalError()
-    ).map(() => { })
+    ).map(() => {})
   }
 
   static isClientIdUsed(client_id: string, transaction?: Transaction): PizziResult<boolean> {

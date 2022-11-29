@@ -1,4 +1,4 @@
-import { SmallCredentialModel } from "../../credentials/models/credential.model"
+import { SmallCredentialModel } from '../../credentials/models/credential.model'
 
 export interface ShopModel {
   id: number
@@ -18,4 +18,6 @@ export interface ShopModel {
 
 export type ShopUpdateModel = Pick<ShopModel, 'description' | 'website' | 'instagram' | 'twitter' | 'facebook'>
 
-export interface ShopWithCredsModel extends ShopModel { credential: SmallCredentialModel }
+export interface ShopWithCredsModel extends ShopModel {
+  credential: SmallCredentialModel
+}

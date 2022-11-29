@@ -61,7 +61,7 @@ export class ShopsServices {
           website: undefined,
           avatar_id: undefined,
         },
-        { transaction }
+        { include: Credential, transaction }
       ),
       () => PizziError.internalError()
     )
