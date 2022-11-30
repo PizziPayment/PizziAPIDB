@@ -1,19 +1,22 @@
 import { ResultAsync } from 'neverthrow'
-import { UserModel } from './models/user.model'
+import { UserModel, UserWithCredsModel } from './models/user.model'
 import User from '../commons/services/orm/models/users.database.model'
 import { Transaction } from 'sequelize'
-import { onTransaction } from '../commons/extensions/generators.extension'
 import { assignNonNullValues } from '../commons/services/util.service'
 import { ErrorCause, fieldNotFoundErrorFilter, PizziError, PizziResult } from '../commons/models/service.error.model'
 import { ImagesService } from '../images/images.database.service'
 import Image from '../commons/services/orm/models/images.database.model'
+import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
+import Credential from '../commons/services/orm/models/credentials.database.model'
 
 const userNotFoundErrorFilter = fieldNotFoundErrorFilter<User>('user', ErrorCause.UserNotFound)
 
 export class UsersServices {
-  static deleteUserById(user_id: number, transaction: Transaction | null = null): PizziResult<null> {
-    return this.getUserFromId(user_id, transaction)
-      .andThen(onTransaction(transaction, destroyUser))
+  static deleteUserById(user_id: number, transaction?: Transaction): PizziResult<null> {
+    return ResultAsync.fromPromise(User.destroy({ where: { id: user_id }, transaction }), () =>
+      PizziError.internalError()
+    )
+      .andThen(okIfNotNullElse(new PizziError(ErrorCause.UserNotFound, `invalid user id: ${user_id}`)))
       .map(() => null)
   }
 
@@ -21,6 +24,18 @@ export class UsersServices {
     return ResultAsync.fromPromise(User.findOne({ where: { id: user_id }, transaction }), () =>
       PizziError.internalError()
     ).andThen(userNotFoundErrorFilter(user_id))
+  }
+
+  static getUsersPage(page: number, nb_items: number, transaction?: Transaction): PizziResult<UserWithCredsModel[]> {
+    return ResultAsync.fromPromise(
+      User.findAll({
+        limit: nb_items,
+        offset: (page - 1) * nb_items,
+        include: [{ model: Credential }],
+        transaction,
+      }),
+      () => PizziError.internalError()
+    )
   }
 
   static createUser(
@@ -98,12 +113,4 @@ export class UsersServices {
         }
       })
   }
-}
-
-// Pipeline
-
-function destroyUser(user: UserModel, transaction: Transaction | null): PizziResult<UserModel> {
-  return ResultAsync.fromPromise(User.destroy({ where: { id: user.id }, transaction }), () =>
-    PizziError.internalError()
-  ).map(() => user)
 }
