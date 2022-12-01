@@ -6,6 +6,7 @@ import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
 import { onTransaction } from '../commons/extensions/generators.extension'
 import { ErrorCause, PizziResult, PizziError } from '../commons/models/service.error.model'
+import { TokensService } from '../tokens/tokens.database.service'
 
 export class CredentialsService {
   static deleteCredentialFromId(credential_id: number, transaction: Transaction | null = null): PizziResult<null> {
@@ -71,6 +72,24 @@ export class CredentialsService {
       .andThen((credential) =>
         ResultAsync.fromPromise(credential.set('email', email).save({ transaction }), () => PizziError.internalError())
       )
+      .map(() => null)
+  }
+
+  static changeEmailAndPassword(
+    credential_id: number,
+    email?: string,
+    password?: string,
+    transaction?: Transaction
+  ): PizziResult<null> {
+    return ResultAsync.fromPromise(
+      Credential.update({ email, password }, { where: { id: credential_id }, transaction }),
+      () => PizziError.internalError()
+    )
+      .map(([affected_rows]) => affected_rows)
+      .andThen(
+        okIfNotNullElse(new PizziError(ErrorCause.CredentialNotFound, `invalid credential_id: ${credential_id}`))
+      )
+      .andThen(() => TokensService.deleteTokensFromCredentialId(credential_id, transaction))
       .map(() => null)
   }
 
