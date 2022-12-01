@@ -1,4 +1,4 @@
-import { ResultAsync } from 'neverthrow'
+import { errAsync, okAsync, ResultAsync } from 'neverthrow'
 import Client from '../commons/services/orm/models/clients.database.model'
 import { ClientModel } from './models/client.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
@@ -25,5 +25,34 @@ export class ClientsService {
         new PizziError(ErrorCause.ClientNotFound, `invalid client_id: ${client_id} or client_secret: ${client_secret}`)
       )
     )
+  }
+
+  static getClientsPage(page: number, nb_items: number, transaction?: Transaction): PizziResult<ClientModel[]> {
+    return ResultAsync.fromPromise(
+      Client.findAll({
+        limit: nb_items,
+        offset: (page - 1) * nb_items,
+        transaction,
+      }),
+      () => PizziError.internalError()
+    )
+  }
+
+  static deleteClientById(id: number, transaction: Transaction | null = null): PizziResult<void> {
+    return ResultAsync.fromPromise(Client.destroy({ where: { id }, transaction }), () =>
+      PizziError.internalError()
+    ).andThen((n) => {
+      if (n > 0) {
+        return okAsync(undefined)
+      } else {
+        return errAsync(new PizziError(ErrorCause.ClientNotFound, `invalid id: ${id}`))
+      }
+    })
+  }
+
+  static isClientIdUsed(client_id: string, transaction?: Transaction): PizziResult<boolean> {
+    return ResultAsync.fromPromise(Client.count({ where: { client_id }, transaction }), () =>
+      PizziError.internalError()
+    ).map((n) => n > 0)
   }
 }

@@ -43,6 +43,6 @@ export default class Credential extends Model<CredentialAttributes, CredentialCr
   @HasMany(() => Token, { onDelete: 'CASCADE' })
   tokens!: Array<Token>
 
-  @BelongsTo(() => User)
+  @BelongsTo(() => User, { onDelete: 'SET NULL' })
   user!: User
 }

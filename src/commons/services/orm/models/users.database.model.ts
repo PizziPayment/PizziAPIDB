@@ -8,7 +8,6 @@ interface UserAttributes {
   id: number
   firstname: string
   surname: string
-  picture_id?: number
   address: string
   zipcode: number
   avatar_id?: number

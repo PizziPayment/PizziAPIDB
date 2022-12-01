@@ -6,3 +6,8 @@ export interface CredentialModel {
   shop_id?: number
   admin_id?: number
 }
+
+export interface SmallCredentialModel {
+  id: number
+  email: string
+}

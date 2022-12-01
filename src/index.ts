@@ -16,6 +16,7 @@ export * from './commons/services/sequelize/model'
 export { ErrorCause, IPizziError } from './commons/models/service.error.model'
 
 // Services
+export * from './admins/admins.database.service'
 export * from './credentials/credentials.database.service'
 export * from './tokens/tokens.database.service'
 export * from './clients/clients.database.service'

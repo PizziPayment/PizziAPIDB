@@ -18,6 +18,7 @@ export enum ErrorCause {
   ProductReturnCertificateNotFound,
   ImageNotFound,
   SharedReceiptNotFound,
+  InvalidAdmin,
 }
 
 export interface IPizziError {
@@ -55,6 +56,7 @@ export class PizziError implements IPizziError {
       'Product Return Certificate not found',
       'Image not found',
       'Shared receipt not found',
+      'Admin not found',
     ][cause]
   }
 
