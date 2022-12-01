@@ -1,5 +1,6 @@
 import { ResultAsync } from 'neverthrow'
 import { Transaction } from 'sequelize'
+import PizziTransaction from '../commons/services/orm/models/transactions.database.model'
 import Receipt from '../commons/services/orm/models/receipts.database.model'
 import { DetailedReceiptModel, ReceiptModel } from './models/receipts.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
@@ -15,7 +16,7 @@ export class ReceiptsService {
     return ResultAsync.fromPromise(
       Receipt.findOne({
         where: { id: receipt_id },
-        include: [{ model: ReceiptItem, include: [{ model: ShopItem }] }],
+        include: [{ model: ReceiptItem, include: [{ model: ShopItem }] }, { model: PizziTransaction }],
         transaction,
       }),
       () => PizziError.internalError()
@@ -25,6 +26,7 @@ export class ReceiptsService {
         return {
           id: receipt.id,
           total_price: receipt.total_price,
+          created_at: receipt.transaction.created_at,
           items: (receipt.items || []).map((item) => {
             return {
               id: item.id,

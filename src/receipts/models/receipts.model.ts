@@ -15,5 +15,6 @@ interface DetailedReceiptItems {
 }
 
 export interface DetailedReceiptModel extends ReceiptModel {
+  created_at: Date
   items: Array<DetailedReceiptItems>
 }
