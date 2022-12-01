@@ -16,7 +16,9 @@ export class CredentialsService {
       Credential.destroy({ where: { [`${id_type}_id`]: id }, transaction }),
       PizziError.internalError
     )
-      .andThen(okIfNotNullElse(new PizziError(ErrorCause.CredentialNotFound, `Credential for ${id_type} ${id} not found`)))
+      .andThen(
+        okIfNotNullElse(new PizziError(ErrorCause.CredentialNotFound, `Credential for ${id_type} ${id} not found`))
+      )
       .map(() => undefined)
   }
 
