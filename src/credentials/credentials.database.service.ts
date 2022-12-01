@@ -74,6 +74,22 @@ export class CredentialsService {
       .map(() => null)
   }
 
+  static changeEmailAndPassword(
+    credential_id: number,
+    email?: string,
+    password?: string,
+    transaction?: Transaction
+  ): PizziResult<null> {
+    return ResultAsync.fromPromise(Credential.update({ email, password }, { where: {}, transaction }), () =>
+      PizziError.internalError()
+    )
+      .map(([affected_rows]) => affected_rows)
+      .andThen(
+        okIfNotNullElse(new PizziError(ErrorCause.CredentialNotFound, `invalid credential_id: ${credential_id}`))
+      )
+      .map(() => null)
+  }
+
   static createCredentialWithId(
     id_type: 'user' | 'shop' | 'admin',
     id: number,
