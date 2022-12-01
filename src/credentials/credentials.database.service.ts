@@ -1,12 +1,9 @@
 import { ResultAsync } from 'neverthrow'
 import Credential from '../commons/services/orm/models/credentials.database.model'
-import Token from '../commons/services/orm/models/tokens.database.model'
 import { CredentialModel } from './models/credential.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
-import { onTransaction } from '../commons/extensions/generators.extension'
 import { ErrorCause, PizziResult, PizziError } from '../commons/models/service.error.model'
-import { TokensService } from '../tokens/tokens.database.service'
 
 export class CredentialsService {
   static deleteCredentialFromOwnerId(
@@ -18,7 +15,7 @@ export class CredentialsService {
       Credential.destroy({ where: { [`${id_type}_id`]: id }, transaction }),
       PizziError.internalError
     )
-      .andThen(okIfNotNullElse(new PizziError(ErrorCause.CredentialNotFound, `Credential ${id} not found`)))
+      .andThen(okIfNotNullElse(new PizziError(ErrorCause.CredentialNotFound, `Credential for ${id_type} ${id} not found`)))
       .map(() => undefined)
   }
 
@@ -71,7 +68,6 @@ export class CredentialsService {
           PizziError.internalError()
         )
       )
-      .andThen(onTransaction(transaction, destroyOwnersTokens))
       .map(() => null)
   }
 
@@ -102,7 +98,6 @@ export class CredentialsService {
       .andThen(
         okIfNotNullElse(new PizziError(ErrorCause.CredentialNotFound, `invalid credential_id: ${credential_id}`))
       )
-      .andThen(() => TokensService.deleteTokensFromCredentialId(credential_id, transaction))
       .map(() => null)
   }
 
@@ -134,15 +129,4 @@ export class CredentialsService {
       .andThen(okIfNotNullElse(new PizziError(ErrorCause.DuplicatedEmail, email)))
       .map(() => null)
   }
-}
-
-// Pipeline
-
-function destroyOwnersTokens(
-  credential: CredentialModel,
-  transaction: Transaction | null
-): PizziResult<CredentialModel> {
-  return ResultAsync.fromPromise(Token.destroy({ where: { credential_id: credential.id }, transaction }), () =>
-    PizziError.internalError()
-  ).map(() => credential)
 }
