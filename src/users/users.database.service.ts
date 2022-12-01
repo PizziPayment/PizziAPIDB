@@ -31,7 +31,7 @@ export class UsersServices {
       User.findAll({
         limit: nb_items,
         offset: (page - 1) * nb_items,
-        include: [{ model: Credential }],
+        include: [{ model: Credential, required: true }],
         transaction,
       }),
       () => PizziError.internalError()

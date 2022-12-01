@@ -124,7 +124,9 @@ describe('Credential domain', () => {
       const new_email = 'new_email@example.com'
       const [_, created_cred] = await setupCredential('user')
 
-      expect((await CredentialsService.changeEmail(created_cred.id, new_email, transaction)).isOk()).toBeTruthy()
+      expect(
+        (await CredentialsService.changeEmailAndPassword(created_cred.id, new_email, undefined, transaction)).isOk()
+      ).toBeTruthy()
       const res = await CredentialsService.getCredentialFromId(created_cred.id, transaction)
       expect(res.isOk()).toBeTruthy()
       const updated_cred = res._unsafeUnwrap()
@@ -136,7 +138,9 @@ describe('Credential domain', () => {
       const new_password = EncryptionService.encrypt('password')
       const [_, created_cred] = await setupCredential('user')
 
-      expect((await CredentialsService.changePassword(created_cred.id, new_password, transaction)).isOk()).toBeTruthy()
+      expect(
+        (await CredentialsService.changeEmailAndPassword(created_cred.id, undefined, new_password, transaction)).isOk()
+      ).toBeTruthy()
       const res = await CredentialsService.getCredentialFromId(created_cred.id, transaction)
       expect(res.isOk()).toBeTruthy()
       const updated_cred = res._unsafeUnwrap()

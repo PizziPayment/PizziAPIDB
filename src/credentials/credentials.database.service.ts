@@ -1,14 +1,27 @@
 import { ResultAsync } from 'neverthrow'
 import Credential from '../commons/services/orm/models/credentials.database.model'
-import Token from '../commons/services/orm/models/tokens.database.model'
 import { CredentialModel } from './models/credential.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
-import { onTransaction } from '../commons/extensions/generators.extension'
 import { ErrorCause, PizziResult, PizziError } from '../commons/models/service.error.model'
 import { TokensService } from '../tokens/tokens.database.service'
 
 export class CredentialsService {
+  static deleteCredentialFromOwnerId(
+    id_type: 'user' | 'shop' | 'admin',
+    id: number,
+    transaction?: Transaction
+  ): PizziResult<void> {
+    return ResultAsync.fromPromise(
+      Credential.destroy({ where: { [`${id_type}_id`]: id }, transaction }),
+      PizziError.internalError
+    )
+      .andThen(
+        okIfNotNullElse(new PizziError(ErrorCause.CredentialNotFound, `Credential for ${id_type} ${id} not found`))
+      )
+      .map(() => undefined)
+  }
+
   static deleteCredentialFromId(credential_id: number, transaction: Transaction | null = null): PizziResult<null> {
     return ResultAsync.fromPromise(Credential.destroy({ where: { id: credential_id }, transaction }), () =>
       PizziError.internalError()
@@ -42,39 +55,6 @@ export class CredentialsService {
     )
   }
 
-  static changePassword(
-    credential_id: number,
-    hashed_password: string,
-    transaction: Transaction | null = null
-  ): PizziResult<null> {
-    return ResultAsync.fromPromise(Credential.findOne({ where: { id: credential_id }, transaction }), () =>
-      PizziError.internalError()
-    )
-      .andThen(
-        okIfNotNullElse(new PizziError(ErrorCause.CredentialNotFound, `invalid credential_id: ${credential_id}`))
-      )
-      .andThen((credential) =>
-        ResultAsync.fromPromise(credential.set('password', hashed_password).save({ transaction }), () =>
-          PizziError.internalError()
-        )
-      )
-      .andThen(onTransaction(transaction, destroyOwnersTokens))
-      .map(() => null)
-  }
-
-  static changeEmail(credential_id: number, email: string, transaction: Transaction | null = null): PizziResult<null> {
-    return ResultAsync.fromPromise(Credential.findOne({ where: { id: credential_id }, transaction }), () =>
-      PizziError.internalError()
-    )
-      .andThen(
-        okIfNotNullElse(new PizziError(ErrorCause.CredentialNotFound, `invalid credential_id: ${credential_id}`))
-      )
-      .andThen((credential) =>
-        ResultAsync.fromPromise(credential.set('email', email).save({ transaction }), () => PizziError.internalError())
-      )
-      .map(() => null)
-  }
-
   static changeEmailAndPassword(
     credential_id: number,
     email?: string,
@@ -89,7 +69,7 @@ export class CredentialsService {
       .andThen(
         okIfNotNullElse(new PizziError(ErrorCause.CredentialNotFound, `invalid credential_id: ${credential_id}`))
       )
-      .andThen(() => TokensService.deleteTokensFromCredentialId(credential_id, transaction))
+      .map(() => TokensService.deleteTokensFromCredentialId(credential_id))
       .map(() => null)
   }
 
@@ -121,15 +101,4 @@ export class CredentialsService {
       .andThen(okIfNotNullElse(new PizziError(ErrorCause.DuplicatedEmail, email)))
       .map(() => null)
   }
-}
-
-// Pipeline
-
-function destroyOwnersTokens(
-  credential: CredentialModel,
-  transaction: Transaction | null
-): PizziResult<CredentialModel> {
-  return ResultAsync.fromPromise(Token.destroy({ where: { credential_id: credential.id }, transaction }), () =>
-    PizziError.internalError()
-  ).map(() => credential)
 }

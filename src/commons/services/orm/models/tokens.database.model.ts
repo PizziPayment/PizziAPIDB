@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, DataType, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
+import { AutoIncrement, BelongsTo, Column, DataType, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import Client from './clients.database.model'
 import Credential from './credentials.database.model'
 
@@ -40,4 +40,7 @@ export default class Token extends Model<TokenAttributes, TokenCreation> {
   @ForeignKey(() => Credential)
   @Column({ allowNull: false })
   credential_id!: number
+
+  @BelongsTo(() => Credential, { onDelete: 'CASCADE' })
+  credential!: Credential
 }
