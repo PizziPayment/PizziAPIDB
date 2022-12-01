@@ -4,6 +4,7 @@ import { CredentialModel } from './models/credential.model'
 import { okIfNotNullElse } from '../commons/extensions/neverthrow.extension'
 import { Transaction } from 'sequelize'
 import { ErrorCause, PizziResult, PizziError } from '../commons/models/service.error.model'
+import { TokensService } from '../tokens/tokens.database.service'
 
 export class CredentialsService {
   static deleteCredentialFromOwnerId(
@@ -52,38 +53,6 @@ export class CredentialsService {
     )
   }
 
-  static changePassword(
-    credential_id: number,
-    hashed_password: string,
-    transaction: Transaction | null = null
-  ): PizziResult<null> {
-    return ResultAsync.fromPromise(Credential.findOne({ where: { id: credential_id }, transaction }), () =>
-      PizziError.internalError()
-    )
-      .andThen(
-        okIfNotNullElse(new PizziError(ErrorCause.CredentialNotFound, `invalid credential_id: ${credential_id}`))
-      )
-      .andThen((credential) =>
-        ResultAsync.fromPromise(credential.set('password', hashed_password).save({ transaction }), () =>
-          PizziError.internalError()
-        )
-      )
-      .map(() => null)
-  }
-
-  static changeEmail(credential_id: number, email: string, transaction: Transaction | null = null): PizziResult<null> {
-    return ResultAsync.fromPromise(Credential.findOne({ where: { id: credential_id }, transaction }), () =>
-      PizziError.internalError()
-    )
-      .andThen(
-        okIfNotNullElse(new PizziError(ErrorCause.CredentialNotFound, `invalid credential_id: ${credential_id}`))
-      )
-      .andThen((credential) =>
-        ResultAsync.fromPromise(credential.set('email', email).save({ transaction }), () => PizziError.internalError())
-      )
-      .map(() => null)
-  }
-
   static changeEmailAndPassword(
     credential_id: number,
     email?: string,
@@ -98,6 +67,7 @@ export class CredentialsService {
       .andThen(
         okIfNotNullElse(new PizziError(ErrorCause.CredentialNotFound, `invalid credential_id: ${credential_id}`))
       )
+      .map(() => TokensService.deleteTokensFromCredentialId(credential_id))
       .map(() => null)
   }
 
