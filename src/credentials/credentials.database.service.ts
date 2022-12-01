@@ -9,6 +9,19 @@ import { ErrorCause, PizziResult, PizziError } from '../commons/models/service.e
 import { TokensService } from '../tokens/tokens.database.service'
 
 export class CredentialsService {
+  static deleteCredentialFromOwnerId(
+    id_type: 'user' | 'shop' | 'admin',
+    id: number,
+    transaction?: Transaction
+  ): PizziResult<void> {
+    return ResultAsync.fromPromise(
+      Credential.destroy({ where: { [`${id_type}_id`]: id }, transaction }),
+      PizziError.internalError
+    )
+      .andThen(okIfNotNullElse(new PizziError(ErrorCause.CredentialNotFound, `Credential ${id} not found`)))
+      .map(() => undefined)
+  }
+
   static deleteCredentialFromId(credential_id: number, transaction: Transaction | null = null): PizziResult<null> {
     return ResultAsync.fromPromise(Credential.destroy({ where: { id: credential_id }, transaction }), () =>
       PizziError.internalError()
