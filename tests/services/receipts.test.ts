@@ -6,6 +6,8 @@ import {
   ShopItemCreationModel,
   ShopItemsService,
   ShopsServices,
+  TransactionsService,
+  UsersServices,
 } from '../../src'
 // @ts-ignore
 import { config } from '../common/config'
@@ -69,9 +71,16 @@ describe('Receipts domain', () => {
       const receipt_sample: Omit<ReceiptModel, 'id'> = {
         total_price: 9999,
       }
-
+      const shop = (
+        await ShopsServices.createShop('test', '0202020202', 123213, 'address', 'city', 20000, transaction)
+      )._unsafeUnwrap()
+      const user = (await UsersServices.createUser('non', 'no', 'nothing', 12312, transaction))._unsafeUnwrap()
       const created_receipt = (
         await ReceiptsService.createReceipt(receipt_sample.total_price, transaction)
+      )._unsafeUnwrap()
+
+      ;(
+        await TransactionsService.createPendingTransaction(created_receipt.id, user.id, shop.id, 'card', transaction)
       )._unsafeUnwrap()
       const retrieved_receipt = (
         await ReceiptsService.getDetailedReceiptById(created_receipt.id, transaction)
@@ -104,31 +113,37 @@ describe('Receipts domain', () => {
       const receipt_sample: Omit<ReceiptModel, 'id'> = {
         total_price: 140,
       }
+
       const created_receipt = (
         await ReceiptsService.createReceipt(receipt_sample.total_price, transaction)
       )._unsafeUnwrap()
 
+      const shop = (
+        await ShopsServices.createShop('test', '0202020202', 123213, 'address', 'city', 20000, transaction)
+      )._unsafeUnwrap()
       ;(
-        await ShopsServices.createShop('test', '0202020202', 123213, 'address', 'city', 20000, transaction).map(
-          (shop) =>
-            ShopItemsService.createShopItems(shop.id, shop_items_sample, transaction).map((shop_items) =>
-              Promise.all(
-                shop_items.map(
-                  async (shop_item) =>
-                    await ReceiptItemsService.createReceiptItem(
-                      created_receipt.id,
-                      shop_item.id,
-                      0,
-                      0,
-                      1,
-                      10,
-                      'tototot',
-                      transaction
-                    )
+        await ShopItemsService.createShopItems(shop.id, shop_items_sample, transaction).map((shop_items) =>
+          Promise.all(
+            shop_items.map(
+              async (shop_item) =>
+                await ReceiptItemsService.createReceiptItem(
+                  created_receipt.id,
+                  shop_item.id,
+                  0,
+                  0,
+                  1,
+                  10,
+                  'tototot',
+                  transaction
                 )
-              )
             )
+          )
         )
+      )._unsafeUnwrap()
+
+      const user = (await UsersServices.createUser('non', 'no', 'nothing', 12312, transaction))._unsafeUnwrap()
+      ;(
+        await TransactionsService.createPendingTransaction(created_receipt.id, user.id, shop.id, 'card', transaction)
       )._unsafeUnwrap()
 
       const retrieved_receipt = (
